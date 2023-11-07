@@ -8,7 +8,7 @@ This project was developed by **Visual Virtuosos** For [INFO 526 - Data Analysis
 
 -   **Jothish Kumar Polaki**: Graduate student in Data Science, University of Arizona
 
--   **Partha Koundinya P**: One sentence description of Team member 2 (e.g., year, major, etc.).
+-   **Partha Koundinya P**: Graduate student in Data Science, University of Arizona
 
 -   **Harshit Mehra**: One sentence description of Team member 3 (e.g., year, major, etc.).
 
