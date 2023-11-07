@@ -10,6 +10,6 @@ This project was developed by **Visual Virtuosos** For [INFO 526 - Data Analysis
 
 -   **Partha Koundinya P**: Graduate student in Data Science, University of Arizona
 
--   **Harshit Mehra**: One sentence description of Team member 3 (e.g., year, major, etc.).
+-   **Harshit Mehra**: Graduate student in Data Science, University of Arizona
 
--   **Kashyap Sai Prasad N**: One sentence description of Team member 4 (e.g., year, major, etc.).
+-   **Kashyap Sai Prasad N**: Graduate student in Data Science, University of Arizona
