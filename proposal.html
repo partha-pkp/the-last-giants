@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Project Title - Proposal title</title>
+<title>The Last Giants</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -104,7 +104,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container">
     <a class="navbar-brand" href="./index.html">
-    <span class="navbar-title">Project Title</span>
+    <span class="navbar-title">The Last Giants</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -132,7 +132,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/INFO526-DataViz/project-01" rel="" target=""><i class="bi bi-github" role="img">
+    <a class="nav-link" href="https://github.com/INFO526-DataViz/project-final-Visual-Virtuosos" rel="" target=""><i class="bi bi-github" role="img">
 </i> 
  <span class="menu-text"></span></a>
   </li>  
@@ -154,7 +154,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#dataset" id="toc-dataset" class="nav-link active" data-scroll-target="#dataset">Dataset</a></li>
   <li><a href="#questions" id="toc-questions" class="nav-link" data-scroll-target="#questions">Questions</a></li>
-  <li><a href="#analysis-plan" id="toc-analysis-plan" class="nav-link" data-scroll-target="#analysis-plan">Analysis plan</a></li>
+  <li><a href="#analysis-plan" id="toc-analysis-plan" class="nav-link" data-scroll-target="#analysis-plan">Analysis plan</a>
+  <ul class="collapse">
+  <li><a href="#question-1" id="toc-question-1" class="nav-link" data-scroll-target="#question-1">Question 1</a></li>
+  <li><a href="#question-2" id="toc-question-2" class="nav-link" data-scroll-target="#question-2">Question 2</a></li>
+  </ul></li>
+  <li><a href="#plan-of-attack" id="toc-plan-of-attack" class="nav-link" data-scroll-target="#plan-of-attack">Plan of Attack</a></li>
+  <li><a href="#repo-organization" id="toc-repo-organization" class="nav-link" data-scroll-target="#repo-organization">Repo Organization</a></li>
   </ul>
 </nav>
     </div>
@@ -163,8 +169,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Proposal title</h1>
-<p class="subtitle lead">Proposal</p>
+<h1 class="title">The Last Giants</h1>
+<p class="subtitle lead">A data-driven safari into the savannah</p>
 </div>
 
 
@@ -179,22 +185,239 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
+<p>The goal of this project is to visualize the African savannah elephants’ population and the ivory trade in Africa.</p>
+<p>The African savannah elephant, scientifically known as Loxodonta africana, stands at the brink of an existential crisis, as it grapples with the relentless threats of poaching and the encroachment of its natural habitats. Despite global efforts to address the dire situation facing these magnificent creatures, a veil of uncertainty shrouds our knowledge regarding their population sizes and trends across much of the African continent. The survival of these iconic giants is compromised by a multitude of poaching activities, including the tragic ivory trade, as well as rampant deforestation and the hunting of elephants for their prized tusks.</p>
+<p>In response to this critical conservation challenge, we have undertaken a vital project aimed at unraveling the enigmatic population trends and distribution patterns of the savannah elephant throughout the years 1995-2023. Furthermore, our mission extends to comprehending the intricate web of ivory trade activities, which may offer invaluable insights into the potential consequences on the elephant population. By shedding light on these pressing issues, we strive to contribute to a better understanding of the complex dynamics between human activities, conservation efforts, and the survival of these majestic beings in the wild.</p>
+<section id="dataset" class="level1">
+<h1>Dataset</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Installing necessary packages</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Loading the dataset</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>elephant <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"data/dataset.xlsx"</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">#glimpse(elephant)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
-<section id="dataset" class="level2">
-<h2 class="anchored" data-anchor-id="dataset">Dataset</h2>
-<p>A brief description of your dataset including its provenance, dimensions, etc. as well as the reason why you chose this dataset.</p>
-<p>Make sure to load the data and use inline code for some of this information.</p>
+<p>The research paper titled <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5012305/">“Continent-wide Survey: Massive Decline in African Savannah Elephants”</a> contains a dataset which is a collection of information on the African Savannah Elephants and spans over the years 1995 to 2014. This data file has been loaded to the <code>data</code> folder. This dataset has been meticulously compiled to track and document the population trends of African savannah elephants, a species that has been facing a severe decline in numbers during this time period.</p>
+<p>This dataset contains a wealth of data points and variables that provide insights into various aspects of elephant populations, including their distribution across different regions of Africa, demographic information such as the ecosystem of the elephants. The dimensions of the dataset are 322 rows and 7 columns. The variables in the dataset and their description is presented as follows.</p>
+<table class="table">
+<colgroup>
+<col style="width: 45%">
+<col style="width: 54%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Column</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Country</td>
+<td>Name of the Country</td>
+</tr>
+<tr class="even">
+<td>Ecosystem</td>
+<td>Name of the ecosystem as used in the manuscript and supplemental material.</td>
+</tr>
+<tr class="odd">
+<td>Stratum</td>
+<td>Where the stratum name is the same as the ecosystem name, this indicates that the entire ecosytsem was the study area for the historical data. See Figure S7 for map of strata.</td>
+</tr>
+<tr class="even">
+<td>Year</td>
+<td>Year of survey</td>
+</tr>
+<tr class="odd">
+<td>Estimate</td>
+<td>Estimated number of elephants present</td>
+</tr>
+<tr class="even">
+<td>SE</td>
+<td>Standard error: 0 values indicate total counts; blank indicates missing value for a sample count.</td>
+</tr>
+<tr class="odd">
+<td>Source</td>
+<td>Source of data. “GEC report” indicates that data were taken from the GEC report for that ecosystem; most GEC reports are not publicly available.</td>
+</tr>
+</tbody>
+</table>
+<p>The ivory trade data was obtained from the <a href="https://cites.org/eng/prog/etis">Elephant Trade Information System (ETIS)</a>. The reports published in the website include country-wise ivory trade data from 2008-2019. The dimensions of the dataset are 88 rows and 12 columns. The variables in the data are, <code>country</code>, <code>year</code> and <code>total no. of seizure cases</code>.</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Column</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Country</td>
+<td>Name of the country</td>
+</tr>
+<tr class="even">
+<td>Year</td>
+<td>Years spanned from 2008-2019</td>
+</tr>
+<tr class="odd">
+<td>Total</td>
+<td>Total no. of seizure cases</td>
+</tr>
+</tbody>
+</table>
 </section>
-<section id="questions" class="level2">
-<h2 class="anchored" data-anchor-id="questions">Questions</h2>
-<p>The two questions you want to answer.</p>
+<section id="questions" class="level1">
+<h1>Questions</h1>
+<p>Q1. How has elephant population varied over the years across several African countries?</p>
+<p>Q2. What is the trend of ivory trade in Africa?</p>
 </section>
-<section id="analysis-plan" class="level2">
-<h2 class="anchored" data-anchor-id="analysis-plan">Analysis plan</h2>
+<section id="analysis-plan" class="level1">
+<h1>Analysis plan</h1>
+<section id="question-1" class="level2">
+<h2 class="anchored" data-anchor-id="question-1">Question 1</h2>
+<p>The present dataset contains the data from 1995-2014. However, this data can be used to further predict the population of the elephants for the period 2015-2023. Hence, it is one of the important stages to predict the elephant population data from 2015-2023.</p>
+<p>In the question, “How has elephant population varied over the years across several African countries?”, we are interested in understanding the distribution of the elephants. The important variables to be considered here are <code>country</code>, <code>estimate</code> and <code>year</code>. This task involves a well-structured analysis plan as presented below.</p>
 <ul>
-<li>A plan for answering each of the questions including the variables involved, variables to be created (if any), external data to be merged in (if any).</li>
+<li><p>Data Preprocessing:</p>
+<ul>
+<li>Clean and preprocess the data to ensure consistency and accuracy.</li>
+<li>Handle missing values and outliers appropriately.</li>
+</ul></li>
+<li><p>Data Exploration:</p>
+<ul>
+<li>Perform initial exploratory data analysis to understand the dataset’s structure and characteristics.</li>
+<li>Calculate basic statistics, visualize distributions, and identify trends or patterns in the data.</li>
+</ul></li>
+<li><p>Data prediction:</p>
+<ul>
+<li>Predict the data from 2015-2023 using multiple regression techniques like Ordinary Least squares, Polynomial regression, Lasso regression, Elastic net regression.</li>
+</ul></li>
+<li><p>Model Evaluation:</p>
+<ul>
+<li>Select the regression technique which provides the best-fit model.</li>
+</ul></li>
+<li><p>Country-Level Analysis:</p>
+<ul>
+<li>Group the data by country and region to analyze elephant populations in different areas of Africa.</li>
+<li>Create map plots that illustrate population distribution using the package <code>rnaturalearth</code>, <code>sf</code> and <code>plotly</code></li>
+<li>The <code>rayshader</code> package may also be used to implement a 3-D map plot.</li>
+</ul></li>
+<li><p>Shiny App Development which includes:</p>
+<ul>
+<li>Dynamic timeline for selecting the year of interest</li>
+<li>Interactive maps of African countries with color-coded markers or chloropleths to represent elephant populations.</li>
+</ul></li>
+</ul>
+</section>
+<section id="question-2" class="level2">
+<h2 class="anchored" data-anchor-id="question-2">Question 2</h2>
+<p>To address the question “What is the trend of ivory trade in Africa?”, the following is a well-structured analysis plan.</p>
+<ul>
+<li><p>Data Preprocessing:</p>
+<ul>
+<li>Clean and preprocess the data to ensure consistency and accuracy.</li>
+<li>Handle missing values and outliers appropriately.</li>
+</ul></li>
+<li><p>Data Exploration:</p>
+<ul>
+<li>Perform initial exploratory data analysis to understand the dataset’s structure and characteristics.</li>
+<li>Calculate basic statistics, visualize distributions, and identify trends or patterns in the data.</li>
+</ul></li>
+<li><p>Data prediction:</p>
+<ul>
+<li>Predict the data from 2020-2023 using multiple regression techniques like Ordinary Least squares, Polynomial regression, Lasso regression, Elastic net regression.</li>
+</ul></li>
+<li><p>Model Evaluation:</p>
+<ul>
+<li>Select the regression technique which provides the best-fit model.</li>
+</ul></li>
+<li><p>Data Visualization:</p>
+<ul>
+<li>Visualize the trends ivory trade with a <code>timeseries plot.</code></li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="plan-of-attack" class="level1">
+<h1>Plan of Attack</h1>
+<table class="table">
+<colgroup>
+<col style="width: 31%">
+<col style="width: 36%">
+<col style="width: 31%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Week</th>
+<th style="text-align: center;">Weekly Tasks</th>
+<th style="text-align: center;">Team members involved</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">Till November 8<sup>th</sup></td>
+<td style="text-align: center;">Explore and finalize the dataset and the problem statements</td>
+<td style="text-align: center;">Everyone</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">Complete the proposal and assign some high-level tasks</td>
+<td style="text-align: center;">Everyone</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Nov.&nbsp;9<sup>th</sup> - 15<sup>th</sup></td>
+<td style="text-align: center;">Understanding <code>rnaturalearth</code>, <code>sf</code> and <code>plotly</code> packages along with geospatial data</td>
+<td style="text-align: center;">TBD</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">Data Pre processing</td>
+<td style="text-align: center;">TBD</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Nov.&nbsp;16<sup>th</sup> - 22<sup>nd</sup></td>
+<td style="text-align: center;">Data prediction and Model Evaluation</td>
+<td style="text-align: center;">TBD</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Nov.&nbsp;23<sup>rd</sup> - 29<sup>th</sup></td>
+<td style="text-align: center;">Data visualisation</td>
+<td style="text-align: center;">TBD</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">Shiny app development</td>
+<td style="text-align: center;">TBD</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Nov.&nbsp;30<sup>th</sup> - December 6<sup>th</sup></td>
+<td style="text-align: center;">Review the code</td>
+<td style="text-align: center;">Everyone</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Dec.&nbsp;7<sup>th</sup> - 13<sup>th</sup></td>
+<td style="text-align: center;">Write-up and presentation for the project</td>
+<td style="text-align: center;">Everyone</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="repo-organization" class="level1">
+<h1>Repo Organization</h1>
+<p>The following are the folders involved in the Project repository.</p>
+<ul>
+<li><p><strong>data/:</strong> Used for storing any necessary data files for the project, such as input files.</p></li>
+<li><p><strong>images/:</strong> Used for storing image files used in the project.</p></li>
+<li><p><strong>presentation_files/:</strong> Folder for having presentation related files.</p></li>
+<li><p><strong>_extra/:</strong> Used to brainstorm our analysis which won’t impact our project workflow.</p></li>
+<li><p><strong>_freeze/:</strong> This folder is used to store the generated files during the build process. These files represent the frozen state of the website at a specific point in time.</p></li>
+<li><p><strong>_site/:</strong> Folder used to store the generated static website files after the site generator processes the quarto document.</p></li>
+<li><p><strong>.github/:</strong> Folder for storing github templates and workflow.</p></li>
 </ul>
 
 
