@@ -60,9 +60,9 @@ Q2. What is the trend of ivory trade in Africa?
 
 # Analysis plan
 
-The present dataset contains the data from 1995-2014. However, this data can be used to further predict the population of the elephants for the period 2015-2023. Hence, it is one of the important stages to predict the elephant population data from 2015-2023.
-
 ## Question 1
+
+The present dataset contains the data from 1995-2014. However, this data can be used to further predict the population of the elephants for the period 2015-2023. Hence, it is one of the important stages to predict the elephant population data from 2015-2023.
 
 In the question, "How has elephant population varied over the years across several African countries?", we are interested in understanding the distribution of the elephants. The important variables to be considered here are `country`, `estimate` and `year`. This task involves a well-structured analysis plan as presented below.
 
