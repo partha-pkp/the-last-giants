@@ -1,7 +1,7 @@
 ---
-title: "Project title"
-subtitle: "INFO 526 - Project Final"
-author: "Team name"
+title: "The Last Giants"
+subtitle: "A data-driven safari into the savannah"
+author: "Visual Virtuosos"
 format: html
 editor: visual
 ---
