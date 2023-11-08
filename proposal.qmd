@@ -97,7 +97,7 @@ In the question, "How has elephant population varied over the years across sever
 
 ## Question 2
 
-To address the question "What is the trend of ivory trade in Africa?", the following is a well-structured analysis plan as presented below.
+To address the question "What is the trend of ivory trade in Africa?", the following is a well-structured analysis plan.
 
 -   Data Preprocessing:
 
