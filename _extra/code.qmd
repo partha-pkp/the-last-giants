@@ -1,25 +1,208 @@
-
-
 ```{r}
 #| label: load-pkgs
 #| message: false
 
 suppressWarnings(library(tidyverse))
-library(knitr)
-library(lubridate)
 
+if (!require("pacman")) 
+  install.packages("pacman")
+
+pacman::p_load(knitr,tidyverse,lubridate,here,dplyr,here,ggplot2,ggmap,maps,rnaturalearth,rnaturalearthdata,rayshader,raster,akima)
 ```
-
 
 ## Dataset Setup
+
 ```{r}
 
+elephant <- readxl::read_xlsx(here("data","elephant_data.xlsx"))
+```
+
+## Plots
+
+```{r}
+
+# Load the Africa countries dataset
+africa <- ne_countries(scale = "medium", continent = "Africa", returnclass = "sf")
 
 ```
 
+```{r}
+
+# Merge the geospatial data with the elephant data
+africa_with_elephants <- merge(africa, elephant, by.x = "iso_a3", by.y = "iso_a3", all.x = TRUE)
+```
+
+```{r}
+
+# Load the required libraries
+library(sf)
+library(ggplot2)
+library(rnaturalearth)
+library(rnaturalearthdata)
+
+# Load the Africa countries dataset
+africa <- ne_countries(scale = "medium", continent = "Africa", returnclass = "sf")
+
+# Create a sample dataset with elephant estimates by ISO country code
+elephant_data <- data.frame(
+  iso_a3 = c("KEN", "TZA", "UGA", "ZAF", "MOZ"),  # ISO country codes
+  elephants = c(3000, 5000, 1500, 2000, 4000)  # Estimated elephant populations
+)
 
 
-## Plots
+# Match the elephant data to the countries in the Africa dataset
+africa$elephants <- NA  # Create a new column for the elephant estimates
+africa$elephants[africa$sovereignt %in% elephant$Country] <- elephant$Estimate
+
+# Create the map
+ggplot(africa) +
+  geom_sf(aes(fill = elephants)) +
+  scale_fill_gradient(low = "lightblue", high = "darkgreen") +
+  labs(title = "Elephant Estimates in African Countries") +
+  theme_minimal()
+```
+
+```{r}
+
+library(dplyr)
+# Select the columns of interest (e.g., country and estimate)
+elephant_data_1995 <- elephant %>%
+  filter(Year == 1995) %>%
+  select(Country,Ecosystem, Estimate)
+
+elephant_data_1996 <- elephant %>%
+  filter(Year == 1996) %>%
+  select(Country,Ecosystem, Estimate)
+
+elephant_data_2014 <- elephant %>%
+  filter(Year == 2014) %>%
+  select(Country,Ecosystem, Estimate)
+
+elephant_data_2010 <- elephant %>%
+  filter(Year == 2010) %>%
+  select(Country,Ecosystem, Estimate)
+
+elephant_data_2005 <- elephant %>%
+  filter(Year == 2005) %>%
+  select(Country,Ecosystem, Estimate)
+
+africa_1996 <- africa |>
+  filter(sovereignt == "Zambia")
+```
+
+```{r}
+
+# Load the rnaturalearth library
+library(rnaturalearth)
+
+# Get geospatial data for the African continent
+africa_data <- ne_countries(scale = "medium", continent = "Africa", returnclass = "sf")
+
+
+ggplot() +
+  geom_sf(data = africa_data, fill = "grey", color = "blue") +  # Africa map
+  #geom_point(data = elephant, aes(color = Estimate), size = 3) +  # Elephant data as scatter plot
+  scale_color_gradient(low = "lightyellow", high = "darkgreen") +  # Color scale
+  labs(title = "Elephant Data in Africa") +
+  theme_minimal()
+```
+
+```{r}
+
+# Fit a logistic regression model
+# Fit a linear regression model
+lm_model <- lm(Estimate ~ Year, data = elephant)
+
+# Get summary of the model
+summary(lm_model)
+```
+
+```{r}
+
+# Create a scatterplot of the data
+plot(elephant$Year, elephant$Estimate, main = "Elephant Estimate Over Time", 
+     xlab = "Year", ylab = "Estimate", pch = 16, col = "blue")
+
+# Add the regression line to the plot
+abline(lm_model, col = "red")
+
+# Create a new data frame with the years of interest
+new_data <- data.frame(Year = 2015:2023)
+
+# Make predictions using the linear regression model
+predicted_estimates <- predict(lm_model, newdata = new_data)
+
+predicted_data <- data.frame(Year = new_data$Year, Predicted_Estimate = predicted_estimates)
+
+predicted_data
+```
+
+```{r}
+
+library(e1071)  # Load the e1071 package for SVM
+
+# Fit an SVM regression model
+svm_model <- svm(Estimate ~ Year, data = elephant, kernel = "linear")
+
+predicted_estimates <- predict(svm_model, newdata = new_data)
+predicted_data <- data.frame(Year = new_data$Year, Predicted_Estimate = predicted_estimates)
+
+print(predicted_data)
+```
+
+```{r}
+
+# Load the necessary libraries
+library(rnaturalearth)
+library(ggplot2)
+
+# Load the elephant population data (replace this with your own data)
+# Assuming you have a data frame named 'elephant_data' with 'Country', 'Estimate' columns
+
+# Merge the elephant data with natural earth data to get the country shapes
+world <- ne_countries(scale = "medium", returnclass = "sf")
+
+# Create a ggplot map
+elephant_map_1995 <- merge(world, elephant_data_1995, by.x = "name", by.y = "Country")
+
+# Create a ggplot map
+ggplot() +
+  geom_sf(data = africa, fill = "white") +
+  geom_sf(data = elephant_map_1995, aes(fill = Estimate), color = "skyblue", size = 0.2) +
+  scale_fill_viridis_c(option = "plasma", name = "Estimate") +
+  scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+  theme_minimal() +
+  labs(title = "Elephant Population Estimates in Africa")
+```
+
+```{r}
+
+elephant_map_2010 <- merge(world, elephant_data_2010, by.x = "name", by.y = "Country")
+
+# Create a ggplot map
+ggplot() +
+  geom_sf(data = africa, fill = "white") +
+  geom_sf(data = elephant_map_2010, aes(fill = Estimate), color = "black", size = 0.2) +
+  scale_fill_viridis_c(option = "plasma", name = "Estimate") +
+  scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+  theme_void() +
+  labs(title = "Elephant Population Estimates in Africa")
+```
+
+```{r}
+
+elephant_map_2014 <- merge(world, elephant_data_2014, by.x = "name", by.y = "Country")
+
+# Create a ggplot map
+ggplot() +
+  geom_sf(data = africa, fill = "white") +
+  geom_sf(data = elephant_map_2014, aes(fill = Estimate), color = "skyblue", size = 0.2) +
+  scale_fill_viridis_c(option = "plasma", name = "Estimate") +
+  scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+  theme_minimal() +
+  labs(title = "Elephant Population Estimates in Africa")
+```
+
 ```{r}
 
 
