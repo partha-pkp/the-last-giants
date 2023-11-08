@@ -86,9 +86,9 @@
   {
     "objectID": "proposal.html",
     "href": "proposal.html",
-    "title": "Proposal title",
+    "title": "The Last Giants",
     "section": "",
-    "text": "library(tidyverse)"
+    "text": "The goal of this project is to visualize the African savannah elephants’ population and the ivory trade in Africa.\nThe African savannah elephant, scientifically known as Loxodonta africana, stands at the brink of an existential crisis, as it grapples with the relentless threats of poaching and the encroachment of its natural habitats. Despite global efforts to address the dire situation facing these magnificent creatures, a veil of uncertainty shrouds our knowledge regarding their population sizes and trends across much of the African continent. The survival of these iconic giants is compromised by a multitude of poaching activities, including the tragic ivory trade, as well as rampant deforestation and the hunting of elephants for their prized tusks.\nIn response to this critical conservation challenge, we have undertaken a vital project aimed at unraveling the enigmatic population trends and distribution patterns of the savannah elephant throughout the years 1995-2023. Furthermore, our mission extends to comprehending the intricate web of ivory trade activities, which may offer invaluable insights into the potential consequences on the elephant population. By shedding light on these pressing issues, we strive to contribute to a better understanding of the complex dynamics between human activities, conservation efforts, and the survival of these majestic beings in the wild."
   },
   {
     "objectID": "proposal.html#dataset",
@@ -110,5 +110,19 @@
     "title": "Proposal title",
     "section": "Analysis plan",
     "text": "Analysis plan\n\nA plan for answering each of the questions including the variables involved, variables to be created (if any), external data to be merged in (if any)."
+  },
+  {
+    "objectID": "proposal.html#question-1",
+    "href": "proposal.html#question-1",
+    "title": "The Last Giants",
+    "section": "Question 1",
+    "text": "Question 1\nIn the question, “How has elephant population varied over the years across several African countries?”, we are interested in understanding the distribution of the elephants. The important variables to be considered here are country, estimate and year. This task involves a well-structured analysis plan as presented below.\n\nData Preprocessing:\n\nClean and preprocess the data to ensure consistency and accuracy.\nHandle missing values and outliers appropriately.\n\nData Exploration:\n\nPerform initial exploratory data analysis to understand the dataset’s structure and characteristics.\nCalculate basic statistics, visualize distributions, and identify trends or patterns in the data.\n\nData prediction:\n\nPredict the data from 2015-2023 using multiple regression techniques like Ordinary Least squares, Polynomial regression, Lasso regression, Elastic net regression.\n\nModel Evaluation:\n\nSelect the regression technique which provides the best-fit model.\n\nCountry-Level Analysis:\n\nGroup the data by country and region to analyze elephant populations in different areas of Africa.\nCreate map plots that illustrate population distribution using the package rnaturalearth, sf and plotly\nThe rayshader package may also be used to implement a 3-D map plot.\n\nShiny App Development which includes:\n\nDynamic timeline for selecting the year of interest\nInteractive maps of African countries with color-coded markers or chloropleths to represent elephant populations."
+  },
+  {
+    "objectID": "proposal.html#question-2",
+    "href": "proposal.html#question-2",
+    "title": "The Last Giants",
+    "section": "Question 2",
+    "text": "Question 2\nTo address the question “What is the trend of ivory trade in Africa?”, the following is a well-structured analysis plan as presented below.\n\nData Preprocessing:\n\nClean and preprocess the data to ensure consistency and accuracy.\nHandle missing values and outliers appropriately.\n\nData Exploration:\n\nPerform initial exploratory data analysis to understand the dataset’s structure and characteristics.\nCalculate basic statistics, visualize distributions, and identify trends or patterns in the data.\n\nData prediction:\n\nPredict the data from 2020-2023 using multiple regression techniques like Ordinary Least squares, Polynomial regression, Lasso regression, Elastic net regression.\n\nModel Evaluation:\n\nSelect the regression technique which provides the best-fit model.\n\nData Visualization:\n\nVisualize the trends ivory trade with a timeseries plot."
   }
 ]
