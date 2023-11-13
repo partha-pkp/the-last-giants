@@ -7,7 +7,7 @@ suppressWarnings(library(tidyverse))
 if (!require("pacman")) 
   install.packages("pacman")
 
-pacman::p_load(knitr,tidyverse,lubridate,here,dplyr,here,ggplot2,ggmap,maps,rnaturalearth,rnaturalearthdata,rayshader,raster,akima)
+pacman::p_load(knitr,tidyverse,lubridate,here,dplyr,here,ggplot2,ggmap,maps,rnaturalearth,rnaturalearthdata,sf)
 ```
 
 ## Dataset Setup
@@ -74,20 +74,25 @@ elephant_data_1996 <- elephant %>%
   filter(Year == 1996) %>%
   select(Country,Ecosystem, Estimate)
 
-elephant_data_2014 <- elephant %>%
-  filter(Year == 2014) %>%
-  select(Country,Ecosystem, Estimate)
-
-elephant_data_2010 <- elephant %>%
-  filter(Year == 2010) %>%
+elephant_data_2001 <- elephant %>%
+  filter(Year == 2001) %>%
   select(Country,Ecosystem, Estimate)
 
 elephant_data_2005 <- elephant %>%
   filter(Year == 2005) %>%
   select(Country,Ecosystem, Estimate)
 
-africa_1996 <- africa |>
-  filter(sovereignt == "Zambia")
+elephant_data_2006 <- elephant %>%
+  filter(Year == 2006) %>%
+  select(Country,Ecosystem, Estimate)
+
+elephant_data_2010 <- elephant %>%
+  filter(Year == 2010) %>%
+  select(Country,Ecosystem, Estimate)
+
+elephant_data_2014 <- elephant %>%
+  filter(Year == 2014) %>%
+  select(Country,Ecosystem, Estimate)
 ```
 
 ```{r}
@@ -168,11 +173,67 @@ elephant_map_1995 <- merge(world, elephant_data_1995, by.x = "name", by.y = "Cou
 # Create a ggplot map
 ggplot() +
   geom_sf(data = africa, fill = "white") +
-  geom_sf(data = elephant_map_1995, aes(fill = Estimate), color = "skyblue", size = 0.2) +
+  geom_sf(data = elephant_map_1995, aes(fill = Estimate), color = "brown", size = 0.2) +
   scale_fill_viridis_c(option = "plasma", name = "Estimate") +
   scale_fill_gradient(low = "skyblue", high = "darkgreen") +
   theme_minimal() +
-  labs(title = "Elephant Population Estimates in Africa")
+  labs(title = "Elephant Population Estimates in Africa in 1995")
+```
+
+```{r}
+
+elephant_map_1996 <- merge(world, elephant_data_1996, by.x = "name", by.y = "Country")
+
+# Create a ggplot map
+ggplot() +
+  geom_sf(data = africa, fill = "white") +
+  geom_sf(data = elephant_map_1996, aes(fill = Estimate), color = "brown", size = 0.2) +
+  scale_fill_viridis_c(option = "plasma", name = "Estimate") +
+  scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+  theme_minimal() +
+  labs(title = "Elephant Population Estimates in Africa in 1996")
+```
+
+```{r}
+
+elephant_map_2001 <- merge(world, elephant_data_2001, by.x = "name", by.y = "Country")
+
+# Create a ggplot map
+ggplot() +
+  geom_sf(data = africa, fill = "white") +
+  geom_sf(data = elephant_map_2001, aes(fill = Estimate), color = "brown", size = 0.2) +
+  scale_fill_viridis_c(option = "plasma", name = "Estimate") +
+  scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+  theme_minimal() +
+  labs(title = "Elephant Population Estimates in Africa in 2001")
+```
+
+```{r}
+
+elephant_map_2005 <- merge(world, elephant_data_2005, by.x = "name", by.y = "Country")
+
+# Create a ggplot map
+ggplot() +
+  geom_sf(data = africa, fill = "white") +
+  geom_sf(data = elephant_map_2005, aes(fill = Estimate), color = "brown", size = 0.2) +
+  scale_fill_viridis_c(option = "plasma", name = "Estimate") +
+  scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+  theme_minimal() +
+  labs(title = "Elephant Population Estimates in Africa in 2005")
+```
+
+```{r}
+
+elephant_map_2006 <- merge(world, elephant_data_2006, by.x = "name", by.y = "Country")
+
+# Create a ggplot map
+ggplot() +
+  geom_sf(data = africa, fill = "white") +
+  geom_sf(data = elephant_map_2006, aes(fill = Estimate), color = "brown", size = 0.2) +
+  scale_fill_viridis_c(option = "plasma", name = "Estimate") +
+  scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+  theme_minimal() +
+  labs(title = "Elephant Population Estimates in Africa in 2006")
 ```
 
 ```{r}
@@ -182,11 +243,11 @@ elephant_map_2010 <- merge(world, elephant_data_2010, by.x = "name", by.y = "Cou
 # Create a ggplot map
 ggplot() +
   geom_sf(data = africa, fill = "white") +
-  geom_sf(data = elephant_map_2010, aes(fill = Estimate), color = "black", size = 0.2) +
+  geom_sf(data = elephant_map_2010, aes(fill = Estimate), color = "brown", size = 0.2) +
   scale_fill_viridis_c(option = "plasma", name = "Estimate") +
   scale_fill_gradient(low = "skyblue", high = "darkgreen") +
   theme_void() +
-  labs(title = "Elephant Population Estimates in Africa")
+  labs(title = "Elephant Population Estimates in Africa in 2010")
 ```
 
 ```{r}
@@ -196,11 +257,11 @@ elephant_map_2014 <- merge(world, elephant_data_2014, by.x = "name", by.y = "Cou
 # Create a ggplot map
 ggplot() +
   geom_sf(data = africa, fill = "white") +
-  geom_sf(data = elephant_map_2014, aes(fill = Estimate), color = "skyblue", size = 0.2) +
+  geom_sf(data = elephant_map_2014, aes(fill = Estimate), color = "brown", size = 0.2) +
   scale_fill_viridis_c(option = "plasma", name = "Estimate") +
   scale_fill_gradient(low = "skyblue", high = "darkgreen") +
   theme_minimal() +
-  labs(title = "Elephant Population Estimates in Africa")
+  labs(title = "Elephant Population Estimates in Africa in 2014")
 ```
 
 ```{r}

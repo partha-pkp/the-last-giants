@@ -6,12 +6,15 @@ code-fold: true
 editor: visual
 ---
 
+# High Level Goal
+
 The goal of this project is to visualize the African savannah elephants' population and the ivory trade in Africa.
+
+# Background
 
 The African savannah elephant, scientifically known as Loxodonta africana, stands at the brink of an existential crisis, as it grapples with the relentless threats of poaching and the encroachment of its natural habitats. Despite global efforts to address the dire situation facing these magnificent creatures, a veil of uncertainty shrouds our knowledge regarding their population sizes and trends across much of the African continent. The survival of these iconic giants is compromised by a multitude of poaching activities, including the tragic ivory trade, as well as rampant deforestation and the hunting of elephants for their prized tusks.
 
 In response to this critical conservation challenge, we have undertaken a vital project aimed at unraveling the enigmatic population trends and distribution patterns of the savannah elephant throughout the years 1995-2023. Furthermore, our mission extends to comprehending the intricate web of ivory trade activities, which may offer invaluable insights into the potential consequences on the elephant population. By shedding light on these pressing issues, we strive to contribute to a better understanding of the complex dynamics between human activities, conservation efforts, and the survival of these majestic beings in the wild.
-
 
 # Dataset
 
@@ -127,11 +130,11 @@ To address the question "What is the trend of ivory trade in Africa?", the follo
 |:---------------------:|:-------------------------:|:---------------------:|
 |     Till November 8^th^      |             Explore and finalize the dataset and the problem statements              |       Everyone        |
 |              \-              |                Complete the proposal and assign some high-level tasks                |       Everyone        |
-|     Nov. 9^th^ - 15^th^      | Understanding `rnaturalearth`, `sf` and `plotly` packages along with geospatial data |          TBD          |
-|              \-              |                                 Data Pre processing                                  |          TBD          |
-|     Nov. 16^th^ - 22^nd^     |                         Data prediction and Model Evaluation                         |          TBD          |
-|     Nov. 23^rd^ - 29^th^     |                                  Data visualisation                                  |          TBD          |
-|              \-              |                                Shiny app development                                 |          TBD          |
+|     Nov. 9^th^ - 15^th^      | Understanding `rnaturalearth`, `sf` and `plotly` packages along with geospatial data |       Everyone        |
+|              \-              |                                 Data Pre processing                                  |   Harshit, Jyotish    |
+|     Nov. 16^th^ - 22^nd^     |                         Data prediction and Model Evaluation                         |    Kashyap, Partha    |
+|     Nov. 23^rd^ - 29^th^     |                                  Data visualisation                                  |   Kashyap, Jyotish    |
+|              \-              |                                Shiny app development                                 |    Harshit, Partha    |
 | Nov. 30^th^ - December 6^th^ |                                   Review the code                                    |       Everyone        |
 |     Dec. 7^th^ - 13^th^      |                      Write-up and presentation for the project                       |       Everyone        |
 
