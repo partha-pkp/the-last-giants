@@ -7,7 +7,7 @@ suppressWarnings(library(tidyverse))
 if (!require("pacman")) 
   install.packages("pacman")
 
-pacman::p_load(knitr,tidyverse,lubridate,here,dplyr,here,ggplot2,ggmap,maps,rnaturalearth,rnaturalearthdata,sf)
+pacman::p_load(knitr,tidyverse,lubridate,here,dplyr,here,ggplot2,ggmap,maps,rnaturalearth,rnaturalearthdata,sf,plotly,magick,listviewer,shiny)
 ```
 
 ## Dataset Setup
@@ -24,12 +24,6 @@ elephant <- readxl::read_xlsx(here("data","elephant_data.xlsx"))
 # Load the Africa countries dataset
 africa <- ne_countries(scale = "medium", continent = "Africa", returnclass = "sf")
 
-```
-
-```{r}
-
-# Merge the geospatial data with the elephant data
-africa_with_elephants <- merge(africa, elephant, by.x = "iso_a3", by.y = "iso_a3", all.x = TRUE)
 ```
 
 ```{r}
@@ -182,6 +176,39 @@ ggplot() +
 
 ```{r}
 
+# Load the necessary libraries
+library(rnaturalearth)
+library(ggplot2)
+library(plotly)
+
+# Load the elephant population data (replace this with your own data)
+# Assuming you have a data frame named 'elephant_data_1995' with 'Country', 'Estimate' columns
+
+# Merge the elephant data with natural earth data to get the country shapes
+africa <- ne_countries(scale = "medium", returnclass = "sf", continent = "Africa")
+elephant_map_1995 <- merge(africa, elephant_data_1995, by.x = "name", by.y = "Country")
+
+# Create a ggplot map
+ggplot() +
+  geom_sf(data = africa, fill = "white") +
+   geom_sf(data = elephant_map_1995, aes(fill = Estimate, text = paste("Country: ", name)),
+          color = "brown", size = 0.2) +
+  scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+  theme_void() +
+  labs(title = "Elephant Population Estimates in Africa in 1995")
+
+# Convert ggplot to plotly
+elephant_map_1995_plotly <- ggplotly()
+
+# Show the plotly map
+elephant_map_1995_plotly
+
+```
+
+## Plotly map
+
+```{r}
+
 elephant_map_1996 <- merge(world, elephant_data_1996, by.x = "name", by.y = "Country")
 
 # Create a ggplot map
@@ -190,8 +217,52 @@ ggplot() +
   geom_sf(data = elephant_map_1996, aes(fill = Estimate), color = "brown", size = 0.2) +
   scale_fill_viridis_c(option = "plasma", name = "Estimate") +
   scale_fill_gradient(low = "skyblue", high = "darkgreen") +
-  theme_minimal() +
+  theme_void() +
   labs(title = "Elephant Population Estimates in Africa in 1996")
+
+# Convert ggplot to plotly
+elephant_map_1996_plotly <- ggplotly()
+
+# Show the plotly map
+elephant_map_1996_plotly
+```
+
+```{r}
+
+library(rnaturalearth)
+library(ggplot2)
+library(plotly)
+
+# Assuming elephant_data_1996 and world are already defined
+
+# Merge data
+elephant_map_1996 <- merge(world, elephant_data_1996, by.x = "name", by.y = "Country")
+
+# Create a ggplot map
+gg_map <- ggplot() +
+  geom_sf(data = africa, fill = "white") +
+  geom_sf(data = elephant_map_1996, aes(fill = Estimate), color = "brown", size = 0.2) +
+  scale_fill_viridis_c(option = "plasma", name = "Estimate") +
+  scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+  theme_void() +
+  labs(title = "Elephant Population Estimates in Africa in 1996")
+
+# Convert ggplot to plotly
+elephant_map_1996_plotly <- ggplotly(gg_map)
+
+# Add theme to the hover
+elephant_map_1996_plotly <- elephant_map_1996_plotly %>% 
+  layout(hoverlabel = list(bgcolor = "white", font = list(family = "Arial", color = "black")))
+
+# Show the plotly map
+elephant_map_1996_plotly
+
+```
+
+```{r}
+
+
+
 ```
 
 ```{r}
@@ -266,5 +337,119 @@ ggplot() +
 
 ```{r}
 
+library(rnaturalearth)
+library(ggplot2)
+library(plotly)
 
+generate_elephant_map <- function(data) {
+  # Load the natural earth data for Africa
+  africa <- ne_countries(scale = "medium", returnclass = "sf", continent = "Africa")
+  
+  # Merge the elephant data with natural earth data to get the country shapes
+  elephant_map <- merge(africa, data, by.x = "name", by.y = "Country")
+  
+  # Create a ggplot map
+  ggplot() +
+    geom_sf(data = africa, fill = "white") +
+    geom_sf(data = elephant_map, aes(fill = Estimate, text = paste("Country: ", name)),
+            color = "brown", size = 0.2) +
+    scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+    theme_void() +
+    labs(title = paste("Elephant Population Estimates in Africa in", year))
+  
+  # Convert ggplot to plotly
+  ggplotly()
+}
+
+# Example usage:
+# Assuming you have a data frame named 'elephant_data_1995' with 'Country', 'Estimate' columns
+# generate_elephant_map(elephant_data_1995, 1995)
+
+```
+
+### Function
+
+```{r}
+
+
+library(rnaturalearth)
+library(ggplot2)
+library(plotly)
+library(magick)
+
+generate_elephant_map <- function(data,year) {
+  # Load the natural earth data for Africa
+  africa <- ne_countries(scale = "medium", returnclass = "sf", continent = "Africa")
+  
+  # Merge the elephant data with natural earth data to get the country shapes
+  elephant_map <- merge(africa, data, by.x = "name", by.y = "Country")
+  
+  # Create a ggplot map
+  gg <- ggplot() +
+    geom_sf(data = africa, fill = "white") +
+    geom_sf(data = elephant_map, aes(fill = Estimate, text = paste("Country: ", name)),
+            color = "brown", size = 0.2) +
+    scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+    theme_void() +
+    labs(title = paste("Elephant Population Estimates in Africa in", year))
+  
+  # Convert ggplot to plotly
+  gg_plotly <- ggplotly(gg)
+  
+  return(gg_plotly)
+}
+
+
+# Specify the years
+years <- c(1995, 1996, 2005, 2010, 2014)
+
+# Create a list to store the plotly objects
+plotly_list <- list()
+
+# Generate plots for each year
+for (year in years) {
+  plotly_list[[as.character(year)]] <- generate_elephant_map(get(paste0("elephant_data_", year)), year)
+}
+```
+
+```{r}
+
+library(rnaturalearth)
+library(ggplot2)
+library(plotly)
+
+generate_elephant_map <- function(elephant_data, year) {
+  # Load the natural earth data for Africa
+  africa <- ne_countries(scale = "medium", returnclass = "sf", continent = "Africa")
+  
+  # Merge the elephant data with natural earth data to get the country shapes
+  elephant_map <- merge(africa, elephant_data, by.x = "name", by.y = "Country")
+  
+  # Create a ggplot map
+  gg <- ggplot() +
+    geom_sf(data = africa, fill = "white") +
+    geom_sf(data = elephant_map, aes(fill = Estimate), color = "brown", size = 0.2) +
+    scale_fill_viridis_c(option = "plasma", name = "Estimate") +
+    scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+    theme_void() +
+    labs(title = paste("Elephant Population Estimates in Africa in", year))
+  
+  # Convert ggplot to plotly
+  gg_plotly <- ggplotly(gg)
+  
+  return(gg_plotly)
+}
+
+
+# Call the function with the data for 1996
+#elephant_1995_plot <- generate_elephant_map(elephant_data_1995, 1995)
+elephant_1996_plot <- generate_elephant_map(elephant_data_1996, 1996)
+elephant_2005_plot <- generate_elephant_map(elephant_data_2005, 2005)
+elephant_2006_plot <- generate_elephant_map(elephant_data_2006, 2006)
+elephant_2010_plot <- generate_elephant_map(elephant_data_2010, 2010)
+elephant_2014_plot <- generate_elephant_map(elephant_data_2014, 2014)
+
+elephant_data_2010
+
+elephant_2014_plot
 ```

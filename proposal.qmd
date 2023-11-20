@@ -37,15 +37,15 @@ The research paper titled ["Continent-wide Survey: Massive Decline in African Sa
 
 This dataset contains a wealth of data points and variables that provide insights into various aspects of elephant populations, including their distribution across different regions of Africa, demographic information such as the ecosystem of the elephants. The dimensions of the dataset are 322 rows and 7 columns. The variables in the dataset and their description is presented as follows.
 
-| Column    | Description                                                                                                                                                                     |
-|---------------------------------|---------------------------------------|
-| Country   | Name of the Country                                                                                                                                                             |
-| Ecosystem | Name of the ecosystem as used in the manuscript and supplemental material.                                                                                                      |
-| Stratum   | Where the stratum name is the same as the ecosystem name, this indicates that the entire ecosytsem was the study area for the historical data. See Figure S7 for map of strata. |
-| Year      | Year of survey                                                                                                                                                                  |
-| Estimate  | Estimated number of elephants present                                                                                                                                           |
-| SE        | Standard error: 0 values indicate total counts; blank indicates missing value for a sample count.                                                                               |
-| Source    | Source of data. "GEC report" indicates that data were taken from the GEC report for that ecosystem; most GEC reports are not publicly available.                                |
+| Column    | Data Type   | Description                                                                                                                                                                     |
+|------------------|------------------|------------------------------------|
+| Country   | `character` | Name of the country                                                                                                                                                             |
+| Ecosystem | `character` | Name of the ecosystem as used in the manuscript and supplemental material.                                                                                                      |
+| Stratum   | `character` | Where the stratum name is the same as the ecosystem name, this indicates that the entire ecosytsem was the study area for the historical data. See Figure S7 for map of strata. |
+| Year      | `integer`   | Year of survey                                                                                                                                                                  |
+| Estimate  | `integer`   | Estimated number of elephants present                                                                                                                                           |
+| SE        | `numeric`   | Standard error: 0 values indicate total counts; blank indicates missing value for a sample count.                                                                               |
+| Source    | `character` | Source of data. "GEC report" indicates that data were taken from the GEC report for that ecosystem; most GEC reports are not publicly available.                                |
 
 The ivory trade data was obtained from the [Elephant Trade Information System (ETIS)](https://cites.org/eng/prog/etis). The reports published in the website include country-wise ivory trade data from 2008-2019. The dimensions of the dataset are 88 rows and 12 columns. The variables in the data are, `country`, `year` and `total no. of seizure cases`.
 
@@ -127,7 +127,7 @@ To address the question "What is the trend of ivory trade in Africa?", the follo
 # Plan of Attack
 
 |             Week             |                                     Weekly Tasks                                     | Team members involved |
-|:---------------------:|:-------------------------:|:---------------------:|
+|:-----------------:|:--------------------------------:|:-----------------:|
 |     Till November 8^th^      |             Explore and finalize the dataset and the problem statements              |       Everyone        |
 |              \-              |                Complete the proposal and assign some high-level tasks                |       Everyone        |
 |     Nov. 9^th^ - 15^th^      | Understanding `rnaturalearth`, `sf` and `plotly` packages along with geospatial data |       Everyone        |
