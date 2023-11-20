@@ -55,7 +55,7 @@ The ivory trade data was obtained from the [Elephant Trade Information System (E
 | Year    | Years spanned from 2008-2019 |
 | Total   | Total no. of seizure cases   |
 
-# Objective
+# Objectives
 
 -   Visualizing the country wise variation in elephant population over the years in Africa.
 -   Predict the elephant population for the years 2015 to 2023 based on the available data.
