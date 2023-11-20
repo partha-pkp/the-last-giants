@@ -155,6 +155,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#high-level-goal" id="toc-high-level-goal" class="nav-link active" data-scroll-target="#high-level-goal">High Level Goal</a></li>
   <li><a href="#background" id="toc-background" class="nav-link" data-scroll-target="#background">Background</a></li>
   <li><a href="#dataset" id="toc-dataset" class="nav-link" data-scroll-target="#dataset">Dataset</a></li>
+  <li><a href="#objectives" id="toc-objectives" class="nav-link" data-scroll-target="#objectives">Objectives</a></li>
   <li><a href="#questions" id="toc-questions" class="nav-link" data-scroll-target="#questions">Questions</a></li>
   <li><a href="#analysis-plan" id="toc-analysis-plan" class="nav-link" data-scroll-target="#analysis-plan">Analysis plan</a>
   <ul class="collapse">
@@ -215,42 +216,51 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>This dataset contains a wealth of data points and variables that provide insights into various aspects of elephant populations, including their distribution across different regions of Africa, demographic information such as the ecosystem of the elephants. The dimensions of the dataset are 322 rows and 7 columns. The variables in the dataset and their description is presented as follows.</p>
 <table class="table">
 <colgroup>
-<col style="width: 45%">
-<col style="width: 54%">
+<col style="width: 26%">
+<col style="width: 26%">
+<col style="width: 47%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Column</th>
+<th>Data Type</th>
 <th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td>Country</td>
-<td>Name of the Country</td>
+<td><code>character</code></td>
+<td>Name of the country</td>
 </tr>
 <tr class="even">
 <td>Ecosystem</td>
+<td><code>character</code></td>
 <td>Name of the ecosystem as used in the manuscript and supplemental material.</td>
 </tr>
 <tr class="odd">
 <td>Stratum</td>
+<td><code>character</code></td>
 <td>Where the stratum name is the same as the ecosystem name, this indicates that the entire ecosytsem was the study area for the historical data. See Figure S7 for map of strata.</td>
 </tr>
 <tr class="even">
 <td>Year</td>
+<td><code>integer</code></td>
 <td>Year of survey</td>
 </tr>
 <tr class="odd">
 <td>Estimate</td>
+<td><code>integer</code></td>
 <td>Estimated number of elephants present</td>
 </tr>
 <tr class="even">
 <td>SE</td>
+<td><code>numeric</code></td>
 <td>Standard error: 0 values indicate total counts; blank indicates missing value for a sample count.</td>
 </tr>
 <tr class="odd">
 <td>Source</td>
+<td><code>character</code></td>
 <td>Source of data. “GEC report” indicates that data were taken from the GEC report for that ecosystem; most GEC reports are not publicly available.</td>
 </tr>
 </tbody>
@@ -278,6 +288,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 </tbody>
 </table>
+</section>
+<section id="objectives" class="level1">
+<h1>Objectives</h1>
+<ul>
+<li>Visualizing the country wise variation in elephant population over the years in Africa.</li>
+<li>Predict the elephant population for the years 2015 to 2023 based on the available data.</li>
+<li>Analyze the trend in various human activities influencing the elephant population.</li>
+</ul>
 </section>
 <section id="questions" class="level1">
 <h1>Questions</h1>
@@ -355,9 +373,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1>Plan of Attack</h1>
 <table class="table">
 <colgroup>
-<col style="width: 31%">
-<col style="width: 36%">
-<col style="width: 31%">
+<col style="width: 26%">
+<col style="width: 47%">
+<col style="width: 26%">
 </colgroup>
 <thead>
 <tr class="header">
