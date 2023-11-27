@@ -46,7 +46,7 @@
     "href": "presentation.html#plots",
     "title": "Project title",
     "section": "Plots",
-    "text": "Plots\n\n\nWarning: Removed 2 rows containing missing values (`geom_point()`)."
+    "text": "Plots"
   },
   {
     "objectID": "presentation.html#plot-and-text",
