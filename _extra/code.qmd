@@ -7,7 +7,7 @@ suppressWarnings(library(tidyverse))
 if (!require("pacman")) 
   install.packages("pacman")
 
-pacman::p_load(knitr,tidyverse,lubridate,here,dplyr,here,ggplot2,ggmap,maps,rnaturalearth,rnaturalearthdata,sf,plotly,magick,listviewer,shiny)
+pacman::p_load(knitr,tidyverse,lubridate,here,dplyr,here,ggplot2,ggmap,maps,rnaturalearth,rnaturalearthdata,sf,plotly,magick,listviewer,shiny,gganimate)
 ```
 
 ## Dataset Setup
@@ -33,6 +33,7 @@ library(sf)
 library(ggplot2)
 library(rnaturalearth)
 library(rnaturalearthdata)
+library(gganimate)
 
 # Load the Africa countries dataset
 africa <- ne_countries(scale = "medium", continent = "Africa", returnclass = "sf")
@@ -452,4 +453,104 @@ elephant_2014_plot <- generate_elephant_map(elephant_data_2014, 2014)
 elephant_data_2010
 
 elephant_2014_plot
+```
+
+```{r}
+
+library(rnaturalearth)
+library(ggplot2)
+library(plotly)
+
+# Assuming you have the following elephant_data dataframes
+# elephant_data_1996, elephant_data_2005, elephant_data_2006, elephant_data_2010, elephant_data_2014
+
+generate_elephant_map <- function(elephant_data, year) {
+  # Load the natural earth data for Africa
+  africa <- ne_countries(scale = "medium", returnclass = "sf", continent = "Africa")
+  
+  # Merge the elephant data with natural earth data to get the country shapes
+  elephant_map <- merge(africa, elephant_data, by.x = "name", by.y = "Country")
+  
+  # Create a ggplot map
+  gg <- ggplot() +
+    geom_sf(data = africa, fill = "white") +
+    geom_sf(data = elephant_map, aes(fill = Estimate), color = "brown", size = 0.2) +
+    scale_fill_viridis_c(option = "plasma", name = "Estimate") +
+    scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+    theme_void() +
+    labs(title = paste("Elephant Population Estimates in Africa in", year))
+  
+  # Convert ggplot to plotly
+  gg_plotly <- ggplotly(gg)
+  
+  return(gg_plotly)
+}
+
+# Create a list to store the plots
+plots <- list()
+
+# Generate and store each plot in the list
+plots[[1]] <- generate_elephant_map(elephant_data_1996, 1996)
+plots[[2]] <- generate_elephant_map(elephant_data_2005, 2005)
+plots[[3]] <- generate_elephant_map(elephant_data_2006, 2006)
+plots[[4]] <- generate_elephant_map(elephant_data_2010, 2010)
+plots[[5]] <- generate_elephant_map(elephant_data_2014, 2014)
+
+# Add traces to create an animation
+animation <- plot_ly() %>%
+  add_trace(plots[[1]], frame = "1996") %>%
+  add_trace(plots[[2]], frame = "2005") %>%
+  add_trace(plots[[3]], frame = "2006") %>%
+  add_trace(plots[[4]], frame = "2010") %>%
+  add_trace(plots[[5]], frame = "2014") %>%
+  layout(
+    updatemenus = list(
+      list(
+        type = "buttons",
+        showactive = FALSE,
+        buttons = list(
+          list(label = "Play",
+               method = "animate",
+               args = list("frame", list(duration = 1000, redraw = TRUE)),
+               fromcurrent = TRUE),
+          list(label = "Pause",
+               method = "animate",
+               args = list("frame", list(duration = 0, redraw = TRUE)))
+        ),
+        x = 0.1,
+        y = 0,
+        xanchor = "right",
+        yanchor = "bottom"
+      )
+    ),
+    sliders = list(
+      list(
+        active = 0,
+        steps = list(
+          list(args = list("frame", "1996"),
+               label = "1996",
+               method = "animate"),
+          list(args = list("frame", "2005"),
+               label = "2005",
+               method = "animate"),
+          list(args = list("frame", "2006"),
+               label = "2006",
+               method = "animate"),
+          list(args = list("frame", "2010"),
+               label = "2010",
+               method = "animate"),
+          list(args = list("frame", "2014"),
+               label = "2014",
+               method = "animate")
+        ),
+        x = 0.1,
+        y = 0,
+        xanchor = "left",
+        yanchor = "top"
+      )
+    )
+  )
+
+# Show the animation
+animation
 ```
