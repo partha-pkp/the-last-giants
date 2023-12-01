@@ -7,7 +7,7 @@ suppressWarnings(library(tidyverse))
 if (!require("pacman")) 
   install.packages("pacman")
 
-pacman::p_load(knitr,tidyverse,lubridate,here,dplyr,here,ggplot2,ggmap,maps,rnaturalearth,rnaturalearthdata,sf,plotly,magick,listviewer,shiny,gganimate)
+pacman::p_load(knitr,tidyverse,lubridate,here,dplyr,here,ggplot2,ggmap,maps,rnaturalearth,rnaturalearthdata,sf,plotly,magick,listviewer,shiny,gganimate,gifski,shiny,shinydashboard,imager)
 ```
 
 ## Dataset Setup
@@ -54,6 +54,7 @@ ggplot(africa) +
   geom_sf(aes(fill = elephants)) +
   scale_fill_gradient(low = "lightblue", high = "darkgreen") +
   labs(title = "Elephant Estimates in African Countries") +
+  transition_states() +
   theme_minimal()
 ```
 
@@ -61,6 +62,10 @@ ggplot(africa) +
 
 library(dplyr)
 # Select the columns of interest (e.g., country and estimate)
+
+elephant_data <- elephant |>
+  select(Country,Ecosystem,Estimate,Year)
+
 elephant_data_1995 <- elephant %>%
   filter(Year == 1995) %>%
   select(Country,Ecosystem, Estimate)
@@ -150,6 +155,8 @@ predicted_data <- data.frame(Year = new_data$Year, Predicted_Estimate = predicte
 print(predicted_data)
 ```
 
+## Africa plots
+
 ```{r}
 
 # Load the necessary libraries
@@ -173,6 +180,132 @@ ggplot() +
   scale_fill_gradient(low = "skyblue", high = "darkgreen") +
   theme_minimal() +
   labs(title = "Elephant Population Estimates in Africa in 1995")
+```
+
+## Trying for all with transition state
+
+```{r}
+
+
+# Load the necessary libraries
+library(rnaturalearth)
+library(ggplot2)
+library(gganimate)
+
+# Load the elephant population data (replace this with your own data)
+# Assuming you have a data frame named 'elephant_data' with 'Country', 'Estimate', and 'Year' columns
+
+# Merge the elephant data with natural earth data to get the country shapes
+world <- ne_countries(scale = "medium", returnclass = "sf")
+elephant_map <- merge(world, elephant_data, by.x = "name", by.y = "Country")
+
+# Create a ggplot map
+gg <- ggplot() +
+  geom_sf(data = world, fill = "white") +
+  geom_sf(data = elephant_map, aes(fill = Estimate), color = "brown", size = 0.2) +
+  scale_fill_viridis_c(option = "plasma", name = "Estimate") +
+  scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+  theme_minimal() +
+  labs(title = "Elephant Population Estimates in Africa") +
+  transition_states(Year, transition_length = 2, state_length = 1)
+
+# Animate and save the GIF
+animated_map <- animate(gg, nframes = 100, duration = 10)
+anim_save("elephant_population_animation.gif", animated_map)
+```
+
+## Function to create images for every year
+
+```{r}
+
+get_map <- function(y) {
+  elephant_data |> filter(Year == y) %>% 
+  ggplot() +
+  geom_sf(data = africa, fill = "white") +
+   geom_sf(data = elephant_map_1995, aes(fill = Estimate, text = paste("Country: ", name)),
+          color = "brown", size = 0.2) +
+  scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+  theme_void() +
+  labs(title = "Elephant Population Estimates in Africa in 1995")
+    }
+
+y_list <- elephant_data$Year %>% sort %>% unique
+my_maps <- paste0("~/temp/m_", seq_along(y_list), ".png")
+for (i in seq_along(y_list)){
+    get_map(y = y_list[i])
+    ggsave(my_maps[i], width = 4, height = 4)
+}
+
+# Specify the directory where the images are saved
+image_dir <- "~/temp/"
+
+# Create a list of image file names
+image_files <- list.files(image_dir, pattern = "*.png", full.names = TRUE)
+
+# Specify the output video file
+output_video <- "~/temp/elephant_population_animation.mp4"
+
+# Use ffmpeg to create a video from the images
+system(paste("ffmpeg -r 1 -i", shQuote(image_files), "-c:v libx264 -vf fps=25 -pix_fmt yuv420p", shQuote(output_video)))
+
+# Display a message when the video creation is complete
+cat("Video created successfully:", output_video, "\n")
+
+library(magick)
+
+# Specify the path to the video file
+output_video <- "~/temp/elephant_population_animation.mp4"
+
+# Display the video using an external application
+browseURL(output_video)
+```
+
+## Shiny app
+
+```{r}
+
+# Load the necessary libraries
+library(shiny)
+library(shinydashboard)
+install.packages("imager")
+
+library(imager)
+
+# Define the UI
+ui <- dashboardPage(
+  dashboardHeader(title = "Elephant Population Animation"),
+  dashboardSidebar(),
+  dashboardBody(
+    fluidRow(
+      box(
+        title = "Elephant Population Animation",
+        status = "primary",
+        solidHeader = TRUE,
+        width = 12,
+        imagerOutput("video")
+      )
+    )
+  )
+)
+
+# Define the server logic
+server <- function(input, output) {
+  # Specify the path to the video file
+  output_video <- "~/temp/elephant_population_animation.mp4"
+  
+  # Display the video
+  output$video <- renderImager({
+    imager::imager(display.read.video(output_video))
+  })
+}
+
+# Run the Shiny app
+shinyApp(ui, server)
+```
+
+```{r}
+
+
 ```
 
 ```{r}
@@ -488,13 +621,9 @@ elephant_2014_plot
 
 ```{r}
 
-# Install and load the magick package
-# install.packages("magick")
 library(gganimate)
 
-# Assuming elephant_1996_plot, elephant_2005_plot, elephant_2006_plot, elephant_2010_plot, elephant_2014_plot are your ggplot objects
-
-# List of ggplot objects
+# Combine your ggplot objects into a list
 plots <- list(
   elephant_1996_plot,
   elephant_2005_plot,
@@ -503,12 +632,77 @@ plots <- list(
   elephant_2014_plot
 )
 
-animation <- gganimate::gganimate(plots_list, interval = 1, title_frame = FALSE, ani.width = 800, ani.height = 600)
 
+
+
+
+
+```
+
+```{r}
+
+
+library(rnaturalearth)
+library(ggplot2)
+
+# Load the elephant population data (replace this with your own data)
+# Assuming you have a data frame named 'elephant_data' with 'Country', 'Estimate' columns
+
+# Merge the elephant data with natural earth data to get the country shapes
+world <- ne_countries(scale = "medium", returnclass = "sf")
+
+# Create a ggplot map
+elephant_map <- merge(world, elephant, by.x = "name", by.y = "Country")
+
+# Create a ggplot map
+ggplot() +
+  geom_sf(data = africa, fill = "white") +
+  geom_sf(data = elephant_map, aes(fill = Estimate), color = "brown", size = 0.2) +
+  scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+  theme_minimal() +
+  labs(title = "Elephant Population Estimates in Africa in 1995") +
+  transition_states(elephant$Year,transition_length = 3,state_length = 1)
+```
+
+```{r}
+
+library(ggplot2)
+library(gganimate)
+library(rnaturalearth)
+
+# Function to generate animated map
+generate_elephant_map <- function(elephant_data) {
+  # Load the natural earth data for Africa
+  africa <- ne_countries(scale = "medium", returnclass = "sf", continent = "Africa")
+  
+  # Merge the elephant data with natural earth data to get the country shapes
+  elephant_map <- merge(africa, elephant_data, by.x = "name", by.y = "Country")
+  
+  # Create a ggplot map
+  gg <- ggplot() +
+    geom_sf(data = africa, fill = "white") +
+    geom_sf(data = elephant_map, aes(fill = Estimate), color = "brown", size = 0.2) +
+    scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+    theme_minimal() +
+    labs(title = "Elephant Population Estimates in Africa in {closest_state}") +
+    transition_states(elephant$Year, transition_length = 3, state_length = 1)
+    
+  return(gg)
+}
+
+# Create a fictional dataset
+set.seed(123)
+elephant_data <- data.frame(
+  Country = africa$name,
+  Year = rep(1995:2015, each = length(africa$name)),
+  Estimate = runif(length(africa$name) * 21, min = 100, max = 10000)
+)
+
+# Call the function with the fictional dataset
+animated_map <- generate_elephant_map(elephant_data)
+
+animated_map
 # Save the animation as a GIF
-anim_save("animation.gif", animation)
-
-# Display the animation
-animation
+anim_save("animated_map.gif", animated_map)
 
 ```
