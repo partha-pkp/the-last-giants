@@ -1,4 +1,4 @@
-```{r}
+```{r , warning=FALSE}
 #| label: load-pkgs
 #| message: false
 
@@ -23,7 +23,7 @@ elephant <- readxl::read_xlsx(here("data","elephant_data.xlsx"))
 
 # Load the Africa countries dataset
 africa <- ne_countries(scale = "medium", continent = "Africa", returnclass = "sf")
-
+View(africa)
 ```
 
 ```{r}
@@ -928,4 +928,119 @@ server <- function(input, output, session) {
 # Run the Shiny app
 shinyApp(ui, server)
 
+```
+
+### Predictions
+
+```{r Loadiing_req_packs, }
+install.packages("glmnet")
+install.packages("polycor")
+
+
+library(glmnet)
+library(polycor)
+library(caret)
+```
+
+```{r}
+data_for_pred <- readxl::read_xlsx(here("data","elephant_data.xlsx"))
+View(data_for_pred)
+data_for_pred <- data_for_pred |>
+  select(Country, Year, Estimate, SE)
+
+data_for_pred$Country <- as.factor(data_for_pred$Country)
+levels(data_for_pred$Country) <- levels(train_data$Country)
+
+predictors <- subset(data_for_pred, select = c("Year", "Country"))
+target_var <- data_for_pred$Estimate
+```
+
+```{r}
+# manually splitting dataset
+
+set.seed(123)
+train_countries <- data_for_pred |>
+  group_by(Country) |>
+  sample_frac(0.7) |>
+  ungroup()
+
+test_countries <- anti_join(data_for_pred, train_countries, by = "Country")
+
+View(test_countries)
+#train_ecosystems <- data_for_pred |>
+ # group_by(Ecosystem) |>
+  #sample_frac(0.7) |>
+  #ungroup()
+
+#test_ecosystems <- anti_join(data_for_pred, train_ecosystems, by = "Ecosystem")
+
+#train_stratum <- data_for_pred |>
+#  group_by(Stratum) |>
+# sample_frac(0.7) |>
+# ungroup()
+
+#test_stratum <- anti_join(data_for_pred, train_stratum, by = "Stratum")
+
+train_year <- data_for_pred |>
+  group_by(Year) |>
+  sample_frac(0.7) |>
+  ungroup()
+
+test_year <- anti_join(data_for_pred, train_year, by = "Year")
+
+#train_source <- data_for_pred |>
+#  group_by(Source) |>
+# sample_frac(0.7) |>
+# ungroup()
+
+#test_source <- anti_join(data_for_pred, train_source, by = "Source")
+
+trainIndex <- createDataPartition(target_var, p = 1, list = FALSE)
+
+
+train_data <- bind_rows(train_countries, train_year)
+train_data <- train_data[trainIndex, ]
+View(train_data)
+
+test_data <- bind_rows(test_countries, test_year)
+
+test_data <- anti_join(data_for_pred, train_data)
+View(test_data)
+
+```
+
+```{r ols_reg}
+ols_model <- lm(Estimate ~ ., data = train_data)
+
+ols_pred <- predict(ols_model, newdata = test_data)
+
+
+```
+
+```{r poly_reg}
+
+poly_degree <- 2
+
+poly_model <- lm(Estimate ~ poly(Year, poly_degree) + Country, data = train_data)
+
+poly_predictions <- predict(poly_model, newdata = test_data)
+
+
+```
+
+```{r}
+lasso_model <- cv.glmnet(
+  x = as.matrix(train_data[, !colnames(train_data) %in% "Estimate"]),  # Predictor matrix without the "Estimate" column
+  y = train_data$Estimate,  # Target variable (assuming "Estimate" is the column you're predicting)
+  alpha = 1  # Alpha parameter for Lasso regression (1 for Lasso, 0 for Ridge)
+)
+
+
+lasso_predictions <- predict(lasso_model, s = "lambda.min", newx = as.matrix(test_data[, -c("Target_Variable")]))
+```
+
+```{r}
+elastic_model <- cv.glmnet(as.matrix(train_data[, -c("Estimate")]), train_data$Estimate, alpha = 0.5)
+
+elastic_predictions <- predict(elastic_model, s = "lambda.min", newx = as.matrix(test_data[, -c("Target_Variable")]))
 ```
