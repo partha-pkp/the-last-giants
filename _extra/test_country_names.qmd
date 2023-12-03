@@ -1,0 +1,107 @@
+---
+title: "united"
+editor: visual
+---
+
+```{r}
+if (!require("pacman")) 
+  install.packages("pacman")
+
+pacman::p_load(rgdal,sf,sp,ggplot2,spData,spDataLarge,raster,plotly,here)
+```
+
+```{r}
+
+elephant <- readxl::read_xlsx(here("data","elephant_data.xlsx"))
+```
+
+```{r}
+
+africa = world[world$region_un=="Africa",]
+zambia = world[world$name_long == "Zambia",]
+plot(africa[0],reset = FALSE)
+plot(zambia[0],add=TRUE,col = "green4")
+```
+
+```{r}
+
+africa = world[world$region_un=="Africa",]
+
+africa.plot = ggplot() +
+ geom_sf(data = africa)
+africa.plot +
+  theme_void()
+
+
+library(ggplot2)
+library(sf)
+
+# Assuming 'world' is an sf object with 'region_un' column
+africa <- world[world$region_un == "Africa", ]
+
+# Replace 'country' with the actual column name containing country names in your data
+africa.plot <- ggplot() +
+  geom_sf(data = africa) +
+  geom_sf_text(data = africa, aes(label = africa$name_long), color = "black", size = 3, nudge_y = 0.1) +
+  theme_void()
+
+print(africa.plot)
+
+
+```
+
+```{r}
+
+library(ggplot2)
+library(plotly)
+library(sf)
+
+# Assuming 'world' is an sf object with 'region_un' column
+africa <- world[world$region_un == "Africa", ]
+
+# Replace 'country' with the actual column name containing country names in your data
+africa.plot <- ggplot() +
+  geom_sf(data = africa) +
+  geom_sf_text(data = africa, aes(label = name_long), color = "black", size = 3, nudge_y = 0.1) +
+  theme_void()
+
+# Convert ggplot to plotly
+africa_plotly <- ggplotly(africa.plot, tooltip = "text")
+
+# Print the plotly chart
+africa_plotly
+```
+
+```{r}
+
+library(ggplot2)
+library(plotly)
+library(sf)
+
+# Assuming 'world' is an sf object with 'region_un' column
+africa <- world[world$region_un == "Africa", ]
+
+# Sample data for ecosystem (replace this with your actual ecosystem data)
+
+
+# Replace 'country' with the actual column name containing country names in your data
+africa.plot <- ggplot() +
+  geom_sf(data = africa) +
+  geom_sf_text(data = africa, aes(label = name_long), color = "black", size = 3, nudge_y = 0.1) +
+  theme_void()
+
+# Convert ggplot to plotly
+africa_plotly <- ggplotly(africa.plot, tooltip = "text") %>%
+  style(
+    hoverlabel = list(bgcolor = "white", font = list(family = "Arial", size = 14)),
+    hoverinfo = "text+x+y",
+    text = paste("Country: ", africa$name_long, "<br>Ecosystem Value: ", round(elephant$Ecosystem, 2))
+  )
+
+# Print the plotly chart
+africa_plotly
+
+```
+
+```         
+```
