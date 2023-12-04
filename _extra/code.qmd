@@ -7,7 +7,7 @@ suppressWarnings(library(tidyverse))
 if (!require("pacman")) 
   install.packages("pacman")
 
-pacman::p_load(knitr,tidyverse,lubridate,here,dplyr,here,ggplot2,ggmap,maps,rnaturalearth,rnaturalearthdata,sf,plotly,magick,listviewer,shiny,gganimate,gifski,shiny,shinydashboard,imager)
+pacman::p_load(knitr,tidyverse,lubridate,here,dplyr,here,ggplot2,ggmap,maps,rnaturalearth,rnaturalearthdata,sf,plotly,magick,listviewer,shiny,gganimate,gifski,shiny,shinydashboard,imager,htmltools)
 ```
 
 ## Dataset Setup
@@ -130,6 +130,23 @@ elephant_data_2014 <- elephant %>%
   select(Country,Ecosystem, Estimate, Year)
 ```
 
+## Function for above data wrangling
+```{r}
+createElephantData <- function(year) {
+  elephant_data <- elephant %>%
+    filter(Year == year) %>%
+    select(Country, Ecosystem, Estimate, Year)
+  
+  return(elephant_data)
+}
+
+# Example usage:
+elephant_data_1995 <- createElephantData(1995)
+elephant_data_1996 <- createElephantData(1996)
+elephant_data_1998 <- createElephantData(1998)
+elephant_data_1999 <- createElephantData(1999)
+```
+
 ```{r}
 
 # Load the rnaturalearth library
@@ -141,10 +158,20 @@ africa_data <- ne_countries(scale = "medium", continent = "Africa", returnclass 
 
 ggplot() +
   geom_sf(data = africa_data, fill = "grey", color = "blue") +  # Africa map
-  #geom_point(data = elephant, aes(color = Estimate), size = 3) +  # Elephant data as scatter plot
   scale_color_gradient(low = "lightyellow", high = "darkgreen") +  # Color scale
   labs(title = "Elephant Data in Africa") +
   theme_minimal()
+```
+
+```{r}
+
+install.packages("maptools")
+library(maptools)
+data(wrld_simpl)
+afr=wrld_simpl[wrld_simpl$REGION==2,]
+ 
+# We can visualize the region's boundaries with the plot function
+plot(afr)
 ```
 
 ```{r}
@@ -405,15 +432,16 @@ gg_map_1995 <- ggplot() +
   geom_sf(data = africa, fill = "white") +
    geom_sf(data = elephant_map_1995, aes(fill = Estimate, text = paste("Country: ", name)),
           color = "brown", size = 0.2) +
-  scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+  #scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+  scale_fill_viridis_c() +
   theme_void() +
   labs(title = "Elephant Population Estimates in Africa in 1995")
 
 # Convert ggplot to plotly
-#elephant_map_1995_plotly <- ggplotly()
+elephant_map_1995_plotly <- ggplotly()
 
 # Show the plotly map
-#elephant_map_1995_plotly
+elephant_map_1995_plotly
 
 ```
 
@@ -929,3 +957,4 @@ server <- function(input, output, session) {
 shinyApp(ui, server)
 
 ```
+
