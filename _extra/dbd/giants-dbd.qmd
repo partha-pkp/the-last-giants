@@ -1,0 +1,190 @@
+---
+title: The Last Giants
+author: Visual Virtuosos
+format: 
+  dashboard:
+    nav-buttons: [github]
+    github: https://github.com/INFO526-DataViz/project-final-Visual-Virtuosos
+    orientation: columns
+    theme: yeti
+---
+
+```{r}
+#| label: load-pkgs
+#| message: false
+
+suppressWarnings(library(tidyverse))
+
+if (!require("pacman")) 
+  install.packages("pacman")
+
+pacman::p_load(knitr,
+               tidyverse,
+               lubridate,
+               here,
+               dplyr,
+               here,
+               ggplot2,
+               ggmap,
+               maps,
+               rnaturalearth,
+               rnaturalearthdata,
+               sf,
+               plotly,
+               magick,
+               listviewer,
+               shiny,
+               gganimate,
+               gifski,
+               shiny,
+               shinydashboard,
+               imager)
+```
+
+
+
+```{r}
+## Dataset Setup
+
+elephant <- readxl::read_xlsx(here("data","elephant_data.xlsx"))
+```
+
+
+```{r}
+## Plots
+
+# Load the Africa countries dataset
+africa <- ne_countries(scale = "medium", continent = "Africa", returnclass = "sf")
+
+```
+
+
+
+
+```{r}
+
+## Data Warangling
+
+library(dplyr)
+# Select the columns of interest (e.g., country and estimate)
+
+elephant_data <- elephant |>
+  select(Country,Ecosystem,Estimate,Year)
+
+elephant_data_1995 <- elephant %>%
+  filter(Year == 1995) %>%
+  select(Country,Ecosystem, Estimate,Year)
+
+elephant_data_1996 <- elephant %>%
+  filter(Year == 1996) %>%
+  select(Country,Ecosystem, Estimate,Year)
+
+elephant_data_1998 <- elephant %>%
+  filter(Year == 1998) %>%
+  select(Country,Ecosystem, Estimate,Year)
+
+elephant_data_1999 <- elephant %>%
+  filter(Year == 1999) %>%
+  select(Country,Ecosystem, Estimate,Year)
+
+elephant_data_2000 <- elephant %>%
+  filter(Year == 2000) %>%
+  select(Country,Ecosystem, Estimate,Year)
+
+elephant_data_2001 <- elephant %>%
+  filter(Year == 2001) %>%
+  select(Country,Ecosystem, Estimate,Year)
+
+elephant_data_2002 <- elephant %>%
+  filter(Year == 2002) %>%
+  select(Country,Ecosystem, Estimate,Year)
+
+elephant_data_2004 <- elephant %>%
+  filter(Year == 2004) %>%
+  select(Country,Ecosystem, Estimate,Year)
+
+elephant_data_2005 <- elephant %>%
+  filter(Year == 2005) %>%
+  select(Country,Ecosystem, Estimate, Year)
+
+elephant_data_2006 <- elephant %>%
+  filter(Year == 2006) %>%
+  select(Country,Ecosystem, Estimate, Year)
+
+elephant_data_2007 <- elephant %>%
+  filter(Year == 2007) %>%
+  select(Country,Ecosystem, Estimate, Year)
+
+elephant_data_2008 <- elephant %>%
+  filter(Year == 2008) %>%
+  select(Country,Ecosystem, Estimate, Year)
+
+elephant_data_2009 <- elephant %>%
+  filter(Year == 2009) %>%
+  select(Country,Ecosystem, Estimate, Year)
+
+elephant_data_2010 <- elephant %>%
+  filter(Year == 2010) %>%
+  select(Country,Ecosystem, Estimate, Year)
+
+elephant_data_2014 <- elephant %>%
+  filter(Year == 2014) %>%
+  select(Country,Ecosystem, Estimate, Year)
+```
+
+
+
+
+```{r}
+
+### Africa plots
+
+# Load the necessary libraries
+library(rnaturalearth)
+library(ggplot2)
+
+# Load the elephant population data (replace this with your own data)
+# Assuming you have a data frame named 'elephant_data' with 'Country', 'Estimate' columns
+
+# Merge the elephant data with natural earth data to get the country shapes
+world <- ne_countries(scale = "medium", returnclass = "sf")
+
+# Create a ggplot map
+elephant_map_1995 <- merge(world, elephant_data_1995, by.x = "name", by.y = "Country")
+
+# Create a ggplot map
+map1 <- ggplot() +
+  geom_sf(data = africa, fill = "white") +
+  geom_sf(data = elephant_map_1995, aes(fill = Estimate), color = "brown", size = 0.2) +
+  scale_fill_viridis_c(option = "plasma", name = "Estimate") +
+  scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+  theme_minimal() +
+  labs(title = "Elephant Population Estimates in Africa in 1995")
+```
+
+## Column
+
+### Row
+
+```{r}
+map1
+
+```
+### Row
+
+```{r}
+map1
+
+```
+
+
+## Column
+
+### Row
+
+```{r}
+#| title: Population Estimates in Africa
+map1
+
+
+```
