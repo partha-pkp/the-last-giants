@@ -1,0 +1,179 @@
+```{r}
+# Installing neccessary libraries 
+
+suppressWarnings(library(tidyverse))
+
+if (!require("pacman")) 
+  install.packages("pacman")
+
+pacman::p_load(knitr,
+               tidyverse,
+               lubridate,
+               here,
+               dplyr,
+               here,
+               ggplot2,
+               ggmap,
+               maps,
+               rnaturalearth,
+               rnaturalearthdata,
+               sf,
+               plotly,
+               magick,
+               listviewer,
+               shiny,
+               gganimate,
+               gifski,
+               shiny,
+               shinydashboard,
+               imager)
+```
+
+
+
+```{r}
+## Dataset Setup
+
+elephant <- readxl::read_xlsx(here("data","elephant_data.xlsx"))
+```
+
+
+```{r}
+
+# Load the Africa countries geographical map
+africa <- ne_countries(scale = "medium", continent = "Africa", returnclass = "sf")
+
+```
+
+
+```{r}
+#-----------------------------------------Data Wrangling---------------------------------------------
+
+# Function to create filter data for each year
+createElephantData <- function(year) {
+  elephant_data <- elephant |>
+    filter(Year == year) |>
+    select(Country, Ecosystem, Estimate, Year)
+  
+  return(elephant_data)
+}
+
+# Example usage:
+elephant_data_1995 <- createElephantData(1995)
+elephant_data_1996 <- createElephantData(1996)
+elephant_data_1998 <- createElephantData(1998)
+elephant_data_1999 <- createElephantData(1999)
+elephant_data_2000 <- createElephantData(2000)
+elephant_data_2001 <- createElephantData(2001)
+elephant_data_2002 <- createElephantData(2002)
+elephant_data_2004 <- createElephantData(2004)
+elephant_data_2005 <- createElephantData(2005)
+elephant_data_2006 <- createElephantData(2006)
+elephant_data_2007 <- createElephantData(2007)
+elephant_data_2008 <- createElephantData(2008)
+elephant_data_2009 <- createElephantData(2009)
+elephant_data_2010 <- createElephantData(2010)
+elephant_data_2014 <- createElephantData(2014)
+```
+
+```{r}
+#-----------------------------Plotting the Africa map with elephant population-------------------------------
+
+# Merge the elephant data with natural earth data to get the country shapes
+africa <- ne_countries(scale = "medium", returnclass = "sf", continent = "Africa")
+elephant_map_1995 <- merge(africa, elephant_data_1995, by.x = "name", by.y = "Country")
+
+# Create a ggplot map
+gg_map_1995 <- ggplot() +
+  geom_sf(data = africa, fill = "white") +
+   geom_sf(data = elephant_map_1995, aes(fill = Estimate, text = paste("Country: ", name)),
+          color = "brown", size = 0.2) +
+  scale_fill_gradient(low = "#7EB480", high = "#056937") +
+  #scale_fill_viridis_c(option = "inferno") +
+  theme_void() +
+  labs(title = "Elephant Population Estimates in Africa in 1995")
+
+# Convert ggplot to plotly
+elephant_map_1995_plotly <- ggplotly()
+
+# Plotting the plotly map
+elephant_map_1995_plotly
+```
+
+
+```{r}
+
+
+library(caret)
+library(glmnet)
+library(tidymodels)
+
+# The dataset includes data from 1995-2014
+#--------------------------------Predicting year-wise population from 2015-2023--------------------------------
+
+
+#--------------- Grouping existing data year-wise (1995-2014)-------------------
+
+# Assuming 'elephant' is your original dataset
+# Group by Year and calculate the total Estimate for each year
+total_estimate_per_year <- elephant %>%
+  group_by(Year) %>%
+  summarise(Total_Estimate = sum(Estimate))
+
+total_estimate_per_year <- total_estimate_per_year %>%
+  filter(Year != 2015)
+
+# Print the new dataset
+print(total_estimate_per_year)
+
+#-------------------------------------OLS Model---------------------------------------
+
+# Define the recipe
+ols_recipe <- recipe(Total_Estimate ~ Year, data = total_estimate_per_year) %>%
+  step_center(Year, all_predictors()) %>%
+  step_scale(Year, all_predictors())
+
+# Define the linear regression model
+ols_model <- linear_reg() %>%
+  set_engine("lm")
+
+# Combine recipe and model into a workflow
+ols_workflow <- workflow() %>%
+  add_recipe(ols_recipe) %>%
+  add_model(ols_model)
+
+# Train the OLS model
+ols_fit <- ols_workflow %>% fit(data = total_estimate_per_year)
+
+# Create a new data frame for prediction (years 2015-2023)
+new_years <- data.frame(Year = 2015:2023)
+
+# Make predictions using the trained OLS model
+ols_predictions <- predict(ols_fit, new_data = new_years)
+
+# Combine the new years and predictions
+ols_predictions_data <- data.frame(Year = new_years$Year, Total_Estimate = ols_predictions$.pred)
+
+# Print the OLS predictions
+print(ols_predictions_data)
+
+
+```
+
+
+```{r}
+#--------------------------- Performing Cross-validation-------------------------------
+
+# Specify the training control
+train_control <- trainControl(method = "cv", number = 5)
+
+# Train the OLS model using cross-validation
+ols_model <- train(Total_Estimate ~ Year, data = total_estimate_per_year, method = "lm", trControl = train_control)
+
+
+# Print cross-validated RMSE for the model
+print("OLS Model Cross-Validated RMSE:")
+print(sqrt(ols_model$results$RMSE))
+
+
+```
