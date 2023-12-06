@@ -299,8 +299,8 @@ eco2 <- merge(africa, eco, by.x = "name", by.y = "col1")
 
 #africa
 gg_map <- ggplot() +
-  geom_sf(data = africa, fill = "gray85", color = "white", linewidth = 0.9 ) +
-  geom_sf(data= eco2, aes(fill = col2), color = "white", linewidth = 0.9)+
+  geom_sf(data = africa, fill = "gray85", color = "gray", linewidth = 0.9 ) +
+  geom_sf(data= eco2, aes(fill = col2), color = "white", linewidth = 0.5)+
   theme_void()+
   theme(
     plot.background = element_rect(
@@ -323,8 +323,15 @@ map3d <- plot_gg(gg_map,
                  flat_transparent_bg = TRUE,
                  invert = FALSE
 )
-render_label(map3d, text = "Northern Territory", x = 200, y = 100, z =250)
-
+render_label(map3d, text = "Origin", x = 0, y = 0, z = 400)
+render_label(map3d, text = "Angola", x = 800, y = 900, z = 400)
+render_label(map3d, text = "Botswana", x = 920, y = 1050, z = 400)
+render_label(map3d, text = "Cameroon", x = 750, y = 600, z = 400)
+render_label(map3d, text = "Congo", x = 800, y = 680, z = 400)
+render_label(map3d, text = "Mali", x = 520, y = 420, z = 400)
+render_label(map3d, text = "Chad", x = 820, y = 430, z = 400)
+render_label(map3d, text = "South Africa", x = 920, y = 1150, z = 400)
+render_label(map3d, text = "Zambia", x = 950, y = 900, z = 400)
 ```
 
 
