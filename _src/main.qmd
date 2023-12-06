@@ -29,14 +29,11 @@ pacman::p_load(knitr,
                imager)
 ```
 
-
-
 ```{r}
 ## Dataset Setup
 
 elephant <- readxl::read_xlsx(here("data","elephant_data.xlsx"))
 ```
-
 
 ```{r}
 
@@ -44,7 +41,6 @@ elephant <- readxl::read_xlsx(here("data","elephant_data.xlsx"))
 africa <- ne_countries(scale = "medium", continent = "Africa", returnclass = "sf")
 
 ```
-
 
 ```{r}
 #-----------------------------------------Data Wrangling---------------------------------------------
@@ -77,7 +73,7 @@ elephant_data_2014 <- createElephantData(2014)
 ```
 
 ```{r}
-#-----------------------------Plotting the Africa map with elephant population-------------------------------
+#---------------Plotting the Africa map with elephant population--------------------
 
 # Merge the elephant data with natural earth data to get the country shapes
 africa <- ne_countries(scale = "medium", returnclass = "sf", continent = "Africa")
@@ -100,7 +96,6 @@ elephant_map_1995_plotly <- ggplotly()
 elephant_map_1995_plotly
 ```
 
-
 ```{r}
 
 
@@ -109,10 +104,10 @@ library(glmnet)
 library(tidymodels)
 
 # The dataset includes data from 1995-2014
-#--------------------------------Predicting year-wise population from 2015-2023--------------------------------
+#-------------------Predicting year-wise population from 2015-2023-------------
 
 
-#--------------- Grouping existing data year-wise (1995-2014)-------------------
+#-------------------Grouping existing data year-wise (1995-2014)---------------
 
 # Assuming 'elephant' is your original dataset
 # Group by Year and calculate the total Estimate for each year
@@ -126,7 +121,7 @@ total_estimate_per_year <- total_estimate_per_year %>%
 # Print the new dataset
 print(total_estimate_per_year)
 
-#-------------------------------------OLS Model---------------------------------------
+#-------------------------------------OLS Model---------------------------------
 
 # Define the recipe
 ols_recipe <- recipe(Total_Estimate ~ Year, data = total_estimate_per_year) %>%
@@ -160,9 +155,8 @@ print(ols_predictions_data)
 
 ```
 
-
 ```{r}
-#--------------------------- Performing Cross-validation-------------------------------
+#--------------------------- Performing Cross-validation------------------------------
 
 # Specify the training control
 train_control <- trainControl(method = "cv", number = 5)
