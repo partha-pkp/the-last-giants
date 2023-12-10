@@ -8,4 +8,16 @@ editor: visual
 
 ## Abstract
 
-Add project abstract here.
+This project focuses on analyzing the population trends of elephants across the African continent from 1950 to 2015 through comprehensive data visualization and statistical analysis. The study utilizes map plots to visually represent the fluctuation in elephant populations over the years and employs multiple regression methods to predict elephant population data from 2016 to 2023. Additionally, the project explores the correlation between elephant population trends and ivory trade data to investigate any potential relationships or impacts on elephant populations due to the ivory trade.
+
+## Introduction
+
+The African elephant, a keystone species crucial to the continent's ecosystem, has faced significant population challenges over the decades due to various factors such as poaching, habitat loss, and human-wildlife conflicts. Understanding the historical trends in elephant populations is fundamental in formulating effective conservation strategies and policies. This project aims to comprehensively analyze the population dynamics of African elephants spanning from 1950 to 2015 by leveraging robust data visualization techniques and advanced statistical methods.
+
+Using datasets sourced from reputable conservation organizations and wildlife databases, the project begins by visually mapping the fluctuations in elephant populations across different regions of Africa over the studied period. Subsequently, employing multiple regression methods, including but not limited to linear regression and time series analysis, the study intends to forecast the elephant population from 2016 to 2023 based on historical data trends.
+
+Moreover, in an effort to comprehend the potential correlation between the illegal ivory trade and elephant populations, the project incorporates ivory trade data alongside elephant population datasets. Through correlation analysis and visual representations, the study aims to discern any discernible patterns or connections between these variables, shedding light on whether the ivory trade has had an impact on the fluctuating populations of African elephants.
+
+By combining data visualization techniques, statistical analyses, and exploration of the complex interplay between elephant populations and the ivory trade, this project endeavors to contribute valuable insights into the dynamics of African elephant conservation and the factors influencing their populations. Ultimately, the findings may aid policymakers, conservationists, and wildlife experts in formulating more targeted and effective measures to safeguard these majestic creatures and their habitats.
+
+## Question 1:- How has elephant population varied over the years across several African countries?
