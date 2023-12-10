@@ -165,18 +165,75 @@ map1 <- ggplot() +
 
 ## Column
 
+
 ### Row
 
-```{r}
-map1
 
-```
-### Row
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+.collapsible {
+  background-color: #777;
+  color: white;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
 
-```{r}
-map1
+.active, .collapsible:hover {
+  background-color: #555;
+}
 
-```
+.content {
+  padding: 0 18px;
+  display: none;
+  overflow: hidden;
+  background-color: #f1f1f1;
+}
+</style>
+</head>
+<body>
+
+<h2>Details of the Strata</h2>
+
+<p>Collapsible Set:</p>
+<button type="button" class="collapsible">Open Section 1</button>
+<div class="content">
+  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+</div>
+<button type="button" class="collapsible">Open Section 2</button>
+<div class="content">
+  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+</div>
+<button type="button" class="collapsible">Open Section 3</button>
+<div class="content">
+  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+</div>
+
+<script>
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+  });
+}
+</script>
+
+</body>
+
+
 
 
 ## Column
@@ -184,58 +241,58 @@ map1
 ### Row
 
 ```{r}
-#| title: Population Estimates in Africa
-
-library(rnaturalearth)
-library(ggplot2)
-library(plotly)
-library(ggiraph)
-library(ggshadow)
-
-library(raster)
-library(rayshader)
-library(rgl)
-
-africa <- ne_countries(scale = "medium", returnclass = "sf", continent = "Africa")
-cnt <- ne_countries(scale = "medium", returnclass = "sf", country = "sudan")
-cnt2 <- ne_countries(scale = "medium", returnclass = "sf", country = "senegal")
-col1 <- c("Angola", "Botswana", "Cameroon", "Chad", "Congo", "Kenya","Malawi",
-          "Mali", "Mozambique", "South Africa", "Tanzania","Uganda", "Zambia", "Zimbabwe")
-col2 <- c(20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20)
-
-eco <- data.frame(col1,col2)
-
-eco2 <- merge(africa, eco, by.x = "name", by.y = "col1")
-
-
-#africa
-gg_map <- ggplot() +
-  geom_sf(data = africa, fill = "gray85", color = "white", linewidth = 0.9 ) +
-  geom_sf(data= eco2, aes(fill = col2), color = "white", linewidth = 0.9)+
-  theme_void()+
-  theme(
-    plot.background = element_rect(
-      fill = "white",
-      colour = "white"
-    ),
-    legend.position = "none")
-
-#gg_map
-
-map3d <- plot_gg(gg_map, 
-                 multicore=TRUE,
-                 width=5,
-                 height=5,
-                 scale = 350,
-                 windowsize = c(1000, 1000),
-                 phi = 30,
-                 save_height_matrix = TRUE,
-                 theta = 0,
-                 flat_transparent_bg = TRUE,
-                 invert = FALSE
-)
-render_label(map3d, text = "Northern Territory", x = 200, y = 100, z =250)
-rgl::rglwidget()
+# #| title: Population Estimates in Africa
+# 
+# library(rnaturalearth)
+# library(ggplot2)
+# library(plotly)
+# library(ggiraph)
+# library(ggshadow)
+# 
+# library(raster)
+# library(rayshader)
+# library(rgl)
+# 
+# africa <- ne_countries(scale = "medium", returnclass = "sf", continent = "Africa")
+# cnt <- ne_countries(scale = "medium", returnclass = "sf", country = "sudan")
+# cnt2 <- ne_countries(scale = "medium", returnclass = "sf", country = "senegal")
+# col1 <- c("Angola", "Botswana", "Cameroon", "Chad", "Congo", "Kenya","Malawi",
+#           "Mali", "Mozambique", "South Africa", "Tanzania","Uganda", "Zambia", "Zimbabwe")
+# col2 <- c(20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20)
+# 
+# eco <- data.frame(col1,col2)
+# 
+# eco2 <- merge(africa, eco, by.x = "name", by.y = "col1")
+# 
+# 
+# #africa
+# gg_map <- ggplot() +
+#   geom_sf(data = africa, fill = "gray85", color = "white", linewidth = 0.9 ) +
+#   geom_sf(data= eco2, aes(fill = col2), color = "white", linewidth = 0.9)+
+#   theme_void()+
+#   theme(
+#     plot.background = element_rect(
+#       fill = "white",
+#       colour = "white"
+#     ),
+#     legend.position = "none")
+# 
+# #gg_map
+# 
+# map3d <- plot_gg(gg_map,
+#                  multicore=TRUE,
+#                  width=5,
+#                  height=5,
+#                  scale = 350,
+#                  windowsize = c(1000, 1000),
+#                  phi = 30,
+#                  save_height_matrix = TRUE,
+#                  theta = 0,
+#                  flat_transparent_bg = TRUE,
+#                  invert = FALSE
+# )
+# render_label(map3d, text = "Northern Territory", x = 200, y = 100, z =250)
+# rgl::rglwidget()
 
 
 ```

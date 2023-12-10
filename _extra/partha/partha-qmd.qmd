@@ -1,4 +1,4 @@
-```{r}
+```{r, eval=FALSE}
 #| label: load-pkgs
 #| message: false
 
@@ -32,14 +32,14 @@ pacman::p_load(knitr,
 
 
 
-```{r}
+```{r, eval=FALSE}
 ## Dataset Setup
 
 elephant <- readxl::read_xlsx(here("data","elephant_data.xlsx"))
 ```
 
 
-```{r}
+```{r, eval=FALSE}
 ## Plots
 
 # Load the Africa countries dataset
@@ -50,7 +50,7 @@ africa <- ne_countries(scale = "medium", continent = "Africa", returnclass = "sf
 
 
 
-```{r}
+```{r, eval=FALSE}
 
 ## Data Warangling
 
@@ -121,7 +121,7 @@ elephant_data_2014 <- elephant %>%
   select(Country,Ecosystem, Estimate, Year)
 ```
 
-```{r}
+```{r, eval=FALSE}
 # To install the latest version from Github:
 #install.packages("devtools")
 #devtools::install_github("tylermorganwall/rayshader")
@@ -137,7 +137,7 @@ install.packages('C:/Users/Jithin/Downloads/rayshader_0.35.7.zip', repos=NULL, t
 
 ```
 
-```{r}
+```{r, eval=FALSE}
 
 ### Africa plots
 
@@ -230,7 +230,7 @@ elephant_2014_plot
 ```
 
 
-```{r}
+```{r, eval=FALSE}
 library(rnaturalearth)
 library(ggplot2)
 library(plotly)
@@ -275,6 +275,8 @@ gg_map <- ggplot() +
 
 ```{r}
 
+
+library(circularEV)
 library(rnaturalearth)
 library(ggplot2)
 library(plotly)
@@ -332,6 +334,15 @@ render_label(map3d, text = "Mali", x = 520, y = 420, z = 400)
 render_label(map3d, text = "Chad", x = 820, y = 430, z = 400)
 render_label(map3d, text = "South Africa", x = 920, y = 1150, z = 400)
 render_label(map3d, text = "Zambia", x = 950, y = 900, z = 400)
+render_label(map3d, text = "Zimbabwe", x = 1030, y = 980, z = 400)
+render_label(map3d, text = "Malawi", x = 1090, y = 900, z = 400)
+render_label(map3d, text = "Mozambique", x = 1150, y = 920, z = 400)
+render_label(map3d, text = "Tanzania", x = 1090, y = 750, z = 400)
+render_label(map3d, text = "Kenya", x = 1150, y = 680, z = 400)
+render_label(map3d, text = "Uganda", x = 1060, y = 650, z = 400)
+render_camera(theta = -90, phi = 30,zoom = 0.5,fov = 130)
+
+rgl::rglwidget()
 ```
 
 
