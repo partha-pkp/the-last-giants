@@ -31,7 +31,7 @@ library(dplyr)
 # Count the number of instances for each year
 export_count_per_year <- ivory_exports_data |>
   group_by(Year) |>
-  summarise(instance_count = n())
+  summarise(export_count = n())
 
 # Assuming `count_per_year` is your dataset
 export_count_per_year <- export_count_per_year |>
@@ -40,11 +40,11 @@ export_count_per_year <- export_count_per_year |>
 export_count_per_year
 
 # Create a bar plot
-ggplot(export_count_per_year, aes(x = as.factor(Year), y = instance_count)) +
+ggplot(export_count_per_year, aes(x = as.factor(Year), y = export_count)) +
   geom_bar(stat = "identity", fill = "grey", color = "black") +
   labs(
     x = "Year",
-    y = "Number of instances",
+    y = "Number of exports",
     title = "Ivory exports in Africa from 1990 to 2022",
     caption = "Source: CITES (Convention of International Trade 
     in Endangered Species of Wild Fauna and Flora)"
@@ -52,55 +52,57 @@ ggplot(export_count_per_year, aes(x = as.factor(Year), y = instance_count)) +
   theme_minimal()
 ```
 
-```{r}
-
-ivory_data_exports|>
-  filter(Exporter == "ZW") |>
-  ggplot(aes(y = Term)) +
-  geom_bar()
-```
+## Bubble plot
 
 ```{r}
 
 library(ggplot2)
-library(dplyr)
 library(plotly)
 library(viridis)
-library(hrbrthemes)
+library(dplyr)
 
-# The dataset is provided in the gapminder library
-library(gapminder)
+bubble_plot_data <- ivory_exports_data %>%
+  group_by(Year) %>%
+  summarise(export_count = n())
 
- ivory_term_count <- ivory_exports_data |>
-  group_by(Year) |>
-  summarise(instance_count = n())
+bubble_plot <- bubble_plot_data %>%
+  ggplot(aes(x = Year, y = export_count, size = export_count, text = paste("Year: ", Year, "<br>Export Count: ", export_count))) +
+  geom_point(alpha = 0.7) +
+  scale_size(range = c(1.4, 10), name = "Population (M)") +
+  scale_color_viridis(discrete = TRUE, guide = FALSE) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(
+    x = "Year",
+    y = "Export count",
+    title = "Number of Ivory exports in Africa from 1990 to 2022"
+  )
 
-  # Classic ggplot
-p<-ivory_term_count |>
-  ggplot( aes(x=Year, y= instance_count, size = instance_count)) +
-    geom_point(alpha=0.7) +
-    scale_size(range = c(1.4, 19), name="Population (M)") +
-    scale_color_viridis(discrete=TRUE, guide=FALSE) +
-    theme_ipsum() +
-    theme(legend.position="none")
+# Turn ggplot interactive with plotly
+bubble_plotly <- ggplotly(bubble_plot, tooltip = "text")
+bubble_plotly
 
-# turn ggplot interactive with plotly
-pp <- ggplotly(p)
-pp
 ```
+
+## Stream Graph for Term ( Ivory carvings etc) 
 
 ```{r}
 
 library(streamgraph)
 library(viridis)
 
-# Create a stream graph with color-blind-friendly colors
-pp <- streamgraph(ivory_term_count, key = "Term", value = "instance_count", date = "Year", height = "300px", width = "1000px") %>%
-  sg_legend(show = TRUE, label = "names: ")
+ivory_term_count <- ivory_exports_data |>
+  group_by(Year,Term) |>
+  summarise(instance_count = n())
 
-pp
+# Create a stream graph with color-blind-friendly colors
+streamgraph_plot <- streamgraph(ivory_term_count, key = "Term", value = "instance_count", date = "Year", height = "300px", width = "1000px")
+
+streamgraph_plot
+
 ```
 
 ```{r}
+
 
 ```
