@@ -7,7 +7,7 @@ suppressWarnings(library(tidyverse))
 if (!require("pacman")) 
   install.packages("pacman")
 
-pacman::p_load(knitr,tidyverse,lubridate,here,dplyr,here,ggplot2,ggmap,maps,rnaturalearth,rnaturalearthdata,sf,plotly,magick,listviewer,shiny,gganimate,gifski,shiny,shinydashboard,imager,htmltools)
+pacman::p_load(knitr,tidyverse,lubridate,here,dplyr,ggplot2,ggmap,maps,rnaturalearth,rnaturalearthdata,sf,plotly,magick,listviewer,shiny,gganimate,gifski,shiny,shinydashboard,imager,htmltools)
 ```
 
 ## Dataset Setup
@@ -131,10 +131,13 @@ elephant_data_2014 <- elephant %>%
 ```
 
 ## Function for above data wrangling
+
 ```{r}
+
+# Function to create filter data for each year
 createElephantData <- function(year) {
-  elephant_data <- elephant %>%
-    filter(Year == year) %>%
+  elephant_data <- elephant |>
+    filter(Year == year) |>
     select(Country, Ecosystem, Estimate, Year)
   
   return(elephant_data)
@@ -145,6 +148,17 @@ elephant_data_1995 <- createElephantData(1995)
 elephant_data_1996 <- createElephantData(1996)
 elephant_data_1998 <- createElephantData(1998)
 elephant_data_1999 <- createElephantData(1999)
+elephant_data_2000 <- createElephantData(2000)
+elephant_data_2001 <- createElephantData(2001)
+elephant_data_2002 <- createElephantData(2002)
+elephant_data_2004 <- createElephantData(2004)
+elephant_data_2005 <- createElephantData(2005)
+elephant_data_2006 <- createElephantData(2006)
+elephant_data_2007 <- createElephantData(2007)
+elephant_data_2008 <- createElephantData(2008)
+elephant_data_2009 <- createElephantData(2009)
+elephant_data_2010 <- createElephantData(2010)
+elephant_data_2014 <- createElephantData(2014)
 ```
 
 ```{r}
@@ -175,8 +189,6 @@ plot(afr)
 ```
 
 ```{r}
-
-# Fit a logistic regression model
 # Fit a linear regression model
 lm_model <- lm(Estimate ~ Year, data = elephant)
 
@@ -221,11 +233,6 @@ print(predicted_data)
 
 ```{r}
 
-# Load the necessary libraries
-library(rnaturalearth)
-library(ggplot2)
-
-# Load the elephant population data (replace this with your own data)
 # Assuming you have a data frame named 'elephant_data' with 'Country', 'Estimate' columns
 
 # Merge the elephant data with natural earth data to get the country shapes
@@ -239,9 +246,15 @@ ggplot() +
   geom_sf(data = africa, fill = "white") +
   geom_sf(data = elephant_map_1995, aes(fill = Estimate), color = "brown", size = 0.2) +
   scale_fill_viridis_c(option = "plasma", name = "Estimate") +
-  scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+  scale_fill_gradient(low = "#7EB480", high = "#056937") +
   theme_minimal() +
   labs(title = "Elephant Population Estimates in Africa in 1995")
+```
+
+## Heat map
+
+```{r}
+
 ```
 
 ## Trying for all with transition state
@@ -432,16 +445,16 @@ gg_map_1995 <- ggplot() +
   geom_sf(data = africa, fill = "white") +
    geom_sf(data = elephant_map_1995, aes(fill = Estimate, text = paste("Country: ", name)),
           color = "brown", size = 0.2) +
-  #scale_fill_gradient(low = "skyblue", high = "darkgreen") +
-  scale_fill_viridis_c() +
+  scale_fill_gradient(low = "#7EB480", high = "#056937") +
+  #scale_fill_viridis_c(option = "inferno") +
   theme_void() +
   labs(title = "Elephant Population Estimates in Africa in 1995")
 
 # Convert ggplot to plotly
-elephant_map_1995_plotly <- ggplotly()
+#elephant_map_1995_plotly <- ggplotly()
 
 # Show the plotly map
-elephant_map_1995_plotly
+#elephant_map_1995_plotly
 
 ```
 
@@ -456,7 +469,7 @@ gg_map_1996 <- ggplot() +
   geom_sf(data = africa, fill = "white") +
   geom_sf(data = elephant_map_1996, aes(fill = Estimate), color = "brown", size = 0.2) +
   scale_fill_viridis_c(option = "plasma", name = "Estimate") +
-  scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+  scale_fill_gradient(low = "#91CD71", high = "darkgreen") +
   theme_void() +
   labs(title = "Elephant Population Estimates in Africa in 1996")
 
@@ -481,12 +494,12 @@ library(plotly)
 elephant_map_1996 <- merge(world, elephant_data_1996, by.x = "name", by.y = "Country")
 
 # Create a ggplot map
-gg_map <- ggplot() +
+gg_map_1996 <- ggplot() +
   geom_sf(data = africa, fill = "white") +
   geom_sf(data = elephant_map_1996, aes(fill = Estimate), color = "brown", size = 0.2) +
   scale_fill_viridis_c(option = "plasma", name = "Estimate") +
-  scale_fill_gradient(low = "skyblue", high = "darkgreen") +
-  theme_void() +
+scale_fill_gradient(low = "#91CD71", high = "#056937") +
+    theme_void() +
   labs(title = "Elephant Population Estimates in Africa in 1996")
 
 # Convert ggplot to plotly
@@ -498,20 +511,22 @@ gg_map <- ggplot() +
 
 # Show the plotly map
 #elephant_map_1996_plotly
+gg_map_1996
 
-gg_map
 ```
 
 ```{r}
 
 elephant_map_1998 <- merge(world, elephant_data_1998, by.x = "name", by.y = "Country")
 
+scale_limits <- c(0, 10000)
+
 # Create a ggplot map
 gg_map_1998 <- ggplot() +
   geom_sf(data = africa, fill = "white") +
   geom_sf(data = elephant_map_1998, aes(fill = Estimate), color = "brown", size = 0.2) +
   scale_fill_viridis_c(option = "plasma", name = "Estimate") +
-  scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+  scale_fill_gradient(low = "#91CD71", high = "#056937") +
   theme_void() +
   labs(title = "Elephant Population Estimates in Africa in 1998")
 
@@ -527,7 +542,7 @@ gg_map_1999 <- ggplot() +
   geom_sf(data = africa, fill = "white") +
   geom_sf(data = elephant_map_1999, aes(fill = Estimate), color = "brown", size = 0.2) +
   scale_fill_viridis_c(option = "plasma", name = "Estimate") +
-  scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+  scale_fill_gradient(low = "#91CD71", high = "#056937") +
   theme_void() +
   labs(title = "Elephant Population Estimates in Africa in 1999")
 
@@ -543,7 +558,7 @@ gg_map_2000 <- ggplot() +
   geom_sf(data = africa, fill = "white") +
   geom_sf(data = elephant_map_2000, aes(fill = Estimate), color = "brown", size = 0.2) +
   scale_fill_viridis_c(option = "plasma", name = "Estimate") +
-  scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+  scale_fill_gradient(low = "#91CD71", high = "#056937") +
   theme_void() +
   labs(title = "Elephant Population Estimates in Africa in 2000")
 
@@ -559,9 +574,11 @@ gg_map_2001 <- ggplot() +
   geom_sf(data = africa, fill = "white") +
   geom_sf(data = elephant_map_2001, aes(fill = Estimate), color = "brown", size = 0.2) +
   scale_fill_viridis_c(option = "plasma", name = "Estimate") +
-  scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+  scale_fill_gradient(low = "#91CD71", high = "#056937") +
   theme_void() +
   labs(title = "Elephant Population Estimates in Africa in 2001")
+
+gg_map_2001
 ```
 
 ```{r}
@@ -573,7 +590,7 @@ gg_map_2002 <- ggplot() +
   geom_sf(data = africa, fill = "white") +
   geom_sf(data = elephant_map_2002, aes(fill = Estimate), color = "brown", size = 0.2) +
   scale_fill_viridis_c(option = "plasma", name = "Estimate") +
-  scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+  scale_fill_gradient(low = "#91CD71", high = "#056937") +
   theme_void() +
   labs(title = "Elephant Population Estimates in Africa in 2002")
 
@@ -589,7 +606,7 @@ gg_map_2004 <- ggplot() +
   geom_sf(data = africa, fill = "white") +
   geom_sf(data = elephant_map_2004, aes(fill = Estimate), color = "brown", size = 0.2) +
   scale_fill_viridis_c(option = "plasma", name = "Estimate") +
-  scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+  scale_fill_gradient(low = "#91CD71", high = "#056937") +
   theme_void() +
   labs(title = "Elephant Population Estimates in Africa in 2004")
 
@@ -605,7 +622,7 @@ gg_map_2005 <- ggplot() +
   geom_sf(data = africa, fill = "white") +
   geom_sf(data = elephant_map_2005, aes(fill = Estimate), color = "brown", size = 0.2) +
   scale_fill_viridis_c(option = "plasma", name = "Estimate") +
-  scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+  scale_fill_gradient(low = "#91CD71", high = "#056937") +
   theme_void() +
   labs(title = "Elephant Population Estimates in Africa in 2005")
 
@@ -621,7 +638,7 @@ gg_map_2006 <- ggplot() +
   geom_sf(data = africa, fill = "white") +
   geom_sf(data = elephant_map_2006, aes(fill = Estimate), color = "brown", size = 0.2) +
   scale_fill_viridis_c(option = "plasma", name = "Estimate") +
-  scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+  scale_fill_gradient(low = "#91CD71", high = "#056937") +
   theme_void() +
   labs(title = "Elephant Population Estimates in Africa in 2006")
 
@@ -637,7 +654,7 @@ gg_map_2007 <- ggplot() +
   geom_sf(data = africa, fill = "white") +
   geom_sf(data = elephant_map_2007, aes(fill = Estimate), color = "brown", size = 0.2) +
   scale_fill_viridis_c(option = "plasma", name = "Estimate") +
-  scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+  scale_fill_gradient(low = "#91CD71", high = "#056937") +
   theme_void() +
   labs(title = "Elephant Population Estimates in Africa in 2007")
 
@@ -653,7 +670,7 @@ gg_map_2008 <- ggplot() +
   geom_sf(data = africa, fill = "white") +
   geom_sf(data = elephant_map_2008, aes(fill = Estimate), color = "brown", size = 0.2) +
   scale_fill_viridis_c(option = "plasma", name = "Estimate") +
-  scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+  scale_fill_gradient(low = "#91CD71", high = "#056937") +
   theme_void() +
   labs(title = "Elephant Population Estimates in Africa in 2008")
 
@@ -669,7 +686,7 @@ gg_map_2009 <- ggplot() +
   geom_sf(data = africa, fill = "white") +
   geom_sf(data = elephant_map_2009, aes(fill = Estimate), color = "brown", size = 0.2) +
   scale_fill_viridis_c(option = "plasma", name = "Estimate") +
-  scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+  scale_fill_gradient(low = "#91CD71", high = "#056937") +
   theme_void() +
   labs(title = "Elephant Population Estimates in Africa in 2009")
 
@@ -684,10 +701,12 @@ elephant_map_2010 <- merge(world, elephant_data_2010, by.x = "name", by.y = "Cou
 gg_map_2010 <- ggplot() +
   geom_sf(data = africa, fill = "white") +
   geom_sf(data = elephant_map_2010, aes(fill = Estimate), color = "brown", size = 0.2) +
-  scale_fill_viridis_c(option = "plasma", name = "Estimate") +
-  scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+  #scale_fill_viridis_c(option = "plasma", name = "Estimate") +
+  scale_fill_gradient(low = "#91CD71", high = "#056937") +
   theme_void() +
   labs(title = "Elephant Population Estimates in Africa in 2010")
+
+gg_map_2010
 ```
 
 ```{r}
@@ -698,10 +717,12 @@ elephant_map_2014 <- merge(world, elephant_data_2014, by.x = "name", by.y = "Cou
 gg_map_2014 <- ggplot() +
   geom_sf(data = africa, fill = "white") +
   geom_sf(data = elephant_map_2014, aes(fill = Estimate), color = "brown", size = 0.2) +
-  scale_fill_viridis_c(option = "plasma", name = "Estimate") +
-  scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+  #scale_fill_viridis_c(option = "plasma", name = "Estimate") +
+  scale_fill_gradient(low = "#91CD71", high = "#056937") +
   theme_void() +
   labs(title = "Elephant Population Estimates in Africa in 2014")
+
+gg_map_2014
 ```
 
 ```{r}
@@ -787,7 +808,7 @@ library(rnaturalearth)
 library(ggplot2)
 library(plotly)
 
-generate_elephant_map <- function(elephant_data, year) {
+create_elephant_map <- function(elephant_data, year) {
   # Load the natural earth data for Africa
   africa <- ne_countries(scale = "medium", returnclass = "sf", continent = "Africa")
   
@@ -798,16 +819,22 @@ generate_elephant_map <- function(elephant_data, year) {
   gg <- ggplot() +
     geom_sf(data = africa, fill = "white") +
     geom_sf(data = elephant_map, aes(fill = Estimate), color = "brown", size = 0.2) +
-    scale_fill_viridis_c(option = "plasma", name = "Estimate") +
-    scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+    scale_fill_viridis_c(
+      option = "plasma", name = "Estimate", 
+      limits = c(30000, 60000),
+      breaks = seq(30000, 60000, by = 5000),
+      labels = scales::comma_format(scale = 1e-3, accuracy = 1),
+      trans = "log",
+      guide = guide_colorbar(barwidth = 10, barheight = 1, title.position = "top", title.hjust = 0.5)
+    ) +
     theme_void() +
     labs(title = paste("Elephant Population Estimates in Africa in", year))
   
   # Convert ggplot to plotly
   gg_plotly <- ggplotly(gg)
-  
-  return(gg_plotly)
+  return(gg)
 }
+
 
 
 # Call the function with the data for 1996
@@ -817,10 +844,6 @@ elephant_2005_plot <- generate_elephant_map(elephant_data_2005, 2005)
 elephant_2006_plot <- generate_elephant_map(elephant_data_2006, 2006)
 elephant_2010_plot <- generate_elephant_map(elephant_data_2010, 2010)
 elephant_2014_plot <- generate_elephant_map(elephant_data_2014, 2014)
-
-elephant_data_2010
-
-elephant_2014_plot
 ```
 
 ## All Elephant plots
@@ -835,7 +858,7 @@ elephant_2014_plot
 
 ```{r}
 
-elephant_2005_plot
+elephant_1996_plot
 ```
 
 ```{r}
@@ -887,15 +910,12 @@ library(ggplot2)
 
 # Assuming you have a list of Plotly plots
 plots <- list(
-  elephant_1996_plot,
-  elephant_2005_plot,
-  elephant_2006_plot,
-  elephant_2010_plot,
-  elephant_2014_plot
+  gg_map_1996,
+  gg_map_2000,
+  gg_map_2006,
+  gg_map_2010,
+  gg_map_2014
 )
-
-
-
 ```
 
 ```{r}
@@ -929,32 +949,27 @@ knitr::include_graphics("elephant_animation.gif")
 
 ```{r}
 
-# app.R
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(ggplot2)
 
-library(shiny)
-library(shinydashboard)
+# Load world map data
+world <- ne_countries(scale = "medium", returnclass = "sf")
 
-# Define UI
-ui <- dashboardPage(
-  dashboardHeader(title = "Elephant Animation"),
-  dashboardSidebar(),
-  dashboardBody(
-    box(
-      title = "Elephant Animation",
-      status = "primary",
-      solidHeader = TRUE,
-      width = 12,
-      img(src = "elephant_animation.gif", width = "100%", height = "100%")
-    )
-  )
+# Load Okavango Delta data (example coordinates, replace with actual data)
+okavango_coords <- data.frame(
+  lon = 22.9071,
+  lat = -18.6027
 )
 
-# Define server
-server <- function(input, output, session) {
-}
+okavango_sf <- st_as_sf(okavango_coords, coords = c("lon", "lat"), crs = st_crs(world))
 
-# Run the Shiny app
-shinyApp(ui, server)
+# Plot the map
+ggplot() +
+  geom_sf(data = africa, fill = "white", color = "black") +
+  geom_sf(data = okavango_sf, color = "red", size = 2) +
+  ggtitle("Okavango Delta in Africa") +
+  theme_void()
 
 ```
-

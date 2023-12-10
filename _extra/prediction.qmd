@@ -1,0 +1,488 @@
+---
+title: "prediction"
+editor: visual
+---
+
+```{r}
+if (!require("pacman")) 
+  install.packages("pacman")
+
+pacman::p_load(knitr,tidyverse,lubridate,here,dplyr,ggplot2,ggmap,maps,rnaturalearth,rnaturalearthdata,sf,plotly,caret,glmnet)
+```
+
+```{r}
+
+elephant <- readxl::read_xlsx(here("data","elephant_data.xlsx"))
+
+```
+
+```{r}
+
+# Fitting a linear regression model
+lm_model <- lm(Estimate ~ Year, data = elephant)
+
+# Summary of the model
+summary(lm_model)
+```
+
+```{r}
+
+# Create a scatterplot of the data
+plot(elephant$Year, elephant$Estimate, main = "Elephant Estimate Over Time", 
+     xlab = "Year", ylab = "Estimate", pch = 16, col = "blue")
+
+abline(lm_model, col = "red")
+
+new_data <- data.frame(Year = 2015:2023)
+
+# Using linear regression
+predicted_estimates <- predict(lm_model, newdata = new_data)
+
+predicted_data <- data.frame(Year = new_data$Year, Predicted_Estimate = predicted_estimates)
+
+predicted_data
+```
+
+## Linear Regression
+
+```{r}
+
+# Load required libraries
+library(dplyr)
+
+# Assuming 'elephant' is your dataset
+
+# Fit a linear regression model
+lm_model <- lm(Estimate ~ Year, data = elephant)
+
+# Get summary of the model
+summary(lm_model)
+
+# Create a scatterplot of the data
+plot(elephant$Year, elephant$Estimate, main = "Elephant Estimate Over Time", 
+     xlab = "Year", ylab = "Estimate", pch = 16, col = "blue")
+
+# Add the regression line to the plot
+abline(lm_model, col = "red")
+
+# Create a new data frame with the years of interest
+new_data <- data.frame(Year = 2015:2023)
+
+# Make predictions using the linear regression model
+predicted_estimates <- predict(lm_model, newdata = new_data)
+
+# Combine the predicted values with the new data
+predicted_data <- data.frame(Year = new_data$Year, Predicted_Estimate = predicted_estimates)
+
+# Print the predicted data
+print(predicted_data)
+
+# Visualize the predictions
+lines(new_data$Year, predicted_estimates, col = "green", lty = 2)
+
+# Evaluate model assumptions and diagnostic plots
+# For example, plot residuals vs. fitted values
+plot(residuals(lm_model) ~ lm_model$fitted.values, 
+     main = "Residuals vs. Fitted Values",
+     xlab = "Fitted Values", ylab = "Residuals")
+
+```
+
+```{r}
+
+# Assuming 'elephant' is your dataset and 'lm_model' is the fitted linear regression model
+
+# Make predictions on the original data
+predicted_values <- predict(lm_model)
+
+# Calculate RMSE
+rmse <- sqrt(mean((elephant$Estimate - predicted_values)^2))
+
+# Print RMSE
+print(paste("Root Mean Squared Error (RMSE):", rmse))
+
+```
+
+## Prediction for total population
+
+```{r}
+
+library(dplyr)
+
+# Assuming 'elephant' is your original dataset
+# Group by Year and calculate the total Estimate for each year
+total_estimate_per_year <- elephant %>%
+  group_by(Year) %>%
+  summarise(Total_Estimate = sum(Estimate))
+
+total_estimate_per_year <- total_estimate_per_year %>%
+  filter(Year != 2015)
+
+# Print the new dataset
+print(total_estimate_per_year)
+```
+
+## OLS
+
+```{r}
+
+
+library(tidymodels)
+
+# Define the recipe
+ols_recipe <- recipe(Total_Estimate ~ Year, data = total_estimate_per_year) %>%
+  step_center(Year, all_predictors()) %>%
+  step_scale(Year, all_predictors())
+
+# Define the linear regression model
+ols_model <- linear_reg() %>%
+  set_engine("lm")
+
+# Combine recipe and model into a workflow
+ols_workflow <- workflow() %>%
+  add_recipe(ols_recipe) %>%
+  add_model(ols_model)
+
+# Train the OLS model
+ols_fit <- ols_workflow %>% fit(data = total_estimate_per_year)
+
+# Create a new data frame for prediction (years 2015-2023)
+new_years <- data.frame(Year = 2015:2023)
+
+# Make predictions using the trained OLS model
+ols_predictions <- predict(ols_fit, new_data = new_years)
+
+# Combine the new years and predictions
+ols_predictions_data <- data.frame(Year = new_years$Year, Total_Estimate = ols_predictions$.pred)
+
+# Print the OLS predictions
+ols_predictions_data
+```
+
+```{r}
+
+# Assuming 'elephant_data' is your dataset with columns 'Year' and 'Estimate'
+library(caret)
+
+# Specify the training control
+train_control <- trainControl(method = "cv", number = 5)
+
+# Train the OLS model using cross-validation
+ols_model <- train(Total_Estimate ~ Year, data = total_estimate_per_year, method = "lm", trControl = train_control)
+
+# Print cross-validated RMSE for each model
+print("OLS Model Cross-Validated RMSE:")
+print(sqrt(ols_model$results$RMSE))
+```
+
+## Poly Regression
+
+```{r}
+
+library(tidymodels)
+
+# Define the recipe with polynomial term
+poly_recipe <- recipe(Total_Estimate ~ Year, data = total_estimate_per_year) %>%
+  step_poly(Year, degree = 2) %>%
+  step_center(all_predictors()) %>%
+  step_scale(all_predictors())
+
+# Define the linear regression model
+poly_model <- linear_reg() %>%
+  set_engine("lm")
+
+# Combine recipe and model into a workflow
+poly_workflow <- workflow() %>%
+  add_recipe(poly_recipe) %>%
+  add_model(poly_model)
+
+# Train the polynomial regression model
+poly_fit <- poly_workflow %>% fit(data = total_estimate_per_year)
+
+# Create a new data frame for prediction (years 2015-2023)
+new_years <- data.frame(Year = 2015:2023)
+
+# Make predictions using the trained polynomial regression model
+poly_predictions <- predict(poly_fit, new_data = new_years)
+
+# Combine the new years and predictions
+poly_predictions_data <- data.frame(Year = new_years$Year, Total_Estimate = poly_predictions$.pred)
+
+# Print the polynomial regression predictions
+poly_predictions_data
+```
+
+```{r}
+
+library(caret)
+
+# Specify the training control
+train_control <- trainControl(method = "cv", number = 5)
+
+# Define the polynomial regression model
+poly_model <- train(Total_Estimate ~ poly(Year, degree = 2), 
+                    data = total_estimate_per_year, 
+                    method = "lm", 
+                    trControl = train_control)
+
+# Print cross-validated RMSE for polynomial regression
+print("Polynomial Regression Model Cross-Validated RMSE:")
+print(sqrt(poly_model$results$RMSE))
+```
+
+## Random forest Regression
+
+```{r warning=FALSE}
+
+# Load required libraries
+library(caret)
+library(randomForest)
+
+# Specify the training control
+train_control <- trainControl(method = "cv", number = 5)
+
+# Define the Random Forest regression model
+rf_model <- train(Total_Estimate ~ Year, 
+                  data = total_estimate_per_year, 
+                  method = "rf", 
+                  trControl = train_control)
+
+# Print cross-validated RMSE for Random Forest regression
+print("Random Forest Regression Model Cross-Validated RMSE:")
+print(sqrt(rf_model$results$RMSE))
+
+```
+
+## Decision Tree Regression
+
+```{r}
+
+library(tidymodels)
+library(rpart)
+
+# Define the recipe
+tree_recipe <- recipe(Total_Estimate ~ Year, data = total_estimate_per_year)
+
+# Define the decision tree regression model
+tree_model <- decision_tree(mode = "regression") %>%
+  set_engine("rpart")
+
+# Combine recipe and model into a workflow
+tree_workflow <- workflow() %>%
+  add_recipe(tree_recipe) %>%
+  add_model(tree_model)
+
+# Train the decision tree regression model
+tree_fit <- tree_workflow %>% fit(data = total_estimate_per_year)
+
+# Make predictions using the trained model
+tree_predictions <- predict(tree_fit, new_data = new_years)
+
+# Combine the new years and predictions
+tree_predictions_data <- data.frame(Year = new_years$Year, Total_Estimate = tree_predictions$.pred)
+
+# Print the decision tree predictions
+print(tree_predictions_data)
+
+```
+
+```{r}
+
+# Load required libraries
+library(caret)
+library(rpart)
+
+# Specify the training control
+train_control <- trainControl(method = "cv", number = 5)
+
+# Define the Decision Tree regression model
+tree_model <- train(Total_Estimate ~ Year, 
+                    data = total_estimate_per_year, 
+                    method = "rpart", 
+                    trControl = train_control)
+
+# Print cross-validated RMSE for Decision Tree regression
+print("Decision Tree Regression Model Cross-Validated RMSE:")
+print(sqrt(tree_model$results$RMSE))
+```
+
+## Line plot
+
+```{r}
+
+# Assuming 'ols_predictions_data' and 'total_estimate_per_year' are your data frames
+
+# Combine the datasets vertically
+combined_data <- rbind(total_estimate_per_year, ols_predictions_data)
+
+# Print the combined dataset
+print(combined_data)
+
+total_estimate_per_year
+```
+
+```{r}
+
+# Assuming 'combined_data' is your dataset
+# Create a line plot with different colors for different time periods
+ggplot(combined_data, aes(x = Year, y = Total_Estimate, group = 1)) +
+  geom_line(aes(color = ifelse(Year <= 2014, "Blue", "Red"))) +
+  stat_smooth(method = "loess", se = FALSE) +  # Add this line for smoothing
+  ggtitle("Combined Data: Estimate Over Time") +
+  xlab("Year") +
+  ylab("Estimate") +
+  scale_color_manual(values = c("Blue", "Red"), guide = FALSE)
+
+```
+
+## With log transformation
+
+```{r}
+
+# Create a line plot with different colors for different time periods
+ggplot(combined_data, aes(x = Year, y = Total_Estimate, group = 1)) +
+  geom_line(aes(color = ifelse(Year <= 2014, "Blue", "Red"))) +
+    stat_smooth(method = "loess", se = FALSE) +  # Add this line for smoothing
+  ggtitle("Combined Data: Estimate Over Time") +
+  xlab("Year") +
+  ylab("Estimate") +
+  scale_y_continuous(limits = c(0, 1000000), expand = c(0, 0)) +  # Set y-axis limits and disable expansion
+  scale_color_manual(values = c("Blue", "Red"), guide = FALSE)
+```
+
+## Botswana prediction
+
+```{r}
+
+elephant_botswana <- elephant |>
+  filter(Country == "Botswana")
+
+elephant_botswana_per_year <- elephant_botswana |>
+  group_by(Year) |>
+  summarize(Total_Estimate = sum(Estimate, na.rm = TRUE))
+
+elephant_botswana_per_year
+```
+
+```{r}
+
+library(tidymodels)
+
+# Define the recipe
+ols_recipe <- recipe(Total_Estimate ~ Year, data = elephant_botswana_per_year) %>%
+  step_center(Year, all_predictors()) %>%
+  step_scale(Year, all_predictors())
+
+# Define the linear regression model
+ols_model <- linear_reg() %>%
+  set_engine("lm")
+
+# Combine recipe and model into a workflow
+ols_workflow <- workflow() %>%
+  add_recipe(ols_recipe) %>%
+  add_model(ols_model)
+
+# Train the OLS model
+ols_fit <- ols_workflow %>% fit(data = elephant_botswana_per_year)
+
+# Create a new data frame for prediction (years 2015-2023)
+new_years <- data.frame(Year = 2015:2023)
+
+# Make predictions using the trained OLS model
+ols_predictions <- predict(ols_fit, new_data = new_years)
+
+# Combine the new years and predictions
+ols_predictions_data <- data.frame(Year = new_years$Year, Total_Estimate = ols_predictions$.pred)
+
+# Print the OLS predictions
+ols_predictions_data
+```
+
+```{r}
+
+# Combine the datasets vertically
+countries_combined <- rbind(elephant_botswana_per_year, ols_predictions_data)
+
+# Print the combined dataset
+print(countries_combined)
+
+ggplot(countries_combined, aes(x = Year, y = Total_Estimate, group = 1)) +
+  geom_line(aes(color = ifelse(Year <= 2014, "Blue", "Red"))) +
+  ggtitle("Combined Data: Estimate Over Time") +
+  geom_smooth(method="loess") +
+  xlab("Year") +
+  ylab("Estimate") +
+  #scale_y_continuous(limits = c(0, 1000000), expand = c(0, 0)) +  # Set y-axis limits and disable expansion
+  scale_color_manual(values = c("Blue", "Red"), guide = FALSE) +
+  theme_minimal()
+```
+
+## Multiple countries prediction
+
+```{r}
+
+# Filter data for specified countries
+elephant_countries <- elephant %>%
+  filter(Country %in% c("Botswana", "Kenya", "Mozambique", "Tanzania", "Uganda"))
+
+# Group by Year and calculate the total estimate for all countries
+elephant_total_per_year <- elephant_countries %>%
+  group_by(Year) %>%
+  summarize(Total_Estimate = sum(Estimate, na.rm = TRUE))
+
+# View the result
+print(elephant_total_per_year)
+```
+
+```{r}
+
+library(tidymodels)
+
+# Define the recipe
+ols_recipe <- recipe(Total_Estimate ~ Year, data = elephant_total_per_year) %>%
+  step_center(Year, all_predictors()) %>%
+  step_scale(Year, all_predictors())
+
+# Define the linear regression model
+ols_model <- linear_reg() %>%
+  set_engine("lm")
+
+# Combine recipe and model into a workflow
+ols_workflow <- workflow() %>%
+  add_recipe(ols_recipe) %>%
+  add_model(ols_model)
+
+# Train the OLS model
+ols_fit <- ols_workflow %>% fit(data = elephant_total_per_year)
+
+# Create a new data frame for prediction (years 2015-2023)
+new_years <- data.frame(Year = 2015:2023)
+
+# Make predictions using the trained OLS model
+ols_predictions <- predict(ols_fit, new_data = new_years)
+
+# Combine the new years and predictions
+ols_predictions_data <- data.frame(Year = new_years$Year, Total_Estimate = ols_predictions$.pred)
+
+# Print the OLS predictions
+ols_predictions_data
+```
+
+```{r}
+
+# Combine the datasets vertically
+countries_combined <- rbind(elephant_botswana_per_year, ols_predictions_data)
+
+# Print the combined dataset
+print(countries_combined)
+
+ggplot(countries_combined, aes(x = Year, y = Total_Estimate, group = 1)) +
+  geom_line(aes(color = ifelse(Year <= 2014, "Blue", "Red"))) +
+  ggtitle("Combined Data: Estimate Over Time") +
+  geom_smooth(method="loess") +
+  xlab("Year") +
+  ylab("Estimate") +
+  #scale_y_continuous(limits = c(0, 1000000), expand = c(0, 0)) +  # Set y-axis limits and disable expansion
+  scale_color_manual(values = c("Blue", "Red"), guide = FALSE) +
+  theme_minimal()
+```
