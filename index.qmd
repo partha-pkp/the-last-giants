@@ -16,8 +16,100 @@ The African elephant, a keystone species crucial to the continent's ecosystem, h
 
 Using datasets sourced from reputable conservation organizations and wildlife databases, the project begins by visually mapping the fluctuations in elephant populations across different regions of Africa over the studied period. Subsequently, employing multiple regression methods, including but not limited to linear regression and time series analysis, the study intends to forecast the elephant population from 2016 to 2023 based on historical data trends.
 
-Moreover, in an effort to comprehend the potential correlation between the illegal ivory trade and elephant populations, the project incorporates ivory trade data alongside elephant population datasets. Through correlation analysis and visual representations, the study aims to discern any discernible patterns or connections between these variables, shedding light on whether the ivory trade has had an impact on the fluctuating populations of African elephants.
+Moreover, in an effort to comprehend the potential correlation between the illegal ivory trade and elephant populations, the project incorporates ivory trade data alongside elephant population data-set. Through correlation analysis and visual representations, the study aims to discern any discernible patterns or connections between these variables, shedding light on whether the ivory trade has had an impact on the fluctuating populations of African elephants.
 
 By combining data visualization techniques, statistical analyses, and exploration of the complex interplay between elephant populations and the ivory trade, this project endeavors to contribute valuable insights into the dynamics of African elephant conservation and the factors influencing their populations. Ultimately, the findings may aid policymakers, conservationists, and wildlife experts in formulating more targeted and effective measures to safeguard these majestic creatures and their habitats.
 
 ## Question 1:- How has elephant population varied over the years across several African countries?
+
+### Introduction
+
+Elephants are the gentle giants and here we want to know about the trends in their population and to find out whether its declining or is at safe level, and if there is a decrease in their population then to find out the reason the cause. Understanding the population dynamics of African elephants is pivotal for conservation efforts and ecological balance. This will help us in safeguarding their future and to show to next many generations the gentle giants of this planet and how marvelous they are.
+
+The dataset under examination spans from 1995 to 2014, presenting a valuable oppurtunity to predict and comprehend the trends in elephant populations for the subsequent years i.e. 2015 to 2023. This study aims to investigate the variations in elephants population across several African countries during the period, leveraging a multi-faceted analytical approach including data pre-processing, explanatory analysis, predictive modelling and country-level analysis
+
+### Approach
+
+###Here we are going to use the data-set about the elephants we have and would like to make some visualizations to represent and analyze the data in an appropriate manner. We are going to utilize these variables from the data `year`, `country` and `estimate` - We are going to make a line plot to find out the basic trend and continue to process to maybe plot the line plots for individual country. The data has 1995 to 2014 data, which we will utilize to find the trends and then use the present data to predict the data between 2015 to 2023 using multiple regression models.###
+
+-   Data Pre-processing:
+
+    -   
+
+-   Data Exploration
+
+    -   
+
+-   Data Prediction
+
+    -   
+
+-   Model Evaluation
+
+    -   
+
+-   Country Level Analysis
+
+    -   
+
+-   Shiny App development
+
+    -   
+
+### Analysis
+
+-   Data Pre-processing:
+
+    -   
+
+-   Data Exploration
+
+    -   
+
+-   Data Prediction
+
+    -   
+
+-   Model Evaluation
+
+    -   
+
+-   Country Level Analysis
+
+    -   
+
+-   Shiny App development
+
+    -   
+
+## Question 2:- What is the trend of ivory trade in Africa?
+
+### Introduction
+
+The illegal trade of ivory has remained a critical concern, posing significant threats to the African elephant population and biodiversity conservation. This analysis aims to study ivory trade in Africa using available historical data. The dataset covers past ivory trade information and seeks to predict trends from 2020 to 2023. The main goal is to reveal how ivory trade has changed over time by using careful data processing, exploring data, making predictions and creating clear visualizations.
+
+### Approach
+
+-   Data Pre-processing:
+
+    -   
+
+-   Data Exploration
+
+    -   
+
+-   Data Prediction
+
+    -   
+
+-   Model Evaluation
+
+    -   
+
+-   Country Level Analysis
+
+    -   
+
+-   Shiny App development
+
+    -   
