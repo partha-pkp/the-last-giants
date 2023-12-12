@@ -22,7 +22,7 @@ African elephants face severe threats from poaching and the loss of their natura
 
 A continent-wide survey conducted by the **`National Library of Medicine`** revealed a stark decline in African Savannah Elephants. Africa may have held over 20 million elephants before European colonization and 1 million as recently as the 1970s. The survey estimated a population of 352,271 savannah elephants across study sites in 18 countries, representing approximately 93% of all savannah elephants in those areas. Alarmingly, regions with historical data indicated a significant decline, estimating a decrease of 144,000 elephants between 2007 and 2014. Moreover, current data suggests a continent-wide decline of 8% per year in elephant populations, primarily attributed to poaching. During the 1970s and 1980s, a surge in poaching significantly reduced elephant populations in numerous regions. Moreover, a resurgence of poaching incidents since approximately 2005 has resulted in an alarming annual death toll, estimated at around 30,000 elephants recently.
 
-This project aims to examine how elephant populations across Africa changed between 1995 and 2015. It involves using graphs and maps to show how the number of elephants varied over these years. To understand what might happen in the future, the project will use different mathematical methods to guess how many elephants there might be from 2016 to 2023.
+This project aims to examine how elephant populations across Africa changed between 1995 and 2014. It involves using graphs and maps to show how the number of elephants varied over these years. To understand what might happen in the future, the project will use different mathematical methods to guess how many elephants there might be from 2015 to 2023.
 
 Moreover, this study will also look into whether there's a connection between how many elephants there are and the trade of ivory. By comparing data about how many elephants there are with information about ivory trade, the project will try to find out if ivory trade affects the number of elephants.
 
@@ -48,7 +48,7 @@ The dataset under examination spans from 1995 to 2014, presenting a valuable opp
 
 ### Approach
 
-###Here we are going to use the data-set about the elephants we have and would like to make some visualizations to represent and analyze the data in an appropriate manner. We are going to utilize these variables from the data `year`, `country` and `estimate` - We are going to make a line plot to find out the basic trend and continue to process to maybe plot the line plots for individual country. The data has 1995 to 2014 data, which we will utilize to find the trends and then use the present data to predict the data between 2015 to 2023 using multiple regression models.###
+We are going to make a code which serves as a robust approach for visualizing and analyzing the fluctuation in elephant population estimates across multiple years within several African countries. Using libraries such as `ggplot2` and `plotly`, this methodology aggregates and processes elephant population data, offering a comprehensive depiction of population trends. We are going to initially read and preprocess the data-set, grouping data by year and summing up estimates, subsequently training an Ordinary Least Squares (OLS) regression model to predict population estimates for future years. Through visualization, we will make interactive plots, showcasing the historical trends of elephant populations from 1995 to 2015, while also projecting estimates for subsequent years i.e. from 2015 to 2023. The plots illustrate the trajectory of elephant population estimates, distinguishing between actual data and predicted values. By merging actual and forecasted population data, the code encapsulates a holistic view, enabling the viewer to comprehend the variations and potential trajectories of elephant populations across different African countries over time. These visualizations serve as an invaluable tool for understanding the historical trends and potential projections of elephant population changes, facilitating comprehensive insights into the population dynamics across various African regions.
 
 ### Analysis
 
@@ -61,15 +61,15 @@ elephant <- readxl::read_xlsx(here("data","elephant_data.xlsx"))
 
 ```{r}
 
-total_estimate_per_year <- elephant %>%
-  group_by(Year) %>%
+total_estimate_per_year <- elephant |>
+  group_by(Year) |>
   summarise(Total_Estimate = sum(Estimate))
 
-total_estimate_per_year <- total_estimate_per_year %>%
+total_estimate_per_year <- total_estimate_per_year |>
   filter(Year != 2015)
 
-# Print the new dataset
-print(total_estimate_per_year)
+# Checking the derived new data set
+glimpse(total_estimate_per_year)
 
 # Fitting a linear regression model
 lm_model <- lm(Estimate ~ Year, data = elephant)
@@ -80,38 +80,38 @@ summary(lm_model)
 
 ```{r}
 
-# Define the recipe
+# Defining a recipe
 ols_recipe <- recipe(Total_Estimate ~ Year, data = total_estimate_per_year) |>
   step_center(Year, all_predictors()) |>
   step_scale(Year, all_predictors())
 
-# Define the linear regression model
-ols_model <- linear_reg() %>%
+# Defining the linear regression model
+ols_model <- linear_reg() |>
   set_engine("lm")
 
-# Combine recipe and model into a workflow
-ols_workflow <- workflow() %>%
-  add_recipe(ols_recipe) %>%
+# Combining recipe and model into a workflow
+ols_workflow <- workflow() |>
+  add_recipe(ols_recipe) |>
   add_model(ols_model)
 
-# Train the OLS model
-ols_fit <- ols_workflow %>% fit(data = total_estimate_per_year)
+# Training the OLS model
+ols_fit <- ols_workflow |>
+  fit(data = total_estimate_per_year)
 
-# Create a new data frame for prediction (years 2015-2023)
+# Creating a new data frame for prediction (between years 2015-2023)
 new_years <- data.frame(Year = 2015:2023)
 
-# Make predictions using the trained OLS model
+# Making predictions using the trained OLS model
 ols_predictions <- predict(ols_fit, new_data = new_years)
 
-# Combine the new years and predictions
+# Combining the new years and predictions
 ols_predictions_data <- data.frame(Year = new_years$Year, Total_Estimate = ols_predictions$.pred)
 
 # Print the OLS predictions
-ols_predictions_data
+glimpse(ols_predictions_data)
+```
 
-# Assuming 'elephant_data' is your dataset with columns 'Year' and 'Estimate'
-library(caret)
-
+```{r}
 # Specify the training control
 train_control <- trainControl(method = "cv", number = 5)
 
@@ -124,7 +124,9 @@ print(sqrt(ols_model$results$RMSE))
 ```
 
 ```{r}
+#| fig-alt: Visualization of elephant population estimates between 1995-2014
 
+# Plotting the estimated of elephant population between 1995 to 2014
 p <- ggplot(total_estimate_per_year, aes(x = Year, y = Total_Estimate, group = 1)) +
   geom_line(aes(color = ifelse(Year <= 2014, "Blue", "Red"))) +
   stat_smooth(method = "loess", se = FALSE) +
@@ -150,7 +152,9 @@ population_trend
 ```
 
 ```{r}
+#| fig-alt: Visualization of predicted elephant population estimates between 2015-2023
 
+# Plotting the predicted estimates of elephant population from 2015 to 2023
 pred <- ggplot(ols_predictions_data, aes(x = Year, y = Total_Estimate, group = 1)) +
   geom_line(aes(color = ifelse(Year <= 2014, "Blue", "Red"))) +
   stat_smooth(method = "loess", se = FALSE) +
@@ -176,10 +180,12 @@ prediction_plot
 ```
 
 ```{r}
+#| fig-alt: Visualization of overall elephant population estimate between 1995-2023
 
+# Combining both the actual and predicted datas using rowbind
 combined_data <- rbind(total_estimate_per_year, ols_predictions_data)
 
-
+# Plotting all the estimates of elephant population between 1995-2023
 combined_prediction <- ggplot(combined_data, aes(x = Year, y = Total_Estimate, group = 1)) +
   geom_line(aes(color = ifelse(Year <= 2014, "Blue", "Red"))) +
   stat_smooth(method = "loess", se = FALSE) +
@@ -216,12 +222,13 @@ The illegal trade of ivory has remained a critical concern, posing significant t
 
 ```{r}
 
+# Loading ivory data
 ivory_exports_data <- read_csv(here("data","cites_ivory_export.csv"))
 ```
 
 ```{r}
 
-# Count the number of instances for each year
+# Counting the number of instances for each year
 export_count_per_year <- ivory_exports_data |>
   group_by(Year) |>
   summarise(export_count = n())
@@ -230,12 +237,13 @@ export_count_per_year <- ivory_exports_data |>
 export_count_per_year <- export_count_per_year |>
   filter(Year > 2000)
 
-export_count_per_year
+glimpse(export_count_per_year)
+```
 
-# Assuming `exports_barplot` is your ggplot bar plot
-library(plotly)
+```{r}
+#| fig-alt: Visualization of Ivory exports in Africa from 1990 to 2022
 
-# Add text to ggplot for hover information
+# Plotting the Ivory exports between 1990 to 2022
 exports_barplot <- ggplot(export_count_per_year, aes(x = as.factor(Year), y = export_count, fill = as.factor(Year), text = paste("Export count: ", export_count))) +
   geom_bar(stat = "identity", color = "black") +
   scale_fill_viridis_d(option = "C") +
@@ -261,13 +269,14 @@ exports_plotly
 ## IVORY CARVINGS
 
 ```{r warning = FALSE,message=FALSE}
+#| fig-alt: Visualizing the Type of Ivory exports in Africa
 
 ivory_term_count <- ivory_exports_data |>
   group_by(Year,Term) |>
   summarise(instance_count = n()) |>
   ungroup()
 
-ivory_term_count <- ivory_term_count %>%
+ivory_term_count <- ivory_term_count |>
   mutate(Term = fct_reorder(Term, instance_count, .desc = TRUE))
 
 carving_ggplot <- ivory_term_count |>
@@ -284,7 +293,6 @@ carving_ggplot <- ivory_term_count |>
     caption = "Source: CITES (Convention of International Trade 
     in Endangered Species of Wild Fauna and Flora)"
   )
-
 
 # converting ggplot to plotly
 carvings_plotly <- ggplotly(carving_ggplot, tooltip = "text")
