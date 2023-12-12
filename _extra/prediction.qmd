@@ -304,6 +304,8 @@ tree_model <- train(Total_Estimate ~ Year,
 # Print cross-validated RMSE for Decision Tree regression
 print("Decision Tree Regression Model Cross-Validated RMSE:")
 print(sqrt(tree_model$results$RMSE))
+
+decision_tree_rmse <- sqrt(tree_model$results$RMSE)
 ```
 
 ## Line plot
@@ -323,16 +325,24 @@ total_estimate_per_year
 
 ```{r}
 
-# Assuming 'combined_data' is your dataset
-# Create a line plot with different colors for different time periods
+
+# Assuming `combined_data` is your dataset
 ggplot(combined_data, aes(x = Year, y = Total_Estimate, group = 1)) +
   geom_line(aes(color = ifelse(Year <= 2014, "Blue", "Red"))) +
-  stat_smooth(method = "loess", se = FALSE) +  # Add this line for smoothing
+  stat_smooth(method = "loess", se = FALSE) +
   ggtitle("Combined Data: Estimate Over Time") +
   xlab("Year") +
   ylab("Estimate") +
-  scale_color_manual(values = c("Blue", "Red"), guide = FALSE)
-
+  scale_y_continuous(limits = c(0, 500000), expand = c(0, 0), labels = scales::comma_format(scale = 1e-3)) +  # Format y-axis labels to be in thousands
+  scale_color_manual(values = c("black", "red3"), guide = FALSE) +
+  labs(
+    x = "Year",
+    y = "Estimate (in Thousands)",
+    title = "Trend in Elephant Population from 1995-2015",
+    caption = "Source: PeerJ PeerJ Article
+doi: 10.7717/peerj.2354 "
+  )
+  theme_minimal()
 ```
 
 ## With log transformation
@@ -347,7 +357,8 @@ ggplot(combined_data, aes(x = Year, y = Total_Estimate, group = 1)) +
   xlab("Year") +
   ylab("Estimate") +
   scale_y_continuous(limits = c(0, 1000000), expand = c(0, 0)) +  # Set y-axis limits and disable expansion
-  scale_color_manual(values = c("Blue", "Red"), guide = FALSE)
+  scale_color_manual(values = c("Blue", "Red"), guide = FALSE) +
+  theme_minimal()
 ```
 
 ## Botswana prediction
@@ -485,4 +496,29 @@ ggplot(countries_combined, aes(x = Year, y = Total_Estimate, group = 1)) +
   #scale_y_continuous(limits = c(0, 1000000), expand = c(0, 0)) +  # Set y-axis limits and disable expansion
   scale_color_manual(values = c("Blue", "Red"), guide = FALSE) +
   theme_minimal()
+```
+
+## RMSE VALUE FOR ALL in a table
+
+```{r}
+
+ols_rmse <- sqrt(ols_model$results$RMSE)
+poly_reg_rmse <- sqrt(poly_model$results$RMSE)
+random_forest_rmse <- sqrt(rf_model$results$RMSE)
+decision_tree_rmse <- sqrt(tree_model$results$RMSE)
+
+model_names <- c("OLS", "Poly Regression", "Random Forest", "Decision Tree")
+rmse_values <- c(ols_rmse, poly_reg_rmse, random_forest_rmse, 298.1879)
+
+rmse_table <- data.frame(model_names,rmse_values)
+
+print(rmse_table)
+```
+
+```{r warning=FALSE, message=FALSE}
+
+rmse_table |>
+  ggplot(aes(x = model_names, y = rmse_values)) +
+  geom_line(color="grey") +
+  geom_point(shape=10)
 ```

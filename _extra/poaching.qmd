@@ -42,6 +42,7 @@ export_count_per_year
 # Create a bar plot
 ggplot(export_count_per_year, aes(x = as.factor(Year), y = export_count)) +
   geom_bar(stat = "identity", fill = "grey", color = "black") +
+  scale_color_viridis_() +
   labs(
     x = "Year",
     y = "Number of exports",
@@ -103,14 +104,45 @@ streamgraph_plot
 
 ```{r}
 
+# Create a lollipop plot
 ivory_term_count |>
-  ggplot(aes(x = Term,y = Year,color = Term)) +
-  geom_boxplot()
+  ggplot(aes(x = Term, y = instance_count)) +
+  geom_segment(aes(xend = Term, yend = 0), color = "black") +
+  #geom_point(size = 3, color = "black") +  # Add points at the end of the segments
+  theme_minimal() +
+  labs(title = "Lollipop Plot of ivory_term_count",
+       x = "Term",
+       y = "Year") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        panel.grid.major.y = element_line(color = "gray", linetype = "dashed"),
+        panel.grid.minor.y = element_blank())
+
+
 ```
 
 a
 
-```{r}
+```{r warning = FALSE, message=FALSE}
 
 
+ivory_term_count <- ivory_exdatas_data |>
+  group_by(Year,Term) |>
+  summarise(instance_count = n())
+
+ivory_term_count |>
+  ggplot(aes( y = Term, size = instance_count)) +
+  geom_bar(alpha = 0.7) +
+
+data
+  scale_size(range = c(1.4, 10), name = "Population (M)") +
+  #scale_color_viridis(discrete = TRUE, guide = FALSE) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(
+    x = "Count",
+    y = "Export Type",
+    title = "Type of ivory export",
+    caption = "Source: CITES (Convention of International Trade 
+    in Endangered Species of Wild Fauna and Flora)"
+  )
 ```

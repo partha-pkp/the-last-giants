@@ -122,6 +122,58 @@ print(sqrt(ols_model$results$RMSE))
 
 ## Plot 1 -- Trend in population
 
+```{r}
+
+p <- ggplot(total_estimate_per_year, aes(x = Year, y = Total_Estimate, group = 1)) +
+  geom_line(aes(color = ifelse(Year <= 2014, "Blue", "Red"))) +
+  stat_smooth(method = "loess", se = FALSE) +
+  ggtitle("Combined Data: Estimate Over Time") +
+  xlab("Year") +
+  ylab("Estimate") +
+  scale_y_continuous(limits = c(0, 500000), expand = c(0, 0), labels = comma_format(scale = 1e-3)) +
+  scale_color_manual(values = c("black", "red3"), guide = FALSE) +
+  labs(
+    x = "Year",
+    y = "Estimate (in Thousands)",
+    title = "Trend in Elephant Population from 1995-2015",
+    caption = "Source: PeerJ PeerJ Article
+doi: 10.7717/peerj.2354 "
+  ) +
+  theme_minimal()
+
+# Convert ggplot to plotly
+prediction_plot <- ggplotly(p)
+
+# Display the interactive plot
+prediction_plot
+```
+
+```{r}
+
+p <- ggplot(ols_predictions_data, aes(x = Year, y = Total_Estimate, group = 1)) +
+  geom_line(aes(color = ifelse(Year <= 2014, "Blue", "Red"))) +
+  stat_smooth(method = "loess", se = FALSE) +
+  ggtitle("Combined Data: Estimate Over Time") +
+  xlab("Year") +
+  ylab("Estimate") +
+  scale_y_continuous(limits = c(0, 500000), expand = c(0, 0), labels = comma_format(scale = 1e-3)) +
+  scale_color_manual(values = c("black", "red3"), guide = FALSE) +
+  labs(
+    x = "Year",
+    y = "Estimate (in Thousands)",
+    title = "Trend in Elephant Population from 1995-2015",
+    caption = "Source: PeerJ PeerJ Article
+doi: 10.7717/peerj.2354 "
+  ) +
+  theme_minimal()
+
+# Convert ggplot to plotly
+prediction_plot <- ggplotly(p)
+
+# Display the interactive plot
+prediction_plot
+```
+
 ```{r warning=FALSE, message=FALSE}
 
 p <- ggplot(combined_data, aes(x = Year, y = Total_Estimate, group = 1)) +
