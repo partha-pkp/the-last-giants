@@ -1,0 +1,102 @@
+```{r}
+
+
+pacman::p_load(knitr,tidyverse,lubridate,here,dplyr,ggplot2,ggmap,maps,rnaturalearth,rnaturalearthdata,sf,plotly,caret,glmnet,viridis,rcartocolor,forcats,tidymodels)
+
+total_estimate_per_year <- elephant |>
+  group_by(Year) |>
+  summarise(Population = sum(Estimate))
+
+total_estimate_per_year <- total_estimate_per_year |>
+  filter(Year != 2015)
+
+# Fitting a linear regression model
+lm_model <- lm(Estimate ~ Year, data = elephant)
+
+# Defining a recipe
+ols_recipe <- recipe(Population ~ Year, data = total_estimate_per_year) |>
+  step_center(Year, all_predictors()) |>
+  step_scale(Year, all_predictors())
+
+# Defining the linear regression model
+ols_model <- linear_reg() |>
+  set_engine("lm")
+
+# Combining recipe and model into a workflow
+ols_workflow <- workflow() |>
+  add_recipe(ols_recipe) |>
+  add_model(ols_model)
+
+# Training the OLS model
+ols_fit <- ols_workflow |>
+  fit(data = total_estimate_per_year)
+
+# Creating a new data frame for prediction (between years 2015-2023)
+new_years <- data.frame(Year = 2015:2023)
+
+# Making predictions using the trained OLS model
+ols_predictions <- predict(ols_fit, new_data = new_years)
+
+# Combining the new years and predictions
+ols_predictions_data <- data.frame(Year = new_years$Year, Population = ols_predictions$.pred)
+
+# Specify the training control
+train_control <- trainControl(method = "cv", number = 5)
+
+# Train the OLS model using cross-validation
+ols_model <- train(Population ~ Year, data = total_estimate_per_year, method = "lm", trControl = train_control)
+
+# Plotting the estimated of elephant population between 1995 to 2014
+p <- ggplot(total_estimate_per_year, aes(x = Year, y = Population, group = 1)) +
+  geom_line(aes(color = ifelse(Year <= 2014, "Blue", "Red"))) +
+  stat_smooth(method = "loess", se = FALSE) +
+  ggtitle("Combined Data: Estimate Over Time") +
+  xlab("Year") +
+  ylab("Estimate") +
+  scale_y_continuous(limits = c(0, 500000), expand = c(0, 0), labels = comma_format(scale = 1e-3)) +
+  scale_color_manual(values = c("black", "red3"), guide = FALSE) +
+  labs(
+    x = "Year",
+    y = "Estimate (in Thousands)",
+    title = "Trend in Elephant Population from 1995-2015",
+    caption = "Source: PeerJ PeerJ Article
+doi: 10.7717/peerj.2354 "
+  ) +
+  theme_minimal()
+
+# Convert ggplot to plotly
+population_trend <- ggplotly(p)
+
+population_trend
+```
+
+```{r}
+
+#| fig-alt: Visualization of overall elephant population estimate between 1995-2023
+
+# Combining both the actual and predicted data using rowbind
+combined_data <- rbind(total_estimate_per_year, ols_predictions_data)
+
+# Plotting all the estimates of elephant population between 1995-2023
+combined_prediction <- ggplot(combined_data, aes(x = Year, y = Population, group = 1)) +
+  geom_line(aes(color = ifelse(Year <= 2014, "Population Trend", "Prediction"))) +
+  stat_smooth(method = "loess", se = FALSE) +
+  scale_y_continuous(limits = c(0, 500000), expand = c(0, 0), labels = scales::comma_format(scale = 1e-3)) +
+  scale_color_manual(values = c("Population Trend" = "black", "Prediction" = "red3"), guide = FALSE) +
+  labs(
+    x = "Year",
+    y = "Estimate (in Thousands)",
+    title = "Trend in Elephant Population from 1995-2014",
+    caption = "Source: PeerJ PeerJ Article doi: 10.7717/peerj.2354 ",
+  ) +
+  theme_minimal()
+
+# Convert ggplot to plotly
+combined_prediction_plot <- ggplotly(combined_prediction, tooltip = c("Year", "y"))
+
+combined_prediction_plot
+```
+
+\
+
+\
