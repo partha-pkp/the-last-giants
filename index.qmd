@@ -11,7 +11,7 @@ editor: visual
 if (!require("pacman")) 
   install.packages("pacman")
 
-pacman::p_load(knitr,tidyverse,lubridate,here,dplyr,ggplot2,ggmap,maps,rnaturalearth,rnaturalearthdata,sf,plotly,caret,glmnet,steamgraph)
+pacman::p_load(knitr,tidyverse,lubridate,here,dplyr,ggplot2,ggmap,maps,rnaturalearth,rnaturalearthdata,sf,plotly,caret,glmnet,viridis)
 ```
 
 ## Abstract
@@ -137,26 +137,29 @@ ivory_exports_data <- read_csv(here("data","cites_ivory_export.csv"))
 
 ```{r}
 
-# Count the number of instances for each year
-export_count_per_year <- ivory_exports_data |>
-  group_by(Year) |>
-  summarise(export_count = n())
-
-# Assuming `count_per_year` is your dataset
-export_count_per_year <- export_count_per_year |>
+# Assuming `export_count_per_year` is your dataset
+export_count_per_year <- export_count_per_year %>%
   filter(Year > 2000)
 
-export_count_per_year
-
-# Create a bar plot
-ggplot(export_count_per_year, aes(x = as.factor(Year), y = export_count)) +
-  geom_bar(stat = "identity", fill = "grey", color = "black") +
+# Create a ggplot bar plot
+gg <- ggplot(export_count_per_year, aes(x = as.factor(Year), y = export_count)) +
+  geom_bar(stat = "identity") +
   labs(
     x = "Year",
     y = "Number of exports",
     title = "Ivory exports in Africa from 1990 to 2022",
-    caption = "Source: CITES (Convention of International Trade 
-    in Endangered Species of Wild Fauna and Flora)"
+    caption = "Source: CITES (Convention of International Trade in Endangered Species of Wild Fauna and Flora)"
   ) +
   theme_minimal()
+
+# Convert ggplot to plotly
+export_bar_plot <- ggplotly(gg)
+
+# Display the interactive plot
+export_bar_plot
+```
+
+```{r}
+
+
 ```
