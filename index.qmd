@@ -177,6 +177,9 @@ prediction_plot
 
 ```{r}
 
+combined_data <- rbind(total_estimate_per_year, ols_predictions_data)
+
+
 combined_prediction <- ggplot(combined_data, aes(x = Year, y = Total_Estimate, group = 1)) +
   geom_line(aes(color = ifelse(Year <= 2014, "Blue", "Red"))) +
   stat_smooth(method = "loess", se = FALSE) +
