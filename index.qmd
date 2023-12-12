@@ -63,7 +63,7 @@ The illegal trade of ivory has remained a critical concern, posing significant t
 
 ```{r}
 
-export_count_per_year <- read_csv(here("data","cites_ivory_export.csv"))
+ivory_exports_data <- read_csv(here("data","cites_ivory_export.csv"))
 ```
 
 ```{r}
@@ -79,16 +79,18 @@ export_count_per_year <- export_count_per_year |>
 
 export_count_per_year
 
-# Create a bar plot
-ggplot(export_count_per_year, aes(x = as.factor(Year), y = export_count, fill = as.factor(Year))) +
+# Assuming `exports_barplot` is your ggplot bar plot
+library(plotly)
+
+# Add text to ggplot for hover information
+exports_barplot <- ggplot(export_count_per_year, aes(x = as.factor(Year), y = export_count, fill = as.factor(Year), text = paste("Export count: ", export_count))) +
   geom_bar(stat = "identity", color = "black") +
   scale_fill_viridis_d(option = "C") +
   labs(
     x = "Year",
     y = "Number of exports",
     title = "Ivory exports in Africa from 1990 to 2022",
-    caption = "Source: CITES (Convention of International Trade 
-    in Endangered Species of Wild Fauna and Flora)",
+    caption = "Source: CITES (Convention of International Trade in Endangered Species of Wild Fauna and Flora)",
     fill = NULL
   ) +
   guides(fill = FALSE) +
@@ -96,9 +98,34 @@ ggplot(export_count_per_year, aes(x = as.factor(Year), y = export_count, fill = 
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1)
   )
+
+# Convert ggplot to plotly
+exports_plotly <- ggplotly(exports_barplot, tooltip = "text")
+
+# Display the interactive plot
+exports_plotly
 ```
 
-```{r}
+## IVORY CARVINGS
 
+```{r warning = FALSE,message=FALSE}
 
+ivory_term_count <- ivory_exports_data |>
+  group_by(Year,Term) |>
+  summarise(instance_count = n())
+
+ivory_term_count |>
+  ggplot(aes( y = Term, size = instance_count)) +
+  geom_bar(alpha = 0.7) +
+  scale_size(range = c(1.4, 10), name = "Population (M)") +
+  #scale_color_viridis(discrete = TRUE, guide = FALSE) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(
+    x = "Count",
+    y = "Export Type",
+    title = "Type of ivory export",
+    caption = "Source: CITES (Convention of International Trade 
+    in Endangered Species of Wild Fauna and Flora)"
+  )
 ```
