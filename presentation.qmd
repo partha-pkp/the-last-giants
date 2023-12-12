@@ -3,6 +3,7 @@ title: "The Last Giants"
 subtitle: "A data-driven safari into the savannah"
 author: "Visual Virtuosos"
 title-slide-attributes:
+  data-background-image: images/bg.jpeg
   data-background-size: stretch
   data-background-opacity: "0.7"
   data-slide-number: none
@@ -10,6 +11,9 @@ format:
   revealjs:
     embed-resources: true
     theme: simple
+    transition: convex
+    background-transition: fade
+    slide-number: true
   
 editor: visual
 execute:
@@ -22,11 +26,26 @@ if (!require("pacman"))
   install.packages("pacman")
 
 
-pacman::p_load(knitr,tidyverse,lubridate,here,dplyr,ggplot2,ggmap,maps,rnaturalearth,rnaturalearthdata,sf,plotly,caret,glmnet,viridis,rcartocolor,forcats,tidymodels)
+pacman::p_load(knitr,
+               tidyverse,
+               lubridate,
+               here,
+               dplyr,
+               ggplot2,
+               ggmap,
+               maps,
+               rnaturalearth,
+               rnaturalearthdata,
+               sf,
+               plotly,
+               caret,
+               glmnet,
+               viridis,
+               rcartocolor,
+               forcats,
+               tidymodels)
 
 ```
-
-
 
 ```{r}
 
@@ -39,15 +58,13 @@ elephant <- readxl::read_xlsx(here("data","elephant_data.xlsx"))
 
 -   Chase, M. J., Schlossberg, S., Griffin, C. R., Bouché, P. J., Djene, S. W., Elkan, P. W., Ferreira, S., Grossman, F., Kohi, E. M., Landen, K., Omondi, P., Peltier, A., Selier, S. A., & Sutcliffe, R. (2016). Continent-wide survey reveals massive decline in African savannah elephants. PeerJ, 4, e2354. [doi:10.7717/peerj.2354](https://doi.org/10.7717/peerj.2354)
 
--   [Convention on International Trade in Endangered Species
-of Wild Fauna and Flora](https://trade.cites.org)
+-   [Convention on International Trade in Endangered Species of Wild Fauna and Flora](https://trade.cites.org)
 
 # The 3D perspective
 
 ## The 3D plot {background-video="images/filename_movie3.mp4" background-video-loop="true" background-video-muted="true"}
 
 # How has elephant population varied over the years in Africa?
-
 
 ## The Trend
 
@@ -122,14 +139,10 @@ population_trend
 
 ```
 
-
-
-
 ## The Trend (Continued...)
 
 ::: columns
 ::: {.column width="80%"}
-
 ```{r, fig.width=9}
 
 # Combining both the actual and predicted data using rowbind
@@ -157,25 +170,18 @@ combined_prediction_plot
 ```
 :::
 
-::: {style="font-size: 0.68"}
-
-|Model|RMSE|
-|-----|----|
-|OLS|312.46|
-|Poly Regression|326.09|
-|Random Forest|333.23|
-
+::: {.column width="20%"}
+| Model           | RMSE   |
+|-----------------|--------|
+| OLS             | 312.46 |
+| Poly Regression | 326.09 |
+| Random Forest   | 333.23 |
 :::
-
 :::
-
-
-
 
 # What is the trend of ivory trade in Africa?
 
 ## The ivory trade
-
 
 ```{r}
 
@@ -196,6 +202,7 @@ export_count_per_year <- export_count_per_year |>
 
 #glimpse(export_count_per_year)
 ```
+
 
 ```{r}
 # Plotting the Ivory exports between 1990 to 2022
@@ -258,6 +265,7 @@ carvings_plotly <- ggplotly(carving_ggplot, tooltip = "text")
 carvings_plotly
 ```
 
+
 ## The ivory trade (continued...)
 
 ```{r}
@@ -297,9 +305,21 @@ gg_export_countries_plotly <- ggplotly(gg_export_countries, tooltip = "text")
 gg_export_countries_plotly
 ```
 
+## The ivory trade (continued...)
 
 
 
+::: {#fig-elephants layout-ncol="3"}
+![](images/i_Jwellery.jpeg){width="150%"}
 
-# Thanks
+![](images/i_Pieces.jpeg){width="150%"}
 
+![](images/Carving.jpeg){width="150%"}
+
+Ivory Products
+
+:::
+
+# Wrapping Up
+
+## ![](images/last.png){width="150%"}
