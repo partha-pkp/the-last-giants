@@ -1,15 +1,15 @@
 ---
-title: "Project title"
-subtitle: "INFO 526 - Fall 2023 - Project Final"
-author: "Author names"
+title: "The Last Giants"
+subtitle: "A data-driven safari into the savannah"
+author: "Visual Virtuosos"
 title-slide-attributes:
-  data-background-image: images/watercolour_sys02_img34_teacup-ocean.jpg
   data-background-size: stretch
   data-background-opacity: "0.7"
   data-slide-number: none
 format:
   revealjs:
-    theme:  ['data/customtheming.scss']
+    embed-resources: true
+    theme: simple
   
 editor: visual
 execute:
@@ -17,149 +17,287 @@ execute:
 ---
 
 ```{r}
-#| label: load-packages
-#| include: false
 
-# Load packages here
-pacman::p_load(tidymodels,
-               tidyverse)
+if (!require("pacman")) 
+  install.packages("pacman")
+
+
+pacman::p_load(knitr,tidyverse,lubridate,here,dplyr,ggplot2,ggmap,maps,rnaturalearth,rnaturalearthdata,sf,plotly,caret,glmnet,viridis,rcartocolor,forcats,tidymodels)
 
 ```
+
+
 
 ```{r}
-#| label: setup
-#| include: false
 
-# Plot theme
-ggplot2::theme_set(ggplot2::theme_minimal(base_size = 11))
-
-# For better figure resolution
-knitr::opts_chunk$set(
-  fig.retina = 3, 
-  dpi = 300, 
-  fig.width = 6, 
-  fig.asp = 0.618 
-  )
+elephant <- readxl::read_xlsx(here("data","elephant_data.xlsx"))
 ```
 
-```{r}
-#| label: load-data
-#| include: false
-# Load data here
-data(mtcars)
-mtcars$speed <- mtcars$hp / mtcars$wt
+# The Data
 
-data("penguins")
-```
-
-# Using Quarto for presentations
-
-## Quarto
+## The Data source
 
 -   The presentation is created using the Quarto CLI
 
 -   `##` sets the start of a new slide
 
-## Layouts
+# The 3D perspective
 
-You can use plain text
+## The 3D plot {background-video="images/filename_movie3.mp4" background-video-loop="true" background-video-muted="true"}
 
-::: columns
-::: {.column width="40%"}
--   or bullet points[^1]
-:::
+# How has elephant population varied over the years in Africa?
 
-::: {.column width="60%"}
-or in two columns
-:::
-:::
 
-[^1]: And add footnotes
-
--   like
-
--   this
-
-## Code
-
-```{r, echo=FALSE}
-model <- lm(mpg ~ speed, data = mtcars) 
-
-model |> tidy()
-
-model |> glance()
-
-```
-
-## Plots
+## The Trend
 
 ```{r}
-penguins |>
-  mutate(species = ifelse(species == "Adelie", "Adelie", "Other")) |>
-  ggplot(aes(x = flipper_length_mm, y = body_mass_g, color = species)) +
-  geom_point()
+
+total_estimate_per_year <- elephant |>
+  group_by(Year) |>
+  summarise(Population = sum(Estimate))
+
+total_estimate_per_year <- total_estimate_per_year |>
+  filter(Year != 2015)
+
+# Fitting a linear regression model
+lm_model <- lm(Estimate ~ Year, data = elephant)
+
+# Defining a recipe
+ols_recipe <- recipe(Population ~ Year, data = total_estimate_per_year) |>
+  step_center(Year, all_predictors()) |>
+  step_scale(Year, all_predictors())
+
+# Defining the linear regression model
+ols_model <- linear_reg() |>
+  set_engine("lm")
+
+# Combining recipe and model into a workflow
+ols_workflow <- workflow() |>
+  add_recipe(ols_recipe) |>
+  add_model(ols_model)
+
+# Training the OLS model
+ols_fit <- ols_workflow |>
+  fit(data = total_estimate_per_year)
+
+# Creating a new data frame for prediction (between years 2015-2023)
+new_years <- data.frame(Year = 2015:2023)
+
+# Making predictions using the trained OLS model
+ols_predictions <- predict(ols_fit, new_data = new_years)
+
+# Combining the new years and predictions
+ols_predictions_data <- data.frame(Year = new_years$Year, Population = ols_predictions$.pred)
+
+# Specify the training control
+train_control <- trainControl(method = "cv", number = 5)
+
+# Train the OLS model using cross-validation
+ols_model <- train(Population ~ Year, data = total_estimate_per_year, method = "lm", trControl = train_control)
+
+# Plotting the estimated of elephant population between 1995 to 2014
+p <- ggplot(total_estimate_per_year, aes(x = Year, y = Population, group = 1)) +
+  geom_line(aes(color = ifelse(Year <= 2014, "Blue", "Red"))) +
+  stat_smooth(method = "loess", se = FALSE) +
+  ggtitle("Combined Data: Estimate Over Time") +
+  xlab("Year") +
+  ylab("Estimate") +
+  scale_y_continuous(limits = c(0, 500000), expand = c(0, 0), labels = comma_format(scale = 1e-3)) +
+  scale_color_manual(values = c("black", "red3"), guide = FALSE) +
+  labs(
+    x = "Year",
+    y = "Estimate (in Thousands)",
+    title = "Trend in Elephant Population from 1995-2015",
+    caption = "Source: PeerJ PeerJ Article
+doi: 10.7717/peerj.2354 "
+  ) +
+  theme_classic()
+
+# Convert ggplot to plotly
+population_trend <- ggplotly(p)
+
+population_trend
 ```
 
-## Plot and text
+
+
+
+## The Trend (Continued...)
 
 ::: columns
-::: {.column width="50%"}
--   Some text
-
--   goes here
-:::
-
-::: {.column width="50%"}
-```{r, warning=FALSE, fig.width=5.5}
-penguins |>
-  ggplot(aes(x = bill_length_mm, y = species, color = species)) +
-  geom_boxplot(linewidth = 0.75,
-               outlier.size = 2.5) +
-  theme_minimal(base_size = 15) +
-  theme(legend.key.size = unit(0.8, "cm"))
-```
-:::
-:::
-
-# A new section...
-
-## Tables
-
-If you want to generate a table, make sure it is in the HTML format (instead of Markdown or other formats), e.g.,
+::: {.column width="70%"}
 
 ```{r}
-penguins |> 
-  head() |>
-  kableExtra::kable() |>
-  kableExtra::kable_styling()
+
+#| fig-alt: Visualization of overall elephant population estimate between 1995-2023
+
+# Combining both the actual and predicted data using rowbind
+combined_data <- rbind(total_estimate_per_year, ols_predictions_data)
+
+# Plotting all the estimates of elephant population between 1995-2023
+combined_prediction <- ggplot(combined_data, aes(x = Year, y = Population, group = 1)) +
+  geom_line(aes(color = ifelse(Year <= 2014, "Population Trend", "Prediction"))) +
+  stat_smooth(method = "loess", se = FALSE) +
+  scale_y_continuous(limits = c(0, 500000), expand = c(0, 0), labels = scales::comma_format(scale = 1e-3)) +
+  scale_color_manual(values = c("Population Trend" = "black", "Prediction" = "red3"), guide = FALSE) +
+  labs(
+    x = "Year",
+    y = "Estimate (in Thousands)",
+    title = "Trend in Elephant Population from 1995-2014",
+    caption = "Source: PeerJ PeerJ Article doi: 10.7717/peerj.2354 ",
+  ) +
+  theme_classic()
+
+# Convert ggplot to plotly
+combined_prediction_plot <- ggplotly(combined_prediction, tooltip = c("Year", "y"))
+
+combined_prediction_plot
+```
+:::
+
+::: {.column width="30%"}
+
+|Model|RMSE|
+|-----|----|
+|1|a|
+|1|a|
+|1|a|
+:::
+
+:::
+
+
+
+
+# What is the trend of ivory trade in Africa?
+
+## The ivory trade
+
+
+```{r}
+
+# Loading ivory data
+ivory_exports_data <- read_csv(here("data","cites_ivory_export.csv"))
 ```
 
-## Images
+```{r}
 
-![Image credit: Danielle Navarro, Percolate.](images/watercolour_sys02_img34_teacup-ocean.png){fig-align="center" width="500"}
+# Counting the number of instances for each year
+export_count_per_year <- ivory_exports_data |>
+  group_by(Year) |>
+  summarise(export_count = n())
 
-## Math Expressions {.smaller}
+# Assuming `count_per_year` is your dataset
+export_count_per_year <- export_count_per_year |>
+  filter(Year > 1994)
 
-You can write LaTeX math expressions inside a pair of dollar signs, e.g. \$\\alpha+\\beta\$ renders $\alpha + \beta$. You can use the display style with double dollar signs:
-
-```         
-$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$
+#glimpse(export_count_per_year)
 ```
 
-$$
-\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i
-$$
+```{r}
+#| fig-alt: Visualization of Ivory exports in Africa from 1990 to 2022
 
-Limitations:
+# Plotting the Ivory exports between 1990 to 2022
+exports_barplot <- ggplot(export_count_per_year, aes(x = as.factor(Year), y = export_count, fill = as.factor(Year), text = paste("Export count: ", export_count))) +
+  geom_bar(stat = "identity", color = "black") +
+  scale_fill_viridis_d(option = "C") +
+  labs(
+    x = "Year",
+    y = "Number of exports",
+    title = "Ivory exports in Africa from 2000 to 2022",
+    caption = "Source: CITES (Convention of International Trade in Endangered Species of Wild Fauna and Flora)"
+  ) +
+  guides(fill = FALSE) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
 
-1.  The source code of a LaTeX math expression must be in one line, unless it is inside a pair of double dollar signs, in which case the starting `$$` must appear in the very beginning of a line, followed immediately by a non-space character, and the ending `$$` must be at the end of a line, led by a non-space character;
+# Convert ggplot to plotly
+exports_plotly <- ggplotly(exports_barplot, tooltip = "text")
 
-2.  There should not be spaces after the opening `$` or before the closing `$`.
+# Display the interactive plot
+exports_plotly
+```
 
-# Wrap up
 
-## Feeling adventurous?
+## The ivory trade (continued...)
 
--   You are welcomed to use the default styling of the slides. In fact, that's what I expect majority of you will do. You will differentiate yourself with the content of your presentation.
 
--   But some of you might want to play around with slide styling. Some solutions for this can be found at https://quarto.org/docs/presentations/revealjs.
+```{r warning = FALSE,message=FALSE}
+#| fig-alt: Visualizing the Type of Ivory exports in Africa
+
+ivory_term_count <- ivory_exports_data |>
+  group_by(Year,Term) |>
+  summarise(instance_count = n()) |>
+  ungroup()
+
+ivory_term_count <- ivory_term_count |>
+  mutate(Term = fct_reorder(Term, instance_count, .desc = TRUE))
+
+carving_ggplot <- ivory_term_count |>
+  ggplot(aes( y = fct_rev(Term), size = instance_count, fill = Term)) +
+  geom_bar(alpha = 0.7, color = "black") +
+  scale_size(range = c(1.4, 10), name = "Population (M)") +
+  scale_fill_carto_d(palette = "Safe") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(
+    x = "Count",
+    y = "Export Type",
+    title = "Type of ivory export",
+    caption = "Source: CITES (Convention of International Trade 
+    in Endangered Species of Wild Fauna and Flora)"
+  )
+
+# converting ggplot to plotly
+carvings_plotly <- ggplotly(carving_ggplot, tooltip = "text")
+
+# display the interactive plot
+carvings_plotly
+```
+
+## The ivory trade (continued...)
+
+```{r}
+
+# Extracing data from ivory_exports dataset
+country_export_count <- ivory_exports_data %>%
+  filter(Exporter %in% c("ZW", "ZM", "ZA", "BW", "MZ")) %>%
+  group_by(Exporter) %>%
+  summarise(count = n()) %>%
+  mutate(Country = case_when(
+    Exporter == "ZW" ~ "Zimbabwe",
+    Exporter == "ZM" ~ "Zambia",
+    Exporter == "ZA" ~ "South Africa",
+    Exporter == "BW" ~ "Botswana",
+    Exporter == "MZ" ~ "Mozambique",
+    TRUE ~ as.character(Exporter)
+  ))
+
+africa <- ne_countries(scale = "medium", continent = "Africa", returnclass = "sf")
+
+export_country_map <- merge(africa, country_export_count, by.x = "name", by.y = "Country")
+
+# Create a ggplot map
+gg_export_countries <- ggplot() +
+  geom_sf(data = africa, fill = "white") +
+  geom_sf(data = export_country_map, aes(fill = count, text = paste("Country: ", country_export_count$Country,"<br>",
+                                                                    "Export count: ",count )), color = "#5D2606", size = 0.2) +
+  scale_fill_gradient(low = "#F2A64F", high = "#B61210") +
+  theme_void() +
+  labs(title = "Ivory exports from 1995 to 2022 for biggest Elephant ecosystems")
+
+# Convert ggplot to plotly
+gg_export_countries_plotly <- ggplotly(gg_export_countries, tooltip = "text")
+
+# Show the Plotly map
+gg_export_countries_plotly
+```
+
+
+
+
+
+# Thanks
+

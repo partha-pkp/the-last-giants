@@ -1,8 +1,5 @@
 ```{r}
 
-
-pacman::p_load(knitr,tidyverse,lubridate,here,dplyr,ggplot2,ggmap,maps,rnaturalearth,rnaturalearthdata,sf,plotly,caret,glmnet,viridis,rcartocolor,forcats,tidymodels)
-
 total_estimate_per_year <- elephant |>
   group_by(Year) |>
   summarise(Population = sum(Estimate))
@@ -97,6 +94,4 @@ combined_prediction_plot <- ggplotly(combined_prediction, tooltip = c("Year", "y
 combined_prediction_plot
 ```
 
-\
 
-\

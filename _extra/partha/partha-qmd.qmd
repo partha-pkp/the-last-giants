@@ -461,7 +461,7 @@ eco2 <- merge(africa, eco, by.x = "name", by.y = "col1")
 
 
 #africa
-gg_map <- ggplot() +
+map <- ggplot() +
   geom_sf(data = africa) +
   geom_sf(data= eco2, aes(fill = col3), color = "white", linewidth = 0.5)+
   theme_void()+
@@ -471,7 +471,9 @@ gg_map <- ggplot() +
       colour = "white"
     ))
 
-gg_map
+gg_map <- map + guides(fill=guide_legend(title=bquote('Area'~(km^2))))
+
+#gg_map
 
 map3d <- plot_gg(gg_map,
                  width=5,
@@ -485,47 +487,75 @@ map3d <- plot_gg(gg_map,
                  invert = FALSE
 )
 
-zambia_coords <- c(x = 200, y = 520, z = 50)
-rgl::text3d(x = zambia_coords[1], y = zambia_coords[2], z = zambia_coords[3], 
+Tanzania_coords <- c(x = 200, y = 520, z = 50)
+rgl::text3d(x = Tanzania_coords[1], y = Tanzania_coords[2], z = Tanzania_coords[3],
             text = "Tanzania", col = "black", cex = 0.9)
 
-rgl::lines3d(c(200, 200, 200), 
+rgl::lines3d(c(200, 200, 200),
              c(50, 100, 500),
-             c(50, 50, 50), 
+             c(50, 50, 50),
+             col = "black")
+
+
+
+Botswana_coords <- c(x = 50, y = 420, z = 250)
+rgl::text3d(x = Botswana_coords[1], y = Botswana_coords[2], z = Botswana_coords[3],
+            text = "Botswana", col = "black", cex = 0.9)
+
+rgl::lines3d(c(50, 50, 50),
+             c(50, 100, 400),
+             c(250, 250, 250),
+             col = "black")
+
+
+Mozam_coords <- c(x = 220, y = 320, z = 190)
+rgl::text3d(x = Mozam_coords[1], y = Mozam_coords[2], z = Mozam_coords[3],
+            text = "Mozambique", col = "black", cex = 0.9)
+
+rgl::lines3d(c(220, 220, 220),
+             c(50, 100, 300),
+             c(190, 190, 190),
+             col = "black")
+
+
+kenya_coords <- c(x = 250, y = 270, z = -90)
+rgl::text3d(x = kenya_coords[1], y = kenya_coords[2], z = kenya_coords[3],
+            text = "Kenya", col = "black", cex = 0.9)
+
+rgl::lines3d(c(250, 250, 250),
+             c(50, 100, 250),
+             c(-90, -90, -90),
+             col = "black")
+
+
+
+
+zambia_coords <- c(x = 50, y = 220, z = 150)
+rgl::text3d(x = zambia_coords[1], y = zambia_coords[2], z = zambia_coords[3],
+            text = "Zambia", col = "black", cex = 0.9)
+
+rgl::lines3d(c(50, 50, 50),
+             c(50, 100, 200),
+             c(150, 150, 150),
              col = "black")
 
 
 # Reference lines
 
-rgl::lines3d(c(50, 50, 50), 
-             c(50, 100, 500),
-             c(50, 50, 50), 
-             col = "red")
-
-rgl::lines3d(c(100, 100, 100), 
-             c(50, 100, 500),
-             c(50, 50, 50), 
-             col = "darkgreen")
-
-
+# rgl::lines3d(c(50, 50, 50),
+#              c(50, 100, 500),
+#              c(50, 50, 50),
+#              col = "red")
+# 
+# rgl::lines3d(c(100, 100, 100),
+#              c(50, 100, 500),
+#              c(50, 50, 50),
+#              col = "darkgreen")
 
 
-# render_label(map3d, text = "Origin", x = 0, y = 0, z = 400)
-# render_label(map3d, text = "Angola", x = 800, y = 900, z = 400)
-# render_label(map3d, text = "Botswana", x = 920, y = 1050, z = 400)
-# render_label(map3d, text = "Cameroon", x = 750, y = 600, z = 400)
-# render_label(map3d, text = "Congo", x = 800, y = 680, z = 400)
-# render_label(map3d, text = "Mali", x = 520, y = 420, z = 400)
-# render_label(map3d, text = "Chad", x = 820, y = 430, z = 400)
-# render_label(map3d, text = "South Africa", x = 920, y = 1150, z = 400)
-# render_label(map3d, text = "Zambia", x = 950, y = 900, z = 400)
-# render_label(map3d, text = "Zimbabwe", x = 1030, y = 980, z = 400)
-# render_label(map3d, text = "Malawi", x = 1090, y = 900, z = 400)
-# render_label(map3d, text = "Mozambique", x = 1150, y = 920, z = 400)
-# render_label(map3d, text = "Tanzania", x = 1090, y = 750, z = 400)
-# render_label(map3d, text = "Kenya", x = 1150, y = 680, z = 400)
-# render_label(map3d, text = "Uganda", x = 1060, y = 650, z = 400)
-# render_camera(theta = -90, phi = 30,zoom = 0.5,fov = 130)
+# render_movie(filename = "filename_movie3.mp4", type = "orbit", 
+#              frames = 360,  phi = 35, zoom = 0.8, theta = -90)
 
-# rgl::rglwidget()
+
+rgl::rglwidget()
 ```
