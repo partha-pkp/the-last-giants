@@ -38,7 +38,7 @@ The research paper titled ["Continent-wide Survey: Massive Decline in African Sa
 This dataset contains a wealth of data points and variables that provide insights into various aspects of elephant populations, including their distribution across different regions of Africa, demographic information such as the ecosystem of the elephants. The dimensions of the dataset are 322 rows and 7 columns. The variables in the dataset and their description is presented as follows.
 
 | Column    | Data Type   | Description                                                                                                                                                                     |
-|-----------|-------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|-------------|-------------|----------------------------------------------|
 | Country   | `character` | Name of the country                                                                                                                                                             |
 | Ecosystem | `character` | Name of the ecosystem as used in the manuscript and supplemental material.                                                                                                      |
 | Stratum   | `character` | Where the stratum name is the same as the ecosystem name, this indicates that the entire ecosytsem was the study area for the historical data. See Figure S7 for map of strata. |
@@ -71,7 +71,7 @@ Q2. What is the trend of ivory trade in Africa?
 
 ## Question 1
 
-The present dataset contains the data from 1995-2014. However, this data can be used to further predict the population of the elephants for the period 2015-2023. Hence, it is one of the important stages to predict the elephant population data from 2015-2023.
+The present dataset contains the data from 1995-2015. However, this data can be used to further predict the population of the elephants for the period 2016-2023. Hence, it is one of the important stages to predict the elephant population data from 2016-2023.
 
 In the question, "How has elephant population varied over the years across several African countries?", we are interested in understanding the distribution of the elephants. The important variables to be considered here are `country`, `estimate` and `year`. This task involves a well-structured analysis plan as presented below.
 
@@ -87,7 +87,7 @@ In the question, "How has elephant population varied over the years across sever
 
 -   Data prediction:
 
-    -   Predict the data from 2015-2023 using multiple regression techniques like Ordinary Least squares, Polynomial regression, Lasso regression, Elastic net regression.
+    -   Predict the data from 2016-2023 using multiple regression techniques like Ordinary Least squares, Polynomial regression, Lasso regression, Elastic net regression.
 
 -   Model Evaluation:
 
@@ -133,13 +133,13 @@ To address the question "What is the trend of ivory trade in Africa?", the follo
 # Plan of Attack
 
 |             Week             |                                     Weekly Tasks                                     | Team members involved |
-|:----------------------------:|:------------------------------------------------------------------------------------:|:---------------------:|
+|:---------------:|:------------------------------------:|:---------------:|
 |     Till November 8^th^      |             Explore and finalize the dataset and the problem statements              |       Everyone        |
 |              \-              |                Complete the proposal and assign some high-level tasks                |       Everyone        |
 |     Nov. 9^th^ - 15^th^      | Understanding `rnaturalearth`, `sf` and `plotly` packages along with geospatial data |       Everyone        |
-|              \-              |                                 Data Pre processing                                  |   Harshit, Jyotish    |
+|              \-              |                                 Data Pre processing                                  |   Harshit, Jothish    |
 |     Nov. 16^th^ - 22^nd^     |                         Data prediction and Model Evaluation                         |    Kashyap, Partha    |
-|     Nov. 23^rd^ - 29^th^     |                                  Data visualisation                                  |   Kashyap, Jyotish    |
+|     Nov. 23^rd^ - 29^th^     |                                  Data visualisation                                  |   Kashyap, Jothish    |
 |              \-              |                                Shiny app development                                 |    Harshit, Partha    |
 | Nov. 30^th^ - December 6^th^ |                                   Review the code                                    |       Everyone        |
 |     Dec. 7^th^ - 13^th^      |                      Write-up and presentation for the project                       |       Everyone        |
