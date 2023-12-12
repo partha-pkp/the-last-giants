@@ -218,6 +218,10 @@ The illegal trade of ivory has remained a critical concern, posing significant t
 
 ### Approach
 
+We are going to conducts an analysis of ivory trade in Africa based on data from CITES. We read and processe the data-set to count the number of ivory exports per year from 1990 to 2022. It then visualizes this information using a bar plot, showcasing the trend of ivory exports over time. Additionally, it explores the types of ivory exports, displaying their counts through a bar plot. These visualizations enable the observation of trends in ivory trade, showcasing changes in export volumes over the years and providing insights into the types of ivory being traded.
+
+The trend of ivory trade in Africa, as depicted by the analysis, showcases the fluctuation in export counts over the years from 1990 to 2022. It allows for a visual understanding of the general trajectory of ivory exports, indicating whether they have increased, decreased, or remained relatively stable over this period. Additionally, the analysis dives into the types of ivory exports, offering insights into the diversity or dominance of specific types in the trade, which contributes to understanding the overall trend of ivory trade in Africa.
+
 ## Plots
 
 ```{r}
