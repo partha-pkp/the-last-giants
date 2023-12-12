@@ -22,7 +22,7 @@ African elephants face severe threats from poaching and the loss of their natura
 
 A continent-wide survey conducted by the **`National Library of Medicine`** revealed a stark decline in African Savannah Elephants. Africa may have held over 20 million elephants before European colonization and 1 million as recently as the 1970s. The survey estimated a population of 352,271 savannah elephants across study sites in 18 countries, representing approximately 93% of all savannah elephants in those areas. Alarmingly, regions with historical data indicated a significant decline, estimating a decrease of 144,000 elephants between 2007 and 2014. Moreover, current data suggests a continent-wide decline of 8% per year in elephant populations, primarily attributed to poaching. During the 1970s and 1980s, a surge in poaching significantly reduced elephant populations in numerous regions. Moreover, a resurgence of poaching incidents since approximately 2005 has resulted in an alarming annual death toll, estimated at around 30,000 elephants recently.
 
-This project aims to examine how elephant populations across Africa changed between 1995 and 2014. It involves using graphs and maps to show how the number of elephants varied over these years. To understand what might happen in the future, the project will use different mathematical methods to guess how many elephants there might be from 2015 to 2023.
+This project aims to examine how elephant populations across Africa changed between 1995 and 2014. It involves using graphs and maps to show how the number of elephants varied over these years. To understand what might happen in the future, the project will use OLS regression mathematical method to guess how many elephants there might be from 2015 to 2023.
 
 Moreover, this study will also look into whether there's a connection between how many elephants there are and the trade of ivory. By comparing data about how many elephants there are with information about ivory trade, the project will try to find out if ivory trade affects the number of elephants.
 
@@ -48,14 +48,13 @@ The dataset under examination spans from 1995 to 2014, presenting a valuable opp
 
 ### Approach
 
-We are going to make a code which serves as a robust approach for visualizing and analyzing the fluctuation in elephant population estimates across multiple years within several African countries. Using libraries such as `ggplot2` and `plotly`, this methodology aggregates and processes elephant population data, offering a comprehensive depiction of population trends. We are going to initially read and preprocess the data-set, grouping data by year and summing up estimates, subsequently training an Ordinary Least Squares (OLS) regression model to predict population estimates for future years. Through visualization, we will make interactive plots, showcasing the historical trends of elephant populations from 1995 to 2015, while also projecting estimates for subsequent years i.e. from 2015 to 2023. The plots illustrate the trajectory of elephant population estimates, distinguishing between actual data and predicted values. By merging actual and forecasted population data, the code encapsulates a holistic view, enabling the viewer to comprehend the variations and potential trajectories of elephant populations across different African countries over time. These visualizations serve as an invaluable tool for understanding the historical trends and potential projections of elephant population changes, facilitating comprehensive insights into the population dynamics across various African regions.
+We are going to make a code which serves as a robust approach for visualizing and analyzing the fluctuation in elephant population estimates across multiple years within several African countries. Using libraries such as `ggplot2` and `plotly`, this methodology aggregates and processes elephant population data, offering a comprehensive depiction of population trends. We are going to initially read and preprocess the data-set, grouping data by year and summing up estimates, subsequently training an Ordinary Least Squares (OLS) regression model to predict population estimates for future years. Through visualization, we will make interactive plots, showcasing the historical trends of elephant populations from 1995 to 2014, while also projecting estimates for subsequent years i.e. from 2015 to 2023. The plots illustrate the trajectory of elephant population estimates, distinguishing between actual data and predicted values. By merging actual and forecasted population data, the code encapsulates a holistic view, enabling the viewer to comprehend the variations and potential trajectories of elephant populations across different African countries over time. These visualizations serve as an invaluable tool for understanding the historical trends and potential projections of elephant population changes, facilitating comprehensive insights into the population dynamics across various African regions.
 
 ### Analysis
 
-## CODE
+### CODE
 
 ```{r}
-
 elephant <- readxl::read_xlsx(here("data","elephant_data.xlsx"))
 ```
 
@@ -206,30 +205,13 @@ combined_prediction_plot
 
 ```
 
-```{r}
+### Discussion
 
-# Combining both the actual and predicted datas using rowbind
-combined_data <- rbind(total_estimate_per_year, ols_predictions_data)
+The line plot depicting the population estimates from 1995 to 2014 reveals annual variations in savannah elephant trends. Utilizing the loess method with geom_smooth, a continuous trend highlights a gradual increase from 1995 until approximately 2003. However, a notable decline follows from 2004, attributed to increased poaching, persisting until 2008. Subsequently, concerted conservation efforts result in a positive trend, aligning with findings in the research paper, indicating the effectiveness of our plot optimization.
 
-# Plotting all the estimates of elephant population between 1995-2023
-combined_prediction <- ggplot(combined_data, aes(x = Year, y = Population, group = 1)) +
-  geom_line(aes(color = ifelse(Year <= 2014, "Population Trend", "Prediction"))) +
-  stat_smooth(method = "loess", se = FALSE) +
-  scale_y_continuous(limits = c(0, 500000), expand = c(0, 0), labels = comma_format(scale = 1e-3)) +
-  scale_color_manual(values = c("Population Trend" = "black", "Prediction" = "red3"), guide = FALSE) +
-  labs(
-    x = "Year",
-    y = "Estimate (in Thousands)",
-    title = "Trend in Elephant Population from 1995-2014",
-    caption = "Source: PeerJ PeerJ Article doi: 10.7717/peerj.2354 ",
-  ) +
-  theme_minimal()
+Conversely, the line plot illustrating predicted population estimates from the OLS regression method demonstrates a consistent, albeit slight, growth in African elephant populations. This prediction strongly relies on previous year estimates, influencing the gradual upward trend observed.
 
-# Convert ggplot to plotly
-combined_prediction_plot <- ggplotly(combined_prediction)
-
-combined_prediction_plot
-```
+The combined plot merges estimate data from 1995 to 2014 with predicted data from 2015 to 2023, displaying an overall trend. The population of elephants exhibits a slow, continuous growth, reflecting conservation efforts aimed at their protection. This cumulative trend is visibly depicted by the geom_smooth line, signifying sustained progress in safeguarding elephant populations.
 
 ## Question 2:- What is the trend of ivory trade in Africa?
 
