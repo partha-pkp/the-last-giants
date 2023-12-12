@@ -12,6 +12,7 @@ if (!require("pacman"))
   install.packages("pacman")
 
 pacman::p_load(knitr,tidyverse,lubridate,here,dplyr,ggplot2,ggmap,maps,rnaturalearth,rnaturalearthdata,sf,plotly,caret,glmnet,viridis)
+library(rcartocolor)
 ```
 
 ## Abstract
@@ -80,6 +81,7 @@ gg <- ggplot(export_count_per_year, aes(x = as.factor(Year), y = export_count)) 
     title = "Ivory exports in Africa from 1990 to 2022",
     caption = "Source: CITES (Convention of International Trade in Endangered Species of Wild Fauna and Flora)"
   ) +
+  scale_fill_carto_c(palette = "Safe") +
   theme_minimal()
 
 # Convert ggplot to plotly
