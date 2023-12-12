@@ -6,6 +6,14 @@ format: html
 editor: visual
 ---
 
+```{r}
+
+if (!require("pacman")) 
+  install.packages("pacman")
+
+pacman::p_load(knitr,tidyverse,lubridate,here,dplyr,ggplot2,ggmap,maps,rnaturalearth,rnaturalearthdata,sf,plotly,caret,glmnet,steamgraph)
+```
+
 ## Abstract
 
 African elephants face severe threats from poaching and the loss of their natural habitats. Despite global attention towards their conservation, there is considerable uncertainty surrounding the population sizes and trends of elephants across much of Africa. Timely and accurate data on elephant populations is crucial for effective conservation efforts.
@@ -120,4 +128,35 @@ The illegal trade of ivory has remained a critical concern, posing significant t
 
 -   Shiny App development
 
-    -   
+## Plots
+
+```{r}
+
+ivory_exports_data <- read_csv(here("data","cites_ivory_export.csv"))
+```
+
+```{r}
+
+# Count the number of instances for each year
+export_count_per_year <- ivory_exports_data |>
+  group_by(Year) |>
+  summarise(export_count = n())
+
+# Assuming `count_per_year` is your dataset
+export_count_per_year <- export_count_per_year |>
+  filter(Year > 2000)
+
+export_count_per_year
+
+# Create a bar plot
+ggplot(export_count_per_year, aes(x = as.factor(Year), y = export_count)) +
+  geom_bar(stat = "identity", fill = "grey", color = "black") +
+  labs(
+    x = "Year",
+    y = "Number of exports",
+    title = "Ivory exports in Africa from 1990 to 2022",
+    caption = "Source: CITES (Convention of International Trade 
+    in Endangered Species of Wild Fauna and Flora)"
+  ) +
+  theme_minimal()
+```

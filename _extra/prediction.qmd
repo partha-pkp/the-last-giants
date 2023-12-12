@@ -342,7 +342,7 @@ ggplot(combined_data, aes(x = Year, y = Total_Estimate, group = 1)) +
 # Create a line plot with different colors for different time periods
 ggplot(combined_data, aes(x = Year, y = Total_Estimate, group = 1)) +
   geom_line(aes(color = ifelse(Year <= 2014, "Blue", "Red"))) +
-    stat_smooth(method = "loess", se = FALSE) +  # Add this line for smoothing
+  stat_smooth(method = "loess", se = FALSE) +  # Add this line for smoothing
   ggtitle("Combined Data: Estimate Over Time") +
   xlab("Year") +
   ylab("Estimate") +

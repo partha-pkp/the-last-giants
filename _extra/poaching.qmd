@@ -75,7 +75,7 @@ bubble_plot <- bubble_plot_data %>%
   labs(
     x = "Year",
     y = "Export count",
-    title = "Number of Ivory exports in Africa from 1990 to 2022"
+    title = "Ivory exports in Africa from 1990 to 2022"
   )
 
 # Turn ggplot interactive with plotly
@@ -99,8 +99,16 @@ ivory_term_count <- ivory_exports_data |>
 streamgraph_plot <- streamgraph(ivory_term_count, key = "Term", value = "instance_count", date = "Year", height = "300px", width = "1000px")
 
 streamgraph_plot
-
 ```
+
+```{r}
+
+ivory_term_count |>
+  ggplot(aes(x = Term,y = Year,color = Term)) +
+  geom_boxplot()
+```
+
+a
 
 ```{r}
 
