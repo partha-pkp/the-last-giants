@@ -245,7 +245,7 @@ glimpse(export_count_per_year)
 ```
 
 ```{r}
-#| fig-alt: Visualization of Ivory exports in Africa from 1990 to 2022
+#| fig-alt: Visualization of Ivory exports in Africa from 1995 to 2022
 
 # Plotting the Ivory exports between 1990 to 2022
 exports_barplot <- ggplot(export_count_per_year, aes(x = as.factor(Year), y = export_count, fill = as.factor(Year), text = paste("Export count: ", export_count))) +
@@ -254,7 +254,7 @@ exports_barplot <- ggplot(export_count_per_year, aes(x = as.factor(Year), y = ex
   labs(
     x = "Year",
     y = "Number of exports",
-    title = "Ivory exports in Africa from 2000 to 2022",
+    title = "Ivory exports in Africa from 1995 to 2022",
     caption = "Source: CITES (Convention of International Trade in Endangered Species of Wild Fauna and Flora)"
   ) +
   guides(fill = FALSE) +
