@@ -12,6 +12,7 @@ if (!require("pacman"))
   install.packages("pacman")
 
 pacman::p_load(knitr,tidyverse,lubridate,here,dplyr,ggplot2,ggmap,maps,rnaturalearth,rnaturalearthdata,sf,plotly,caret,glmnet,viridis)
+library(rcartocolor)
 ```
 
 ## Abstract
@@ -48,55 +49,7 @@ The dataset under examination spans from 1995 to 2014, presenting a valuable opp
 
 ###Here we are going to use the data-set about the elephants we have and would like to make some visualizations to represent and analyze the data in an appropriate manner. We are going to utilize these variables from the data `year`, `country` and `estimate` - We are going to make a line plot to find out the basic trend and continue to process to maybe plot the line plots for individual country. The data has 1995 to 2014 data, which we will utilize to find the trends and then use the present data to predict the data between 2015 to 2023 using multiple regression models.###
 
--   Data Pre-processing:
-
-    -   
-
--   Data Exploration
-
-    -   
-
--   Data Prediction
-
-    -   
-
--   Model Evaluation
-
-    -   
-
--   Country Level Analysis
-
-    -   
-
--   Shiny App development
-
-    -   
-
 ### Analysis
-
--   Data Pre-processing:
-
-    -   
-
--   Data Exploration
-
-    -   
-
--   Data Prediction
-
-    -   
-
--   Model Evaluation
-
-    -   
-
--   Country Level Analysis
-
-    -   
-
--   Shiny App development
-
-    -   
 
 ## Question 2:- What is the trend of ivory trade in Africa?
 
@@ -105,28 +58,6 @@ The dataset under examination spans from 1995 to 2014, presenting a valuable opp
 The illegal trade of ivory has remained a critical concern, posing significant threats to the African elephant population and biodiversity conservation. This analysis aims to study ivory trade in Africa using available historical data. The dataset covers past ivory trade information and seeks to predict trends from 2020 to 2023. The main goal is to reveal how ivory trade has changed over time by using careful data processing, exploring data, making predictions and creating clear visualizations.
 
 ### Approach
-
--   Data Pre-processing:
-
-    -   
-
--   Data Exploration
-
-    -   
-
--   Data Prediction
-
-    -   
-
--   Model Evaluation
-
-    -   
-
--   Country Level Analysis
-
-    -   
-
--   Shiny App development
 
 ## Plots
 
@@ -150,6 +81,7 @@ gg <- ggplot(export_count_per_year, aes(x = as.factor(Year), y = export_count)) 
     title = "Ivory exports in Africa from 1990 to 2022",
     caption = "Source: CITES (Convention of International Trade in Endangered Species of Wild Fauna and Flora)"
   ) +
+  scale_fill_carto_c(palette = "Safe") +
   theme_minimal()
 
 # Convert ggplot to plotly
