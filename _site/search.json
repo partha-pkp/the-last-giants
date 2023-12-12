@@ -53,7 +53,7 @@
     "href": "index.html#code",
     "title": "The Last Giants",
     "section": "CODE",
-    "text": "CODE\n\nelephant &lt;- readxl::read_xlsx(here(\"data\",\"elephant_data.xlsx\"))\n\n\ntotal_estimate_per_year &lt;- elephant |&gt;\n  group_by(Year) |&gt;\n  summarise(Total_Estimate = sum(Estimate))\n\ntotal_estimate_per_year &lt;- total_estimate_per_year |&gt;\n  filter(Year != 2015)\n\n# Checking the derived new data set\nglimpse(total_estimate_per_year)\n\nRows: 20\nColumns: 2\n$ Year           &lt;dbl&gt; 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2…\n$ Total_Estimate &lt;dbl&gt; 139783, 174554, 62417, 138645, 190779, 35809, 238813, 2…\n\n# Fitting a linear regression model\nlm_model &lt;- lm(Estimate ~ Year, data = elephant)\n\n# Summary of the model\nsummary(lm_model)\n\n\nCall:\nlm(formula = Estimate ~ Year, data = elephant)\n\nResiduals:\n   Min     1Q Median     3Q    Max \n-11922  -8049  -6176  -1025 115525 \n\nCoefficients:\n            Estimate Std. Error t value Pr(&gt;|t|)  \n(Intercept) 535059.3   311624.0   1.717   0.0869 .\nYear          -262.2      155.3  -1.688   0.0925 .\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\nResidual standard error: 17060 on 320 degrees of freedom\nMultiple R-squared:  0.008822,  Adjusted R-squared:  0.005725 \nF-statistic: 2.848 on 1 and 320 DF,  p-value: 0.09245\n\n\n\n# Defining a recipe\nols_recipe &lt;- recipe(Total_Estimate ~ Year, data = total_estimate_per_year) |&gt;\n  step_center(Year, all_predictors()) |&gt;\n  step_scale(Year, all_predictors())\n\n# Defining the linear regression model\nols_model &lt;- linear_reg() |&gt;\n  set_engine(\"lm\")\n\n# Combining recipe and model into a workflow\nols_workflow &lt;- workflow() |&gt;\n  add_recipe(ols_recipe) |&gt;\n  add_model(ols_model)\n\n# Training the OLS model\nols_fit &lt;- ols_workflow |&gt;\n  fit(data = total_estimate_per_year)\n\n# Creating a new data frame for prediction (between years 2015-2023)\nnew_years &lt;- data.frame(Year = 2015:2023)\n\n# Making predictions using the trained OLS model\nols_predictions &lt;- predict(ols_fit, new_data = new_years)\n\n# Combining the new years and predictions\nols_predictions_data &lt;- data.frame(Year = new_years$Year, Total_Estimate = ols_predictions$.pred)\n\n# Print the OLS predictions\nglimpse(ols_predictions_data)\n\nRows: 9\nColumns: 2\n$ Year           &lt;int&gt; 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023\n$ Total_Estimate &lt;dbl&gt; 161499.9, 163090.6, 164681.3, 166271.9, 167862.6, 16945…\n\n\n\n# Specify the training control\ntrain_control &lt;- trainControl(method = \"cv\", number = 5)\n\n# Train the OLS model using cross-validation\nols_model &lt;- train(Total_Estimate ~ Year, data = total_estimate_per_year, method = \"lm\", trControl = train_control)\n\n# Print cross-validated RMSE for each model\nprint(\"OLS Model Cross-Validated RMSE:\")\n\n[1] \"OLS Model Cross-Validated RMSE:\"\n\nprint(sqrt(ols_model$results$RMSE))\n\n[1] 306.8519\n\n\n\n# Plotting the estimated of elephant population between 1995 to 2014\np &lt;- ggplot(total_estimate_per_year, aes(x = Year, y = Total_Estimate, group = 1)) +\n  geom_line(aes(color = ifelse(Year &lt;= 2014, \"Blue\", \"Red\"))) +\n  stat_smooth(method = \"loess\", se = FALSE) +\n  ggtitle(\"Combined Data: Estimate Over Time\") +\n  xlab(\"Year\") +\n  ylab(\"Estimate\") +\n  scale_y_continuous(limits = c(0, 500000), expand = c(0, 0), labels = comma_format(scale = 1e-3)) +\n  scale_color_manual(values = c(\"black\", \"red3\"), guide = FALSE) +\n  labs(\n    x = \"Year\",\n    y = \"Estimate (in Thousands)\",\n    title = \"Trend in Elephant Population from 1995-2015\",\n    caption = \"Source: PeerJ PeerJ Article\ndoi: 10.7717/peerj.2354 \"\n  ) +\n  theme_minimal()\n\n# Convert ggplot to plotly\npopulation_trend &lt;- ggplotly(p)\n\n`geom_smooth()` using formula = 'y ~ x'\n\n\nWarning: The `guide` argument in `scale_*()` cannot be `FALSE`. This was deprecated in\nggplot2 3.3.4.\nℹ Please use \"none\" instead.\nℹ The deprecated feature was likely used in the plotly package.\n  Please report the issue at &lt;https://github.com/plotly/plotly.R/issues&gt;.\n\n# Display the interactive plot\npopulation_trend\n\n\n\n\n\n\n# Plotting the predicted estimates of elephant population from 2015 to 2023\npred &lt;- ggplot(ols_predictions_data, aes(x = Year, y = Total_Estimate, group = 1)) +\n  geom_line(aes(color = ifelse(Year &lt;= 2014, \"Blue\", \"Red\"))) +\n  stat_smooth(method = \"loess\", se = FALSE) +\n  ggtitle(\"Combined Data: Estimate Over Time\") +\n  xlab(\"Year\") +\n  ylab(\"Estimate\") +\n  scale_y_continuous(limits = c(0, 500000), expand = c(0, 0), labels = comma_format(scale = 1e-3)) +\n  scale_color_manual(values = c(\"black\", \"red3\"), guide = FALSE) +\n  labs(\n    x = \"Year\",\n    y = \"Estimate (in Thousands)\",\n    title = \"Trend in Elephant Population from 1995-2015\",\n    caption = \"Source: PeerJ PeerJ Article\ndoi: 10.7717/peerj.2354 \"\n  ) +\n  theme_minimal()\n\n# Convert ggplot to plotly\nprediction_plot &lt;- ggplotly(pred)\n\n`geom_smooth()` using formula = 'y ~ x'\n\n# Display the interactive plot\nprediction_plot\n\n\n\n\n\n\n# Combining both the actual and predicted datas using rowbind\ncombined_data &lt;- rbind(total_estimate_per_year, ols_predictions_data)\n\n# Plotting all the estimates of elephant population between 1995-2023\ncombined_prediction &lt;- ggplot(combined_data, aes(x = Year, y = Total_Estimate, group = 1)) +\n  geom_line(aes(color = ifelse(Year &lt;= 2014, \"Blue\", \"Red\"))) +\n  stat_smooth(method = \"loess\", se = FALSE) +\n  ggtitle(\"Combined Data: Estimate Over Time\") +\n  xlab(\"Year\") +\n  ylab(\"Estimate\") +\n  scale_y_continuous(limits = c(0, 500000), expand = c(0, 0), labels = comma_format(scale = 1e-3)) +\n  scale_color_manual(values = c(\"black\", \"red3\"), guide = FALSE) +\n  labs(\n    x = \"Year\",\n    y = \"Estimate (in Thousands)\",\n    title = \"Trend in Elephant Population from 1995-2015\",\n    caption = \"Source: PeerJ PeerJ Article\ndoi: 10.7717/peerj.2354 \"\n  ) +\n  theme_minimal()\n\n# Convert ggplot to plotly\ncombined_prediction_plot &lt;- ggplotly(combined_prediction)\n\n`geom_smooth()` using formula = 'y ~ x'\n\n# Display the interactive plot\ncombined_prediction_plot"
+    "text": "CODE\n\nelephant &lt;- readxl::read_xlsx(here(\"data\",\"elephant_data.xlsx\"))\n\n\ntotal_estimate_per_year &lt;- elephant |&gt;\n  group_by(Year) |&gt;\n  summarise(Population = sum(Estimate))\n\ntotal_estimate_per_year &lt;- total_estimate_per_year |&gt;\n  filter(Year != 2015)\n\n# Checking the derived new data set\nglimpse(total_estimate_per_year)\n\nRows: 20\nColumns: 2\n$ Year       &lt;dbl&gt; 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004,…\n$ Population &lt;dbl&gt; 139783, 174554, 62417, 138645, 190779, 35809, 238813, 27117…\n\n# Fitting a linear regression model\nlm_model &lt;- lm(Estimate ~ Year, data = elephant)\n\n# Summary of the model\nsummary(lm_model)\n\n\nCall:\nlm(formula = Estimate ~ Year, data = elephant)\n\nResiduals:\n   Min     1Q Median     3Q    Max \n-11922  -8049  -6176  -1025 115525 \n\nCoefficients:\n            Estimate Std. Error t value Pr(&gt;|t|)  \n(Intercept) 535059.3   311624.0   1.717   0.0869 .\nYear          -262.2      155.3  -1.688   0.0925 .\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\nResidual standard error: 17060 on 320 degrees of freedom\nMultiple R-squared:  0.008822,  Adjusted R-squared:  0.005725 \nF-statistic: 2.848 on 1 and 320 DF,  p-value: 0.09245\n\n\n\n# Defining a recipe\nols_recipe &lt;- recipe(Population ~ Year, data = total_estimate_per_year) |&gt;\n  step_center(Year, all_predictors()) |&gt;\n  step_scale(Year, all_predictors())\n\n# Defining the linear regression model\nols_model &lt;- linear_reg() |&gt;\n  set_engine(\"lm\")\n\n# Combining recipe and model into a workflow\nols_workflow &lt;- workflow() |&gt;\n  add_recipe(ols_recipe) |&gt;\n  add_model(ols_model)\n\n# Training the OLS model\nols_fit &lt;- ols_workflow |&gt;\n  fit(data = total_estimate_per_year)\n\n# Creating a new data frame for prediction (between years 2015-2023)\nnew_years &lt;- data.frame(Year = 2015:2023)\n\n# Making predictions using the trained OLS model\nols_predictions &lt;- predict(ols_fit, new_data = new_years)\n\n# Combining the new years and predictions\nols_predictions_data &lt;- data.frame(Year = new_years$Year, Population = ols_predictions$.pred)\n\n# Print the OLS predictions\nglimpse(ols_predictions_data)\n\nRows: 9\nColumns: 2\n$ Year       &lt;int&gt; 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023\n$ Population &lt;dbl&gt; 161499.9, 163090.6, 164681.3, 166271.9, 167862.6, 169453.3,…\n\n\n\n# Specify the training control\ntrain_control &lt;- trainControl(method = \"cv\", number = 5)\n\n# Train the OLS model using cross-validation\nols_model &lt;- train(Population ~ Year, data = total_estimate_per_year, method = \"lm\", trControl = train_control)\n\n# Print cross-validated RMSE for each model\nprint(\"OLS Model Cross-Validated RMSE:\")\n\n[1] \"OLS Model Cross-Validated RMSE:\"\n\nprint(sqrt(ols_model$results$RMSE))\n\n[1] 320.0367\n\n\n\n# Plotting the estimated of elephant population between 1995 to 2014\np &lt;- ggplot(total_estimate_per_year, aes(x = Year, y = Population, group = 1)) +\n  geom_line(aes(color = ifelse(Year &lt;= 2014, \"Blue\", \"Red\"))) +\n  stat_smooth(method = \"loess\", se = FALSE) +\n  ggtitle(\"Combined Data: Estimate Over Time\") +\n  xlab(\"Year\") +\n  ylab(\"Estimate\") +\n  scale_y_continuous(limits = c(0, 500000), expand = c(0, 0), labels = comma_format(scale = 1e-3)) +\n  scale_color_manual(values = c(\"black\", \"red3\"), guide = FALSE) +\n  labs(\n    x = \"Year\",\n    y = \"Estimate (in Thousands)\",\n    title = \"Trend in Elephant Population from 1995-2015\",\n    caption = \"Source: PeerJ PeerJ Article\ndoi: 10.7717/peerj.2354 \"\n  ) +\n  theme_minimal()\n\n# Convert ggplot to plotly\npopulation_trend &lt;- ggplotly(p)\n\n`geom_smooth()` using formula = 'y ~ x'\n\n\nWarning: The `guide` argument in `scale_*()` cannot be `FALSE`. This was deprecated in\nggplot2 3.3.4.\nℹ Please use \"none\" instead.\nℹ The deprecated feature was likely used in the plotly package.\n  Please report the issue at &lt;https://github.com/plotly/plotly.R/issues&gt;.\n\n# Display the interactive plot\npopulation_trend\n\n\n\n\n\n\n# Plotting the predicted estimates of elephant population from 2015 to 2023\npred &lt;- ggplot(ols_predictions_data, aes(x = Year, y = Population, group = 1)) +\n  geom_line(aes(color = ifelse(Year &lt;= 2014, \"Blue\", \"Red\"))) +\n  stat_smooth(method = \"loess\", se = FALSE) +\n  ggtitle(\"Combined Data: Estimate Over Time\") +\n  xlab(\"Year\") +\n  ylab(\"Estimate\") +\n  scale_y_continuous(limits = c(0, 500000), expand = c(0, 0), labels = comma_format(scale = 1e-3)) +\n  scale_color_manual(values = c(\"black\", \"red3\"), guide = FALSE) +\n  labs(\n    x = \"Year\",\n    y = \"Estimate (in Thousands)\",\n    title = \"Trend in Elephant Population from 1995-2015\",\n    caption = \"Source: PeerJ PeerJ Article\ndoi: 10.7717/peerj.2354 \"\n  ) +\n  theme_minimal()\n\n# Convert ggplot to plotly\nprediction_plot &lt;- ggplotly(pred)\n\n`geom_smooth()` using formula = 'y ~ x'\n\n# Display the interactive plot\nprediction_plot\n\n\n\n\n\n\n# Combining both the actual and predicted data using rowbind\ncombined_data &lt;- rbind(total_estimate_per_year, ols_predictions_data)\n\n# Plotting all the estimates of elephant population between 1995-2023\ncombined_prediction &lt;- ggplot(combined_data, aes(x = Year, y = Population, group = 1)) +\n  geom_line(aes(color = ifelse(Year &lt;= 2014, \"Population Trend\", \"Prediction\"))) +\n  stat_smooth(method = \"loess\", se = FALSE) +\n  scale_y_continuous(limits = c(0, 500000), expand = c(0, 0), labels = scales::comma_format(scale = 1e-3)) +\n  scale_color_manual(values = c(\"Population Trend\" = \"black\", \"Prediction\" = \"red3\"), guide = FALSE) +\n  labs(\n    x = \"Year\",\n    y = \"Estimate (in Thousands)\",\n    title = \"Trend in Elephant Population from 1995-2014\",\n    caption = \"Source: PeerJ PeerJ Article doi: 10.7717/peerj.2354 \",\n  ) +\n  theme_minimal()\n\n# Convert ggplot to plotly\ncombined_prediction_plot &lt;- ggplotly(combined_prediction, tooltip = c(\"Year\", \"y\"))\n\n`geom_smooth()` using formula = 'y ~ x'\n\ncombined_prediction_plot\n\n\n\n\n\n\n# Combining both the actual and predicted datas using rowbind\ncombined_data &lt;- rbind(total_estimate_per_year, ols_predictions_data)\n\n# Plotting all the estimates of elephant population between 1995-2023\ncombined_prediction &lt;- ggplot(combined_data, aes(x = Year, y = Population, group = 1)) +\n  geom_line(aes(color = ifelse(Year &lt;= 2014, \"Population Trend\", \"Prediction\"))) +\n  stat_smooth(method = \"loess\", se = FALSE) +\n  scale_y_continuous(limits = c(0, 500000), expand = c(0, 0), labels = comma_format(scale = 1e-3)) +\n  scale_color_manual(values = c(\"Population Trend\" = \"black\", \"Prediction\" = \"red3\"), guide = FALSE) +\n  labs(\n    x = \"Year\",\n    y = \"Estimate (in Thousands)\",\n    title = \"Trend in Elephant Population from 1995-2014\",\n    caption = \"Source: PeerJ PeerJ Article doi: 10.7717/peerj.2354 \",\n  ) +\n  theme_minimal()\n\n# Convert ggplot to plotly\ncombined_prediction_plot &lt;- ggplotly(combined_prediction)\n\n`geom_smooth()` using formula = 'y ~ x'\n\ncombined_prediction_plot"
   },
   {
     "objectID": "index.html#question-2--what-is-the-trend-of-ivory-trade-in-africa",
@@ -81,7 +81,7 @@
     "href": "index.html#ivory-exports",
     "title": "The Last Giants",
     "section": "Ivory Exports",
-    "text": "Ivory Exports\n\n# Assuming `ivory_exports_data` is your dataset\ncountry_export_count &lt;- ivory_exports_data %&gt;%\n  filter(Exporter %in% c(\"ZW\", \"ZM\", \"ZA\", \"BW\", \"MZ\")) %&gt;%\n  group_by(Exporter) %&gt;%\n  summarise(count = n()) %&gt;%\n  mutate(Country = case_when(\n    Exporter == \"ZW\" ~ \"Zimbabwe\",\n    Exporter == \"ZM\" ~ \"Zambia\",\n    Exporter == \"ZA\" ~ \"South Africa\",\n    Exporter == \"BW\" ~ \"Botswana\",\n    Exporter == \"MZ\" ~ \"Mozambique\",\n    TRUE ~ as.character(Exporter)\n  ))\n\nafrica &lt;- ne_countries(scale = \"medium\", continent = \"Africa\", returnclass = \"sf\")\n\nexport_country_map &lt;- merge(africa, country_export_count, by.x = \"name\", by.y = \"Country\")\n\n# Create a ggplot map\ngg_export_countries &lt;- ggplot() +\n  geom_sf(data = africa, fill = \"white\") +\n  geom_sf(data = export_country_map, aes(fill = count, text = paste(\"Country: \", country_export_count$Country,\"&lt;br&gt;\",\n                                                                    \"Export count: \",count )), color = \"#5D2606\", size = 0.2) +\n  scale_fill_gradient(low = \"#F2A64F\", high = \"#B61210\") +\n  theme_void() +\n  labs(title = \"Ivory exports from 1995 to 2022 for biggest Elephant ecosystems\")\n\nWarning in layer_sf(geom = GeomSf, data = data, mapping = mapping, stat = stat,\n: Ignoring unknown aesthetics: text\n\n# Convert ggplot to plotly\ngg_export_countries_plotly &lt;- ggplotly(gg_export_countries, tooltip = \"text\")\n\n# Show the Plotly map\ngg_export_countries_plotly"
+    "text": "Ivory Exports\n\n# Extracing data from ivory_exports dataset\ncountry_export_count &lt;- ivory_exports_data %&gt;%\n  filter(Exporter %in% c(\"ZW\", \"ZM\", \"ZA\", \"BW\", \"MZ\")) %&gt;%\n  group_by(Exporter) %&gt;%\n  summarise(count = n()) %&gt;%\n  mutate(Country = case_when(\n    Exporter == \"ZW\" ~ \"Zimbabwe\",\n    Exporter == \"ZM\" ~ \"Zambia\",\n    Exporter == \"ZA\" ~ \"South Africa\",\n    Exporter == \"BW\" ~ \"Botswana\",\n    Exporter == \"MZ\" ~ \"Mozambique\",\n    TRUE ~ as.character(Exporter)\n  ))\n\nafrica &lt;- ne_countries(scale = \"medium\", continent = \"Africa\", returnclass = \"sf\")\n\nexport_country_map &lt;- merge(africa, country_export_count, by.x = \"name\", by.y = \"Country\")\n\n# Create a ggplot map\ngg_export_countries &lt;- ggplot() +\n  geom_sf(data = africa, fill = \"white\") +\n  geom_sf(data = export_country_map, aes(fill = count, text = paste(\"Country: \", country_export_count$Country,\"&lt;br&gt;\",  \n    \"Export count: \",count )), color = \"#5D2606\", size = 0.2) +\n  scale_fill_gradient(low = \"#F2A64F\", high = \"#B61210\", name = \"Export count\") + \n  theme_void() +\n  labs(title = \"Ivory exports from 1995 to 2022\", caption = \"Source: CITES (Convention of International Trade \n    in Endangered Species of Wild Fauna and Flora)\")\n\nWarning in layer_sf(geom = GeomSf, data = data, mapping = mapping, stat = stat,\n: Ignoring unknown aesthetics: text\n\n# Convert ggplot to plotly\ngg_export_countries_plotly &lt;- ggplotly(gg_export_countries, tooltip = \"text\")\n\n# Show the Plotly map\ngg_export_countries_plotly"
   },
   {
     "objectID": "about.html",
@@ -91,69 +91,6 @@
     "text": "This project was developed by Visual Virtuosos For INFO 526 - Data Analysis & Visualization at the University of Arizona, taught by Dr. Greg Chism. The team is comprised of the following team members.\n\nJothish Kumar Polaki: Graduate student in Data Science, University of Arizona\nPartha Koundinya P: Graduate student in Data Science, University of Arizona\nHarshit Mehra: Graduate student in Data Science, University of Arizona\nKashyap Sai Prasad Nadendla: Graduate student in Data Science, University of Arizona"
   },
   {
-    "objectID": "presentation.html#quarto",
-    "href": "presentation.html#quarto",
-    "title": "Project title",
-    "section": "Quarto",
-    "text": "Quarto\n\nThe presentation is created using the Quarto CLI\n## sets the start of a new slide"
-  },
-  {
-    "objectID": "presentation.html#layouts",
-    "href": "presentation.html#layouts",
-    "title": "Project title",
-    "section": "Layouts",
-    "text": "Layouts\nYou can use plain text\n\n\n\nor bullet points1\n\n\nor in two columns\n\n\n\nlike\nthis\n\nAnd add footnotes"
-  },
-  {
-    "objectID": "presentation.html#code",
-    "href": "presentation.html#code",
-    "title": "Project title",
-    "section": "Code",
-    "text": "Code\n\n\n# A tibble: 2 × 5\n  term        estimate std.error statistic       p.value\n  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;\n1 (Intercept)   25.3      3.08        8.22 0.00000000358\n2 speed         -0.116    0.0642     -1.81 0.0806       \n\n\n# A tibble: 1 × 12\n  r.squared adj.r.squared sigma statistic p.value    df logLik   AIC   BIC\n      &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;\n1    0.0983        0.0682  5.82      3.27  0.0806     1  -101.  207.  212.\n# ℹ 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;"
-  },
-  {
-    "objectID": "presentation.html#plots",
-    "href": "presentation.html#plots",
-    "title": "Project title",
-    "section": "Plots",
-    "text": "Plots"
-  },
-  {
-    "objectID": "presentation.html#plot-and-text",
-    "href": "presentation.html#plot-and-text",
-    "title": "The Last Giants",
-    "section": "Plot and text",
-    "text": "Plot and text\n\n\n\nSome text\ngoes here"
-  },
-  {
-    "objectID": "presentation.html#tables",
-    "href": "presentation.html#tables",
-    "title": "Project title",
-    "section": "Tables",
-    "text": "Tables\nIf you want to generate a table, make sure it is in the HTML format (instead of Markdown or other formats), e.g.,\n\n\n\n\n\nspecies\nisland\nbill_length_mm\nbill_depth_mm\nflipper_length_mm\nbody_mass_g\nsex\n\n\n\n\nAdelie\nTorgersen\n39.1\n18.7\n181\n3750\nmale\n\n\nAdelie\nTorgersen\n39.5\n17.4\n186\n3800\nfemale\n\n\nAdelie\nTorgersen\n40.3\n18.0\n195\n3250\nfemale\n\n\nAdelie\nTorgersen\nNA\nNA\nNA\nNA\nNA\n\n\nAdelie\nTorgersen\n36.7\n19.3\n193\n3450\nfemale\n\n\nAdelie\nTorgersen\n39.3\n20.6\n190\n3650\nmale"
-  },
-  {
-    "objectID": "presentation.html#images",
-    "href": "presentation.html#images",
-    "title": "Project title",
-    "section": "Images",
-    "text": "Images\n\nImage credit: Danielle Navarro, Percolate."
-  },
-  {
-    "objectID": "presentation.html#math-expressions",
-    "href": "presentation.html#math-expressions",
-    "title": "The Last Giants",
-    "section": "Math Expressions",
-    "text": "Math Expressions\nYou can write LaTeX math expressions inside a pair of dollar signs, e.g. $\\alpha+\\beta$ renders \\(\\alpha + \\beta\\). You can use the display style with double dollar signs:\n$$\\bar{X}=\\frac{1}{n}\\sum_{i=1}^nX_i$$\n\\[\n\\bar{X}=\\frac{1}{n}\\sum_{i=1}^nX_i\n\\]\nLimitations:\n\nThe source code of a LaTeX math expression must be in one line, unless it is inside a pair of double dollar signs, in which case the starting $$ must appear in the very beginning of a line, followed immediately by a non-space character, and the ending $$ must be at the end of a line, led by a non-space character;\nThere should not be spaces after the opening $ or before the closing $."
-  },
-  {
-    "objectID": "presentation.html#feeling-adventurous",
-    "href": "presentation.html#feeling-adventurous",
-    "title": "The Last Giants",
-    "section": "Feeling adventurous?",
-    "text": "Feeling adventurous?\n\nYou are welcomed to use the default styling of the slides. In fact, that’s what I expect majority of you will do. You will differentiate yourself with the content of your presentation.\nBut some of you might want to play around with slide styling. Some solutions for this can be found at https://quarto.org/docs/presentations/revealjs."
-  },
-  {
     "objectID": "presentation.html#the-data-source",
     "href": "presentation.html#the-data-source",
     "title": "The Last Giants",
@@ -161,11 +98,11 @@
     "text": "The Data source\n\nThe presentation is created using the Quarto CLI\n## sets the start of a new slide"
   },
   {
-    "objectID": "presentation.html#the-dataset",
-    "href": "presentation.html#the-dataset",
+    "objectID": "presentation.html#the-3d-plot",
+    "href": "presentation.html#the-3d-plot",
     "title": "The Last Giants",
-    "section": "The Dataset",
-    "text": "The Dataset"
+    "section": "The 3D plot",
+    "text": "The 3D plot"
   },
   {
     "objectID": "presentation.html#the-trend",
@@ -187,20 +124,6 @@
     "title": "The Last Giants",
     "section": "The ivory trade",
     "text": "The ivory trade"
-  },
-  {
-    "objectID": "presentation.html#the-ivory-trade-1",
-    "href": "presentation.html#the-ivory-trade-1",
-    "title": "The Last Giants",
-    "section": "The ivory trade",
-    "text": "The ivory trade\n\nImage credit: Danielle Navarro, Percolate."
-  },
-  {
-    "objectID": "presentation.html#the-3d-plot",
-    "href": "presentation.html#the-3d-plot",
-    "title": "The Last Giants",
-    "section": "The 3D plot",
-    "text": "The 3D plot"
   },
   {
     "objectID": "presentation.html#the-ivory-trade-continued",
