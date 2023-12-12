@@ -239,7 +239,7 @@ export_count_per_year <- ivory_exports_data |>
 
 # Assuming `count_per_year` is your dataset
 export_count_per_year <- export_count_per_year |>
-  filter(Year > 2000)
+  filter(Year > 1994)
 
 glimpse(export_count_per_year)
 ```
@@ -254,7 +254,7 @@ exports_barplot <- ggplot(export_count_per_year, aes(x = as.factor(Year), y = ex
   labs(
     x = "Year",
     y = "Number of exports",
-    title = "Ivory exports in Africa from 1990 to 2022",
+    title = "Ivory exports in Africa from 2000 to 2022",
     caption = "Source: CITES (Convention of International Trade in Endangered Species of Wild Fauna and Flora)"
   ) +
   guides(fill = FALSE) +
@@ -305,7 +305,40 @@ carvings_plotly <- ggplotly(carving_ggplot, tooltip = "text")
 carvings_plotly
 ```
 
+## Ivory Exports
+
 ```{r}
 
+# Assuming `ivory_exports_data` is your dataset
+country_export_count <- ivory_exports_data %>%
+  filter(Exporter %in% c("ZW", "ZM", "ZA", "BW", "MZ")) %>%
+  group_by(Exporter) %>%
+  summarise(count = n()) %>%
+  mutate(Country = case_when(
+    Exporter == "ZW" ~ "Zimbabwe",
+    Exporter == "ZM" ~ "Zambia",
+    Exporter == "ZA" ~ "South Africa",
+    Exporter == "BW" ~ "Botswana",
+    Exporter == "MZ" ~ "Mozambique",
+    TRUE ~ as.character(Exporter)
+  ))
 
+africa <- ne_countries(scale = "medium", continent = "Africa", returnclass = "sf")
+
+export_country_map <- merge(africa, country_export_count, by.x = "name", by.y = "Country")
+
+# Create a ggplot map
+gg_export_countries <- ggplot() +
+  geom_sf(data = africa, fill = "white") +
+  geom_sf(data = export_country_map, aes(fill = count, text = paste("Country: ", country_export_count$Country,"<br>",
+                                                                    "Export count: ",count )), color = "#5D2606", size = 0.2) +
+  scale_fill_gradient(low = "#F2A64F", high = "#B61210") +
+  theme_void() +
+  labs(title = "Ivory exports from 1995 to 2022 for biggest Elephant ecosystems")
+
+# Convert ggplot to plotly
+gg_export_countries_plotly <- ggplotly(gg_export_countries, tooltip = "text")
+
+# Show the Plotly map
+gg_export_countries_plotly
 ```
