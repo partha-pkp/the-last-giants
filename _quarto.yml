@@ -16,6 +16,8 @@ website:
         href: presentation.qmd
       - text: About
         href: about.qmd
+      - text: Dashboard
+        href: https://partha-pkp.quarto.pub/the-last-giants/
 
 format:
   html:

@@ -245,12 +245,25 @@ library(rgl)
 world <- ne_countries(scale = "medium", returnclass = "sf")
 elephant_map_1996 <- merge(world, elephant_data_1996, by.x = "name", by.y = "Country")
 
+
+col1 <- c("Angola", "Botswana", "Cameroon", "Chad", "Congo", "Kenya","Malawi",
+          "Mali", "Mozambique", "South Africa", "Tanzania","Uganda", "Zambia", "Zimbabwe")
+
+col2 <- c(43459, 101599, 20598, 9799, 9349, 85711, 2991, 3944, 101077, 19809, 268250,
+          10938, 84814, 68851)
+
+eco <- data.frame(col1,col2)
+
+colnames(eco) <- c("country","area")
+
+eco2 <- merge(africa, eco, by.x = "name", by.y = "country")
+
 # Create a ggplot map
 gg_map <- ggplot() +
   geom_sf(data = africa, fill = "white") +
-  geom_sf(data = elephant_map_1996, aes(fill = Estimate), color = "brown", size = 0.2) +
-  scale_fill_viridis_c(option = "plasma", name = "Estimate") +
-  scale_fill_gradient(low = "skyblue", high = "darkgreen") +
+  geom_sf(data = eco2, aes(fill = area), size = 0.2) +
+  scale_fill_viridis_c(option = "plasma", name = "area") +
+  scale_fill_gradient(low = "#aaff99", high = "#0B6623") +
   theme_bw() +
   labs(title = "Elephant Population Estimates in Africa in 1996")
 
@@ -267,9 +280,79 @@ gg_map <- ggplot() +
 #gg_map2 <- ggiraph::girafe(ggobj = gg_map)
 #gg_map2
 
-#plot_gg(gg_map, multicore = TRUE, width = 6 ,height=2.7, fov = 70)
+mamp2 <- plot_gg(gg_map, multicore = TRUE, width = 6 ,height = 3, fov = 70)
+
 #render_movie(filename = "demo.mp4", type = "orbit")
 #rgl::rglwidget()
+```
+
+
+```{r}
+
+
+library(circularEV)
+library(rnaturalearth)
+library(ggplot2)
+library(plotly)
+library(ggiraph)
+library(ggshadow)
+
+library(raster)
+library(rayshader)
+library(rgl)
+
+africa <- ne_countries(scale = "medium", returnclass = "sf", continent = "Africa")
+col1 <- c("Angola", "Botswana", "Cameroon", "Chad", "Congo", "Kenya","Malawi",
+          "Mali", "Mozambique", "South Africa", "Tanzania","Uganda", "Zambia", "Zimbabwe")
+
+col2 <- c(43459, 101599, 20598, 9799, 9349, 85711, 2991, 3944, 101077, 19809, 268250,
+          10938, 84814, 68851)
+col3 <- c(20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20)
+
+eco <- data.frame(col1,col3)
+
+colnames(eco) <- c("country","area")
+
+eco2 <- merge(africa, eco, by.x = "name", by.y = "country")
+
+
+
+
+#africa
+gg_map <- ggplot() +
+  geom_sf(data = africa, fill = "gray85", linewidth = 0.9 ) +
+  geom_sf(data= eco2, aes(fill = area), linewidth = 0.5)+
+  theme_void()+
+  theme(
+    plot.background = element_rect(
+      fill = "white",
+      colour = "white"
+    )) +
+  scale_fill_viridis_c(option = "plasma", name = "Estimate") +
+  scale_fill_gradient(low = "#aaff99", high = "#0B6623")
+  
+
+gg_map
+
+map3d <- plot_gg(gg_map)
+# render_label(map3d, text = "Origin", x = 0, y = 0, z = 400)
+# render_label(map3d, text = "Angola", x = 800, y = 900, z = 400)
+# render_label(map3d, text = "Botswana", x = 920, y = 1050, z = 400)
+# render_label(map3d, text = "Cameroon", x = 750, y = 600, z = 400)
+# render_label(map3d, text = "Congo", x = 800, y = 680, z = 400)
+# render_label(map3d, text = "Mali", x = 520, y = 420, z = 400)
+# render_label(map3d, text = "Chad", x = 820, y = 430, z = 400)
+# render_label(map3d, text = "South Africa", x = 920, y = 1150, z = 400)
+# render_label(map3d, text = "Zambia", x = 950, y = 900, z = 400)
+# render_label(map3d, text = "Zimbabwe", x = 1030, y = 980, z = 400)
+# render_label(map3d, text = "Malawi", x = 1090, y = 900, z = 400)
+# render_label(map3d, text = "Mozambique", x = 1150, y = 920, z = 400)
+# render_label(map3d, text = "Tanzania", x = 1090, y = 750, z = 400)
+# render_label(map3d, text = "Kenya", x = 1150, y = 680, z = 400)
+# render_label(map3d, text = "Uganda", x = 1060, y = 650, z = 400)
+# render_camera(theta = -90, phi = 30,zoom = 0.5,fov = 130)
+
+rgl::rglwidget()
 ```
 
 
@@ -343,8 +426,106 @@ render_label(map3d, text = "Uganda", x = 1060, y = 650, z = 400)
 render_camera(theta = -90, phi = 30,zoom = 0.5,fov = 130)
 
 rgl::rglwidget()
+
 ```
 
 
 
+```{r}
 
+
+library(circularEV)
+library(rnaturalearth)
+library(ggplot2)
+library(plotly)
+library(ggiraph)
+library(ggshadow)
+
+library(raster)
+library(rayshader)
+library(rgl)
+
+africa <- ne_countries(scale = "medium", returnclass = "sf", continent = "Africa")
+cnt <- ne_countries(scale = "medium", returnclass = "sf", country = "sudan")
+cnt2 <- ne_countries(scale = "medium", returnclass = "sf", country = "senegal")
+col1 <- c("Angola", "Botswana", "Cameroon", "Chad", "Congo", "Kenya","Malawi",
+          "Mali", "Mozambique", "South Africa", "Tanzania","Uganda", "Zambia", "Zimbabwe")
+col2 <- c(20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20)
+
+col3 <- c(43459, 101599, 20598, 9799, 9349, 85711, 2991, 3944, 101077, 19809, 268250,
+          10938, 84814, 68851)
+
+eco <- data.frame(col1,col3)
+
+eco2 <- merge(africa, eco, by.x = "name", by.y = "col1")
+
+
+#africa
+gg_map <- ggplot() +
+  geom_sf(data = africa) +
+  geom_sf(data= eco2, aes(fill = col3), color = "white", linewidth = 0.5)+
+  theme_void()+
+  theme(
+    plot.background = element_rect(
+      fill = "white",
+      colour = "white"
+    ))
+
+gg_map
+
+map3d <- plot_gg(gg_map,
+                 width=5,
+                 height=5,
+                 scale = 350,
+                 windowsize = c(1000, 1000),
+                 phi = 30,
+                 save_height_matrix = FALSE,
+                 theta = 0,
+                 flat_transparent_bg = TRUE,
+                 invert = FALSE
+)
+
+zambia_coords <- c(x = 200, y = 520, z = 50)
+rgl::text3d(x = zambia_coords[1], y = zambia_coords[2], z = zambia_coords[3], 
+            text = "Tanzania", col = "black", cex = 0.9)
+
+rgl::lines3d(c(200, 200, 200), 
+             c(50, 100, 500),
+             c(50, 50, 50), 
+             col = "black")
+
+
+# Reference lines
+
+rgl::lines3d(c(50, 50, 50), 
+             c(50, 100, 500),
+             c(50, 50, 50), 
+             col = "red")
+
+rgl::lines3d(c(100, 100, 100), 
+             c(50, 100, 500),
+             c(50, 50, 50), 
+             col = "darkgreen")
+
+
+
+
+# render_label(map3d, text = "Origin", x = 0, y = 0, z = 400)
+# render_label(map3d, text = "Angola", x = 800, y = 900, z = 400)
+# render_label(map3d, text = "Botswana", x = 920, y = 1050, z = 400)
+# render_label(map3d, text = "Cameroon", x = 750, y = 600, z = 400)
+# render_label(map3d, text = "Congo", x = 800, y = 680, z = 400)
+# render_label(map3d, text = "Mali", x = 520, y = 420, z = 400)
+# render_label(map3d, text = "Chad", x = 820, y = 430, z = 400)
+# render_label(map3d, text = "South Africa", x = 920, y = 1150, z = 400)
+# render_label(map3d, text = "Zambia", x = 950, y = 900, z = 400)
+# render_label(map3d, text = "Zimbabwe", x = 1030, y = 980, z = 400)
+# render_label(map3d, text = "Malawi", x = 1090, y = 900, z = 400)
+# render_label(map3d, text = "Mozambique", x = 1150, y = 920, z = 400)
+# render_label(map3d, text = "Tanzania", x = 1090, y = 750, z = 400)
+# render_label(map3d, text = "Kenya", x = 1150, y = 680, z = 400)
+# render_label(map3d, text = "Uganda", x = 1060, y = 650, z = 400)
+# render_camera(theta = -90, phi = 30,zoom = 0.5,fov = 130)
+
+# rgl::rglwidget()
+```

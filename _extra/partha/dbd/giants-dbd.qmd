@@ -1,12 +1,8 @@
 ---
 title: The Last Giants
 author: Visual Virtuosos
-format: 
-  dashboard:
-    nav-buttons: [github]
-    github: https://github.com/INFO526-DataViz/project-final-Visual-Virtuosos
-    orientation: columns
-    theme: yeti
+format: dashboard
+theme: yeti
 ---
 
 ```{r}
@@ -161,84 +157,20 @@ map1 <- ggplot() +
   theme_minimal() +
   labs(title = "Elephant Population Estimates in Africa in 1995")
 ```
+# Page1 {orientation="columns"}
 
+## Column {width="40%"}
 
-## Column
-
-
-### Row
-
-
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-.collapsible {
-  background-color: #777;
-  color: white;
-  cursor: pointer;
-  padding: 18px;
-  width: 100%;
-  border: none;
-  text-align: left;
-  outline: none;
-  font-size: 15px;
-}
-
-.active, .collapsible:hover {
-  background-color: #555;
-}
-
-.content {
-  padding: 0 18px;
-  display: none;
-  overflow: hidden;
-  background-color: #f1f1f1;
-}
-</style>
-</head>
-<body>
-
-<h2>Details of the Strata</h2>
-
-<p>Collapsible Set:</p>
-<button type="button" class="collapsible">Open Section 1</button>
-<div class="content">
-  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-</div>
-<button type="button" class="collapsible">Open Section 2</button>
-<div class="content">
-  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-</div>
-<button type="button" class="collapsible">Open Section 3</button>
-<div class="content">
-  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-</div>
-
-<script>
-var coll = document.getElementsByClassName("collapsible");
-var i;
-
-for (i = 0; i < coll.length; i++) {
-  coll[i].addEventListener("click", function() {
-    this.classList.toggle("active");
-    var content = this.nextElementSibling;
-    if (content.style.display === "block") {
-      content.style.display = "none";
-    } else {
-      content.style.display = "block";
-    }
-  });
-}
-</script>
-
-</body>
+```{r}
+#| title: "Map1"
+map1
+```
 
 
 
 
-## Column
 
-### Row
+
 
 ```{r}
 # #| title: Population Estimates in Africa
@@ -296,3 +228,329 @@ for (i = 0; i < coll.length; i++) {
 
 
 ```
+
+
+
+
+## Column
+
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {font-family: Arial;}
+
+/* Style the tab */
+.tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+</style>
+</head>
+<body>
+
+<h2>Top 5 largest Ecosystems</h2>
+
+<div class="tab">
+  <button class="tablinks" onclick="openCity(event, 'Tanzania')">Tanzania</button>
+  <button class="tablinks" onclick="openCity(event, 'Botswana')">Botswana</button>
+  <button class="tablinks" onclick="openCity(event, 'Mozambique')">Mozambique</button>
+  <button class="tablinks" onclick="openCity(event, 'Kenya')">Kenya</button>
+  <button class="tablinks" onclick="openCity(event, 'Zambia')">Zambia</button>
+  <button class="tablinks" onclick="openCity(event, 'Zimbabwe')">Zimbabwe</button>
+  <button class="tablinks" onclick="openCity(event, 'Angola')">Angola</button>
+  <button class="tablinks" onclick="openCity(event, 'Cameroon')">Cameroon</button>
+  <button class="tablinks" onclick="openCity(event, 'South Africa')">South Africa</button>
+  <button class="tablinks" onclick="openCity(event, 'Uganda')">Uganda</button>
+  <button class="tablinks" onclick="openCity(event, 'Chad')">Chad</button>
+  <button class="tablinks" onclick="openCity(event, 'Congo')">Congo</button>
+  <button class="tablinks" onclick="openCity(event, 'Mali')">Mali</button>
+  <button class="tablinks" onclick="openCity(event, 'Malawi')">Malawi</button>
+</div>
+
+<div id="Tanzania" class="tabcontent">
+  <h5>Savannah Elephant Ecosystems in Tanzania</h5>
+  
+  <p> 
+  <ul>
+  <li>Names of ecosystems - Burigi-Biharamulo, Katavi-Rukwa, Malagarasi-Muyovosi, Ruaha-Rungwa, Selous-Mikumi, Serengeti, Tarangire-Manyara</li>
+  <li>Total Ecosystem area (km2) = 268,250</li>
+  </ul>
+  </p>
+  <figure>
+  <img src="tan1.png" alt="tan1" style="width:40%">
+  <figcaption>Fig. Burigi-Biharamulo, Tanzania</figcaption>
+  </figure>
+  
+</div>
+
+
+
+<div id="Botswana" class="tabcontent">
+  <h5>Savannah Elephant Ecosystems in Botswana</h5>
+  
+  <p> 
+  <ul>
+  <li>Names of ecosystems - Northern Botswana, Tuli
+</li>
+  <li>Total Ecosystem area (km2) = 101,599
+</li>
+  </ul>
+  </p>
+  <figure>
+  <img src="bots1.jpg" alt="bots1" style="width:40%">
+  <figcaption>Fig. Tuli, Botswana</figcaption>
+  </figure>
+  
+</div>
+
+
+
+<div id="Mozambique" class="tabcontent">
+  <h5>Savannah Elephant Ecosystems in Mozambique</h5>
+  
+  <p> 
+  <ul>
+  <li>Names of ecosystems - Limpopo NP, Marromeo Buffalo R, Niassa NR, Quirimbas NP, Tete Province / Magoe
+</li>
+  <li>Total Ecosystem area (km2) = 101,077
+
+</li>
+  </ul>
+  </p>
+  <figure>
+  <img src="mozam1.jpg" alt="mozam1" style="width:20%">
+  <figcaption>Fig. Limpopo NP, Mozambique</figcaption>
+  </figure>
+  
+</div>
+
+
+
+<div id="Kenya" class="tabcontent">
+  <h5>Savannah Elephant Ecosystems in Kenya</h5>
+  
+  <p> 
+  <ul>
+  <li>Names of ecosystems - Laikipia-Samburu, Masai Mara, Tsavo-Amboseli
+</li>
+  <li>Total Ecosystem area (km2) = 85,711
+</li>
+  </ul>
+  </p>
+  <figure>
+  <img src="kenya1.jpg" alt="kenya1" style="width:40%">
+  <figcaption>Fig. Masai Mara, Kenya</figcaption>
+  </figure>
+  
+</div>
+
+
+<div id="Zambia" class="tabcontent">
+  <h5>Savannah Elephant Ecosystems in Zambia</h5>
+  
+  <p> 
+  <ul>
+  <li>Names of ecosystems - Luangwa, West Zambezi
+</li>
+  <li>Total Ecosystem area (km2) = 84,814
+</li>
+  </ul>
+  </p>
+  <figure>
+  <img src="zambia1.jpg" alt="zambia1" style="width:40%">
+  <figcaption>Fig. Masai Mara, Zambia</figcaption>
+  </figure>
+  
+</div>
+
+
+<script>
+function openCity(evt, cityName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(cityName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+</script>
+   
+</body>
+</html> 
+
+# Page 2
+
+
+# Page 3 {orientation="columns"}
+
+
+
+```{r}
+
+ivory_exports_data <- read_csv(here("data","cites_ivory_export.csv"))
+```
+
+
+
+
+
+
+
+
+## Column {width="55%"}
+
+```{r}
+
+# Count the number of instances for each year
+export_count_per_year <- ivory_exports_data |>
+  group_by(Year) |>
+  summarise(export_count = n())
+
+# Assuming `count_per_year` is your dataset
+export_count_per_year <- export_count_per_year |>
+  filter(Year > 2000)
+
+#export_count_per_year
+
+# Assuming `exports_barplot` is your ggplot bar plot
+library(plotly)
+
+# Add text to ggplot for hover information
+exports_barplot <- ggplot(export_count_per_year, aes(x = as.factor(Year), y = export_count, fill = as.factor(Year), text = paste("Export count: ", export_count))) +
+  geom_bar(stat = "identity", color = "black") +
+  scale_fill_viridis_d(option = "C") +
+  labs(
+    x = "Year",
+    y = "Number of exports",
+    title = "Ivory exports in Africa from 1990 to 2022",
+    caption = "Source: CITES (Convention of International Trade in Endangered Species of Wild Fauna and Flora)"
+  ) +
+  guides(fill = FALSE) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+
+# Convert ggplot to plotly
+exports_plotly <- ggplotly(exports_barplot, tooltip = "text")
+
+# # Display the interactive plot
+exports_plotly
+```
+
+### Row {height="60%"}
+
+
+### Row {height="40%"}
+
+```{r warning = FALSE,message=FALSE}
+
+library(rcartocolor)
+
+ivory_term_count <- ivory_exports_data |>
+  group_by(Year,Term) |>
+  summarise(instance_count = n()) |>
+  ungroup()
+
+ivory_term_count <- ivory_term_count %>%
+  mutate(Term = fct_reorder(Term, instance_count, .desc = TRUE))
+
+carving_ggplot <- ivory_term_count |>
+  ggplot(aes( y = fct_rev(Term), size = instance_count, fill = Term)) +
+  geom_bar(alpha = 0.7, color = "black") +
+  scale_size(range = c(1.4, 10), name = "Population (M)") +
+  scale_fill_carto_d(palette = "Safe") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(
+    x = "Count",
+    y = "Export Type",
+    title = "Type of ivory export",
+    caption = "Source: CITES (Convention of International Trade 
+    in Endangered Species of Wild Fauna and Flora)"
+  )
+
+
+# converting ggplot to plotly
+carvings_plotly <- ggplotly(carving_ggplot, tooltip = "text")
+
+# # display the interactive plot
+carvings_plotly
+```
+
+
+## Column {width="45%"}
+
+```{r, fig.width=40, fig.height=100}
+
+# Assuming `ivory_exports_data` is your dataset
+country_export_count <- ivory_exports_data %>%
+  filter(Exporter %in% c("ZW", "ZM", "ZA", "BW", "MZ")) %>%
+  group_by(Exporter) %>%
+  summarise(count = n()) %>%
+  mutate(Country = case_when(
+    Exporter == "ZW" ~ "Zimbabwe",
+    Exporter == "ZM" ~ "Zambia",
+    Exporter == "ZA" ~ "South Africa",
+    Exporter == "BW" ~ "Botswana",
+    Exporter == "MZ" ~ "Mozambique",
+    TRUE ~ as.character(Exporter)
+  ))
+
+africa <- ne_countries(scale = "medium", continent = "Africa", returnclass = "sf")
+
+export_country_map <- merge(africa, country_export_count, by.x = "name", by.y = "Country")
+
+# Create a ggplot map
+gg_export_countries <- ggplot() +
+  geom_sf(data = africa, fill = "white") +
+  geom_sf(data = export_country_map, aes(fill = count, text = paste("Country: ", country_export_count$Country,"<br>",
+                                                                    "Export count: ",count )), color = "#5D2606", size = 0.2) +
+  scale_fill_gradient(low = "#F2A64F", high = "#B61210") +
+  theme_void() +
+  labs(title = "Ivory exports from 1995 to 2022 for biggest Elephant ecosystems")
+
+# Convert ggplot to plotly
+gg_export_countries_plotly <- ggplotly(gg_export_countries, tooltip = "text")
+
+# Show the Plotly map
+gg_export_countries_plotly
+```
+
