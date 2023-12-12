@@ -102,14 +102,21 @@
     "href": "presentation.html#the-trend",
     "title": "The Last Giants",
     "section": "The Trend",
-    "text": "The Trend"
+    "text": "The Trend\n\n\n\n\n\n\nThis matches with results in the reasearch article!!"
   },
   {
     "objectID": "presentation.html#the-trend-continued",
     "href": "presentation.html#the-trend-continued",
     "title": "The Last Giants",
     "section": "The Trend (Continued…)",
-    "text": "The Trend (Continued…)\n\n\n\n\n\n\n\n\n\n\n\n\nModel\nRMSE\n\n\n\n\nOLS\n312.46\n\n\nPoly Regression\n326.09\n\n\nRandom Forest\n333.23"
+    "text": "The Trend (Continued…)\nResults of the prediction models\n\n\n\nModel\nRMSE\n\n\n\n\nOLS\n312.46\n\n\nPoly Regression\n326.09\n\n\nRandom Forest\n333.23"
+  },
+  {
+    "objectID": "presentation.html#the-trend-continued-1",
+    "href": "presentation.html#the-trend-continued-1",
+    "title": "The Last Giants",
+    "section": "The Trend (Continued…)",
+    "text": "The Trend (Continued…)"
   },
   {
     "objectID": "presentation.html#the-ivory-trade",
