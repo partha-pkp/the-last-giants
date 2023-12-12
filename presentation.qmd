@@ -230,40 +230,6 @@ exports_plotly <- ggplotly(exports_barplot, tooltip = "text")
 exports_plotly
 ```
 
-## The ivory trade (continued...)
-
-```{r warning = FALSE,message=FALSE}
-#| fig-alt: Visualizing the Type of Ivory exports in Africa
-
-ivory_term_count <- ivory_exports_data |>
-  group_by(Year,Term) |>
-  summarise(instance_count = n()) |>
-  ungroup()
-
-ivory_term_count <- ivory_term_count |>
-  mutate(Term = fct_reorder(Term, instance_count, .desc = TRUE))
-
-carving_ggplot <- ivory_term_count |>
-  ggplot(aes( y = fct_rev(Term), size = instance_count, fill = Term)) +
-  geom_bar(alpha = 0.7, color = "black") +
-  scale_size(range = c(1.4, 10), name = "Population (M)") +
-  scale_fill_carto_d(palette = "Safe") +
-  theme_minimal() +
-  theme(legend.position = "none") +
-  labs(
-    x = "Count",
-    y = "Export Type",
-    title = "Type of ivory export",
-    caption = "Source: CITES (Convention of International Trade 
-    in Endangered Species of Wild Fauna and Flora)"
-  )
-
-# converting ggplot to plotly
-carvings_plotly <- ggplotly(carving_ggplot, tooltip = "text")
-
-# display the interactive plot
-carvings_plotly
-```
 
 ## The ivory trade (continued...)
 
@@ -303,6 +269,42 @@ gg_export_countries_plotly <- ggplotly(gg_export_countries, tooltip = "text")
 # Show the Plotly map
 gg_export_countries_plotly
 ```
+
+## The ivory trade (continued...)
+
+```{r warning = FALSE,message=FALSE}
+#| fig-alt: Visualizing the Type of Ivory exports in Africa
+
+ivory_term_count <- ivory_exports_data |>
+  group_by(Year,Term) |>
+  summarise(instance_count = n()) |>
+  ungroup()
+
+ivory_term_count <- ivory_term_count |>
+  mutate(Term = fct_reorder(Term, instance_count, .desc = TRUE))
+
+carving_ggplot <- ivory_term_count |>
+  ggplot(aes( y = fct_rev(Term), size = instance_count, fill = Term)) +
+  geom_bar(alpha = 0.7, color = "black") +
+  scale_size(range = c(1.4, 10), name = "Population (M)") +
+  scale_fill_carto_d(palette = "Safe") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(
+    x = "Count",
+    y = "Export Type",
+    title = "Type of ivory export",
+    caption = "Source: CITES (Convention of International Trade 
+    in Endangered Species of Wild Fauna and Flora)"
+  )
+
+# converting ggplot to plotly
+carvings_plotly <- ggplotly(carving_ggplot, tooltip = "text")
+
+# display the interactive plot
+carvings_plotly
+```
+
 
 ## The ivory trade (continued...)
 
