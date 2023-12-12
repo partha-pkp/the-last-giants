@@ -90,8 +90,7 @@ exports_barplot <- ggplot(export_count_per_year, aes(x = as.factor(Year), y = ex
     x = "Year",
     y = "Number of exports",
     title = "Ivory exports in Africa from 1990 to 2022",
-    caption = "Source: CITES (Convention of International Trade in Endangered Species of Wild Fauna and Flora)",
-    fill = NULL
+    caption = "Source: CITES (Convention of International Trade in Endangered Species of Wild Fauna and Flora)"
   ) +
   guides(fill = FALSE) +
   theme_minimal() +
@@ -114,11 +113,11 @@ ivory_term_count <- ivory_exports_data |>
   group_by(Year,Term) |>
   summarise(instance_count = n())
 
-ivory_term_count |>
-  ggplot(aes( y = Term, size = instance_count)) +
-  geom_bar(alpha = 0.7) +
+carving_ggplot <- ivory_term_count |>
+  ggplot(aes( y = Term, size = instance_count, fill = Term)) +
+  geom_bar(alpha = 0.7, color = "black") +
   scale_size(range = c(1.4, 10), name = "Population (M)") +
-  #scale_color_viridis(discrete = TRUE, guide = FALSE) +
+  scale_fill_carto_d(palette = "Safe") +
   theme_minimal() +
   theme(legend.position = "none") +
   labs(
@@ -128,4 +127,10 @@ ivory_term_count |>
     caption = "Source: CITES (Convention of International Trade 
     in Endangered Species of Wild Fauna and Flora)"
   )
+
+# converting ggplot to plotly
+carvings_plotly <- ggplotly(carving_ggplot, tooltip = "text")
+
+# display the interactive plot
+carvings_plotly
 ```
