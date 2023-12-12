@@ -154,7 +154,7 @@ Results of the prediction models
 ## The Trend (Continued...)
 
 
-```{r, fig.width=9}
+```{r}
 
 # Combining both the actual and predicted data using rowbind
 combined_data <- rbind(total_estimate_per_year, ols_predictions_data)
