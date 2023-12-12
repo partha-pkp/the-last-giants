@@ -37,9 +37,10 @@ elephant <- readxl::read_xlsx(here("data","elephant_data.xlsx"))
 
 ## The Data source
 
--   The presentation is created using the Quarto CLI
+-   Chase, M. J., Schlossberg, S., Griffin, C. R., Bouché, P. J., Djene, S. W., Elkan, P. W., Ferreira, S., Grossman, F., Kohi, E. M., Landen, K., Omondi, P., Peltier, A., Selier, S. A., & Sutcliffe, R. (2016). Continent-wide survey reveals massive decline in African savannah elephants. PeerJ, 4, e2354. [doi:10.7717/peerj.2354](https://doi.org/10.7717/peerj.2354)
 
--   `##` sets the start of a new slide
+-   [Convention on International Trade in Endangered Species
+of Wild Fauna and Flora](https://trade.cites.org)
 
 # The 3D perspective
 
@@ -51,6 +52,7 @@ elephant <- readxl::read_xlsx(here("data","elephant_data.xlsx"))
 ## The Trend
 
 ```{r}
+
 
 total_estimate_per_year <- elephant |>
   group_by(Year) |>
@@ -97,7 +99,7 @@ ols_model <- train(Population ~ Year, data = total_estimate_per_year, method = "
 
 # Plotting the estimated of elephant population between 1995 to 2014
 p <- ggplot(total_estimate_per_year, aes(x = Year, y = Population, group = 1)) +
-  geom_line(aes(color = ifelse(Year <= 2014, "Blue", "Red"))) +
+  geom_line() +
   stat_smooth(method = "loess", se = FALSE) +
   ggtitle("Combined Data: Estimate Over Time") +
   xlab("Year") +
@@ -106,17 +108,18 @@ p <- ggplot(total_estimate_per_year, aes(x = Year, y = Population, group = 1)) +
   scale_color_manual(values = c("black", "red3"), guide = FALSE) +
   labs(
     x = "Year",
-    y = "Estimate (in Thousands)",
-    title = "Trend in Elephant Population from 1995-2015",
+    y = "Population (in Thousands)",
+    title = "Trend in Elephant Population from 1995-2014",
     caption = "Source: PeerJ PeerJ Article
 doi: 10.7717/peerj.2354 "
   ) +
-  theme_classic()
+  theme_minimal()
 
 # Convert ggplot to plotly
 population_trend <- ggplotly(p)
 
 population_trend
+
 ```
 
 
@@ -125,11 +128,9 @@ population_trend
 ## The Trend (Continued...)
 
 ::: columns
-::: {.column width="70%"}
+::: {.column width="80%"}
 
-```{r}
-
-#| fig-alt: Visualization of overall elephant population estimate between 1995-2023
+```{r, fig.width=9}
 
 # Combining both the actual and predicted data using rowbind
 combined_data <- rbind(total_estimate_per_year, ols_predictions_data)
@@ -142,26 +143,28 @@ combined_prediction <- ggplot(combined_data, aes(x = Year, y = Population, group
   scale_color_manual(values = c("Population Trend" = "black", "Prediction" = "red3"), guide = FALSE) +
   labs(
     x = "Year",
-    y = "Estimate (in Thousands)",
-    title = "Trend in Elephant Population from 1995-2014",
+    y = "Population (in Thousands)",
+    title = "Trend in Elephant Population from 1995-2023",
     caption = "Source: PeerJ PeerJ Article doi: 10.7717/peerj.2354 ",
   ) +
-  theme_classic()
+  theme_minimal()
 
 # Convert ggplot to plotly
 combined_prediction_plot <- ggplotly(combined_prediction, tooltip = c("Year", "y"))
 
 combined_prediction_plot
+
 ```
 :::
 
-::: {.column width="30%"}
+::: {style="font-size: 0.68"}
 
 |Model|RMSE|
 |-----|----|
-|1|a|
-|1|a|
-|1|a|
+|OLS|312.46|
+|Poly Regression|326.09|
+|Random Forest|333.23|
+
 :::
 
 :::
@@ -195,8 +198,6 @@ export_count_per_year <- export_count_per_year |>
 ```
 
 ```{r}
-#| fig-alt: Visualization of Ivory exports in Africa from 1990 to 2022
-
 # Plotting the Ivory exports between 1990 to 2022
 exports_barplot <- ggplot(export_count_per_year, aes(x = as.factor(Year), y = export_count, fill = as.factor(Year), text = paste("Export count: ", export_count))) +
   geom_bar(stat = "identity", color = "black") +
@@ -204,7 +205,7 @@ exports_barplot <- ggplot(export_count_per_year, aes(x = as.factor(Year), y = ex
   labs(
     x = "Year",
     y = "Number of exports",
-    title = "Ivory exports in Africa from 2000 to 2022",
+    title = "Ivory exports in Africa from 1995 to 2022",
     caption = "Source: CITES (Convention of International Trade in Endangered Species of Wild Fauna and Flora)"
   ) +
   guides(fill = FALSE) +
@@ -282,11 +283,12 @@ export_country_map <- merge(africa, country_export_count, by.x = "name", by.y = 
 # Create a ggplot map
 gg_export_countries <- ggplot() +
   geom_sf(data = africa, fill = "white") +
-  geom_sf(data = export_country_map, aes(fill = count, text = paste("Country: ", country_export_count$Country,"<br>",
-                                                                    "Export count: ",count )), color = "#5D2606", size = 0.2) +
-  scale_fill_gradient(low = "#F2A64F", high = "#B61210") +
+  geom_sf(data = export_country_map, aes(fill = count, text = paste("Country: ", country_export_count$Country,"<br>",  
+    "Export count: ",count )), color = "#5D2606", size = 0.2) +
+  scale_fill_gradient(low = "#F2A64F", high = "#B61210", name = "Export count") + 
   theme_void() +
-  labs(title = "Ivory exports from 1995 to 2022 for biggest Elephant ecosystems")
+  labs(title = "Ivory exports from 1995 to 2022 (Top 5 largest ecosystems)", caption = "Source: CITES (Convention of International Trade 
+    in Endangered Species of Wild Fauna and Flora)")
 
 # Convert ggplot to plotly
 gg_export_countries_plotly <- ggplotly(gg_export_countries, tooltip = "text")

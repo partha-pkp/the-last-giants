@@ -95,7 +95,7 @@
     "href": "presentation.html#the-data-source",
     "title": "The Last Giants",
     "section": "The Data source",
-    "text": "The Data source\n\nThe presentation is created using the Quarto CLI\n## sets the start of a new slide"
+    "text": "The Data source\n\nChase, M. J., Schlossberg, S., Griffin, C. R., Bouché, P. J., Djene, S. W., Elkan, P. W., Ferreira, S., Grossman, F., Kohi, E. M., Landen, K., Omondi, P., Peltier, A., Selier, S. A., & Sutcliffe, R. (2016). Continent-wide survey reveals massive decline in African savannah elephants. PeerJ, 4, e2354. doi:10.7717/peerj.2354\nConvention on International Trade in Endangered Species of Wild Fauna and Flora"
   },
   {
     "objectID": "presentation.html#the-3d-plot",
@@ -116,7 +116,7 @@
     "href": "presentation.html#the-trend-continued",
     "title": "The Last Giants",
     "section": "The Trend (Continued…)",
-    "text": "The Trend (Continued…)\n\n\n\n\n\n\n\n\n\n\n\n\nModel\nRMSE\n\n\n\n\n1\na\n\n\n1\na\n\n\n1\na"
+    "text": "The Trend (Continued…)\n\n\n\n\n\n\n\n\n\n\n\n\nModel\nRMSE\n\n\n\n\nOLS\n312.46\n\n\nPoly Regression\n326.09\n\n\nRandom Forest\n333.23"
   },
   {
     "objectID": "presentation.html#the-ivory-trade",
