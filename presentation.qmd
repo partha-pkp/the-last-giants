@@ -11,7 +11,7 @@ format:
   revealjs:
     embed-resources: true
     theme: simple
-    transition: convex
+    transition: slide
     background-transition: fade
     slide-number: true
   
@@ -138,11 +138,22 @@ population_trend <- ggplotly(p)
 population_trend
 
 ```
+This matches with results in the reasearch article!!
 
 ## The Trend (Continued...)
 
-::: columns
-::: {.column width="80%"}
+Results of the prediction models 
+
+
+| Model           | RMSE   |
+|-----------------|--------|
+| OLS             | 312.46 |
+| Poly Regression | 326.09 |
+| Random Forest   | 333.23 |
+
+## The Trend (Continued...)
+
+
 ```{r, fig.width=9}
 
 # Combining both the actual and predicted data using rowbind
@@ -168,16 +179,8 @@ combined_prediction_plot <- ggplotly(combined_prediction, tooltip = c("Year", "y
 combined_prediction_plot
 
 ```
-:::
 
-::: {.column width="20%"}
-| Model           | RMSE   |
-|-----------------|--------|
-| OLS             | 312.46 |
-| Poly Regression | 326.09 |
-| Random Forest   | 333.23 |
-:::
-:::
+
 
 # What is the trend of ivory trade in Africa?
 
@@ -203,7 +206,6 @@ export_count_per_year <- export_count_per_year |>
 #glimpse(export_count_per_year)
 ```
 
-
 ```{r}
 # Plotting the Ivory exports between 1990 to 2022
 exports_barplot <- ggplot(export_count_per_year, aes(x = as.factor(Year), y = export_count, fill = as.factor(Year), text = paste("Export count: ", export_count))) +
@@ -228,9 +230,7 @@ exports_plotly <- ggplotly(exports_barplot, tooltip = "text")
 exports_plotly
 ```
 
-
 ## The ivory trade (continued...)
-
 
 ```{r warning = FALSE,message=FALSE}
 #| fig-alt: Visualizing the Type of Ivory exports in Africa
@@ -264,7 +264,6 @@ carvings_plotly <- ggplotly(carving_ggplot, tooltip = "text")
 # display the interactive plot
 carvings_plotly
 ```
-
 
 ## The ivory trade (continued...)
 
@@ -307,8 +306,6 @@ gg_export_countries_plotly
 
 ## The ivory trade (continued...)
 
-
-
 ::: {#fig-elephants layout-ncol="3"}
 ![](images/i_Jwellery.jpeg){width="150%"}
 
@@ -317,7 +314,6 @@ gg_export_countries_plotly
 ![](images/Carving.jpeg){width="150%"}
 
 Ivory Products
-
 :::
 
 # Wrapping Up
