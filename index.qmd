@@ -3,19 +3,41 @@ title: "The Last Giants"
 subtitle: "A data-driven safari into the savannah"
 author: "Visual Virtuosos"
 format: html
+embed-resources: true
 code-fold: true
 editor: visual
 execute: 
   warning: false
+  message: false
+  error: false
 ---
 
-```{r}
+```{r, echo=FALSE}
+#Installing necessary packages
 
 if (!require("pacman")) 
   install.packages("pacman")
 
 
-pacman::p_load(knitr,tidyverse,lubridate,here,dplyr,ggplot2,ggmap,maps,rnaturalearth,rnaturalearthdata,sf,plotly,caret,glmnet,viridis,rcartocolor,forcats,tidymodels)
+pacman::p_load(knitr,
+               tidyverse,
+               lubridate,
+               here,
+               dplyr,
+               ggplot2,
+               ggmap,
+               maps,
+               rnaturalearth,
+               rnaturalearthdata,
+               sf,
+               plotly,
+               caret,
+               glmnet,
+               viridis,
+               rcartocolor,
+               forcats,
+               tidymodels)
+
 
 ```
 
@@ -23,7 +45,7 @@ pacman::p_load(knitr,tidyverse,lubridate,here,dplyr,ggplot2,ggmap,maps,rnaturale
 
 African elephants face severe threats from poaching and the loss of their natural habitats. Despite global attention towards their conservation, there is considerable uncertainty surrounding the population sizes and trends of elephants across much of Africa. Timely and accurate data on elephant populations is crucial for effective conservation efforts.
 
-A continent-wide survey conducted by the **`National Library of Medicine`** revealed a stark decline in African Savannah Elephants. Africa may have held over 20 million elephants before European colonization and 1 million as recently as the 1970s. The survey estimated a population of 352,271 savannah elephants across study sites in 18 countries, representing approximately 93% of all savannah elephants in those areas. Alarmingly, regions with historical data indicated a significant decline, estimating a decrease of 144,000 elephants between 2007 and 2014.
+A continent-wide survey conducted by the [**Chase, M.J. et al., 2016**](https://doi.org/10.7717/peerj.2354)` revealed a stark decline in African Savannah Elephants. Africa may have held over 20 million elephants before European colonization and 1 million as recently as the 1970s. The survey estimated a population of 352,271 savannah elephants across study sites in 18 countries, representing approximately 93% of all savannah elephants in those areas. Alarmingly, regions with historical data indicated a significant decline, estimating a decrease of 144,000 elephants between 2007 and 2014.
 
 This project aims to examine how elephant populations across Africa changed between 1995 and 2014. It involves using graphs and maps to show how the number of elephants varied over these years. To understand what might happen in the future, the project will use OLS regression mathematical method to guess how many elephants there might be from 2015 to 2023.
 
@@ -39,6 +61,159 @@ Using datasets sourced from reputable conservation organizations and wildlife da
 
 By combining data visualization techniques, statistical analyses, and exploration of the complex interplay between elephant populations and the ivory trade, this project endeavors to contribute valuable insights into the dynamics of African elephant conservation and the factors influencing their populations. Ultimately, the findings may aid policymakers, conservationists, and wildlife experts in formulating more targeted and effective measures to safeguard these majestic creatures and their habitats.
 
+
+## 3D Visualization
+
+The following animation (a rendered 3D-plot in .mp4)  highlights those African countries which have the Savannah elephant ecosystems.  
+The specific countries are projected in 3-dimensional on the basis of the area of the ecosystems.  
+
+
+
+```{r, eval=FALSE}
+
+#------------------- Installing libraries-------------------------------------
+
+library(circularEV)
+library(rnaturalearth)
+library(ggplot2)
+library(plotly)
+library(ggiraph)
+library(ggshadow)
+
+library(raster)
+library(rayshader)
+library(rgl)
+
+#------------------- Mapping the dataset with the "Africa" dataset in rnaturalearth-------
+
+africa <- ne_countries(scale = "medium", returnclass = "sf", continent = "Africa")
+cnt <- ne_countries(scale = "medium", returnclass = "sf", country = "sudan")
+cnt2 <- ne_countries(scale = "medium", returnclass = "sf", country = "senegal")
+col1 <- c("Angola", "Botswana", "Cameroon", "Chad", "Congo", "Kenya","Malawi",
+          "Mali", "Mozambique", "South Africa", "Tanzania","Uganda", "Zambia", "Zimbabwe")
+#col2 <- c(20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20)
+
+col3 <- c(43459, 101599, 20598, 9799, 9349, 85711, 2991, 3944, 101077, 19809, 268250,
+          10938, 84814, 68851)
+
+eco <- data.frame(col1,col3)
+
+eco2 <- merge(africa, eco, by.x = "name", by.y = "col1")
+
+
+#------------------- Creating the ggplot -------------------------------------
+map <- ggplot() +
+  geom_sf(data = africa) +
+  geom_sf(data= eco2, aes(fill = col3), color = "white", linewidth = 0.5)+
+  guides(fill=guide_legend(title=bquote('Area'~(km^2)), reverse=TRUE)
+         )+
+  theme_void()+
+  theme(
+    plot.background = element_rect(
+      fill = "white",
+      colour = "white"
+    ))  
+map
+
+#------------------- Converting the 2-D ggplot to 3-D-------------------------------------
+
+map3d <- plot_gg(map,
+                 width=5,
+                 height=5,
+                 scale = 350,
+                 windowsize = c(1000, 1000),
+                 phi = 30,
+                 save_height_matrix = FALSE,
+                 theta = 0,
+                 flat_transparent_bg = TRUE,
+                 invert = FALSE
+                 )
+
+#------------------- Annotating the top countries-------------------------------------
+
+Tanzania_coords <- c(x = 200, y = 520, z = 50)
+rgl::text3d(x = Tanzania_coords[1], y = Tanzania_coords[2], z = Tanzania_coords[3],
+            text = "Tanzania", col = "black", cex = 0.9)
+
+rgl::lines3d(c(200, 200, 200),
+             c(50, 100, 500),
+             c(50, 50, 50),
+             col = "black")
+
+
+
+Botswana_coords <- c(x = 50, y = 420, z = 250)
+rgl::text3d(x = Botswana_coords[1], y = Botswana_coords[2], z = Botswana_coords[3],
+            text = "Botswana", col = "black", cex = 0.9)
+
+rgl::lines3d(c(50, 50, 50),
+             c(50, 100, 400),
+             c(250, 250, 250),
+             col = "black")
+
+
+Mozam_coords <- c(x = 220, y = 320, z = 190)
+rgl::text3d(x = Mozam_coords[1], y = Mozam_coords[2], z = Mozam_coords[3],
+            text = "Mozambique", col = "black", cex = 0.9)
+
+rgl::lines3d(c(220, 220, 220),
+             c(50, 100, 300),
+             c(190, 190, 190),
+             col = "black")
+
+
+kenya_coords <- c(x = 250, y = 270, z = -90)
+rgl::text3d(x = kenya_coords[1], y = kenya_coords[2], z = kenya_coords[3],
+            text = "Kenya", col = "black", cex = 0.9)
+
+rgl::lines3d(c(250, 250, 250),
+             c(50, 100, 250),
+             c(-90, -90, -90),
+             col = "black")
+
+
+
+
+zambia_coords <- c(x = 50, y = 220, z = 150)
+rgl::text3d(x = zambia_coords[1], y = zambia_coords[2], z = zambia_coords[3],
+            text = "Zambia", col = "black", cex = 0.9)
+
+rgl::lines3d(c(50, 50, 50),
+             c(50, 100, 200),
+             c(150, 150, 150),
+             col = "black")
+
+
+# Reference lines
+
+# rgl::lines3d(c(50, 50, 50),
+#              c(50, 100, 500),
+#              c(50, 50, 50),
+#              col = "red")
+# 
+# rgl::lines3d(c(100, 100, 100),
+#              c(50, 100, 500),
+#              c(50, 50, 50),
+#              col = "darkgreen")
+
+
+# render_movie(filename = "final3d.mp4", type = "orbit",
+#              frames = 360,  phi = 35, zoom = 0.8, theta = -90)
+
+
+rgl::rglwidget()
+```
+
+
+
+```{=html}
+
+<video width="800" height="500" controls>
+  <source src="images/final3d.mp4" type="video/mp4">
+</video>
+
+```
+
 ## Question 1:- How has elephant population varied over the years across several African countries?
 
 ### Introduction
@@ -49,7 +224,7 @@ The dataset under examination spans from 1995 to 2014, presenting a valuable opp
 
 ### Approach
 
--   We are going to make a code which serves as a robust approach for visualizing and analyzing the fluctuation in elephant population estimates across multiple years within several African countries. Using libraries such as `ggplot2` and `plotly`, this methodology aggregates and processes elephant population data, offering a comprehensive depiction of population trends.
+-   We are going to develop code which serves as a robust approach for visualizing and analyzing the fluctuation in elephant population estimates across multiple years within several African countries. Using libraries such as `ggplot2` and `plotly`, this methodology aggregates and processes elephant population data, offering a comprehensive depiction of population trends.
 
 -   We are going to initially read and preprocess the data-set, grouping data by year and summing up estimates, subsequently training an Ordinary Least Squares (OLS) regression model to predict population estimates for future years.
 
@@ -59,13 +234,14 @@ The dataset under examination spans from 1995 to 2014, presenting a valuable opp
 
 ### Analysis
 
-### Code
 
-```{r, echo=FALSE}
+```{r}
 elephant <- readxl::read_xlsx(here("data","elephant_data.xlsx"))
 ```
 
-```{r,echo=FALSE}
+
+```{r}
+#| title: "Visualising the trend in elephant population from 1995-2014"
 
 total_estimate_per_year <- elephant |>
   group_by(Year) |>
@@ -74,13 +250,8 @@ total_estimate_per_year <- elephant |>
 total_estimate_per_year <- total_estimate_per_year |>
   filter(Year != 2015)
 
-
 # Fitting a linear regression model
 lm_model <- lm(Estimate ~ Year, data = elephant)
-
-```
-
-```{r,echo=FALSE}
 
 # Defining a recipe
 ols_recipe <- recipe(Population ~ Year, data = total_estimate_per_year) |>
@@ -108,22 +279,17 @@ ols_predictions <- predict(ols_fit, new_data = new_years)
 
 # Combining the new years and predictions
 ols_predictions_data <- data.frame(Year = new_years$Year, Population = ols_predictions$.pred)
-```
 
-```{r,echo=FALSE}
 # Specify the training control
 train_control <- trainControl(method = "cv", number = 5)
 
 # Train the OLS model using cross-validation
 ols_model <- train(Population ~ Year, data = total_estimate_per_year, method = "lm", trControl = train_control)
-```
 
-```{r,echo=FALSE,warning=FALSE,message=FALSE}
-#| fig-alt: Visualization of elephant population estimates between 1995-2014
 
 # Plotting the estimated of elephant population between 1995 to 2014
 p <- ggplot(total_estimate_per_year, aes(x = Year, y = Population, group = 1)) +
-  geom_line(aes(color = ifelse(Year <= 2014, "Blue", "Red"))) +
+  geom_line() +
   stat_smooth(method = "loess", se = FALSE) +
   ggtitle("Combined Data: Estimate Over Time") +
   xlab("Year") +
@@ -132,8 +298,8 @@ p <- ggplot(total_estimate_per_year, aes(x = Year, y = Population, group = 1)) +
   scale_color_manual(values = c("black", "red3"), guide = FALSE) +
   labs(
     x = "Year",
-    y = "Estimate (in Thousands)",
-    title = "Trend in Elephant Population from 1995-2015",
+    y = "Population (in Thousands)",
+    title = "Trend in Elephant Population from 1995-2014",
     caption = "Source: PeerJ PeerJ Article
 doi: 10.7717/peerj.2354 "
   ) +
@@ -142,12 +308,22 @@ doi: 10.7717/peerj.2354 "
 # Convert ggplot to plotly
 population_trend <- ggplotly(p)
 
-# Display the interactive plot
 population_trend
+
 ```
 
-```{r,echo=FALSE}
-#| fig-alt: Visualization of overall elephant population estimate between 1995-2023
+The population of the elephants from 2015-2023 was predicted using machine learning techniques and eesults of the same are as follows 
+
+
+| Model           | RMSE   |
+|-----------------|--------|
+| OLS             | 312.46 |
+| Poly Regression | 326.09 |
+| Random Forest   | 333.23 |
+
+```{r}
+
+#| title: ""Visualising the trend in elephant population from 1995-2023""
 
 # Combining both the actual and predicted data using rowbind
 combined_data <- rbind(total_estimate_per_year, ols_predictions_data)
@@ -160,8 +336,8 @@ combined_prediction <- ggplot(combined_data, aes(x = Year, y = Population, group
   scale_color_manual(values = c("Population Trend" = "black", "Prediction" = "red3"), guide = FALSE) +
   labs(
     x = "Year",
-    y = "Estimate (in Thousands)",
-    title = "Trend in Elephant Population from 1995-2014",
+    y = "Population (in Thousands)",
+    title = "Trend in Elephant Population from 1995-2023",
     caption = "Source: PeerJ PeerJ Article doi: 10.7717/peerj.2354 ",
   ) +
   theme_minimal()
@@ -173,9 +349,10 @@ combined_prediction_plot
 
 ```
 
+
 ### Discussion
 
--   The line plot depicting the population estimates from 1995 to 2014 reveals annual variations in savannah elephant trends. Utilizing the loess method with geom_smooth, a continuous trend highlights a gradual increase from 1995 until approximately 2003. However, a notable decline follows from 2004, attributed to increased poaching, persisting until 2008. Subsequently, concerted conservation efforts result in a positive trend, aligning with findings in the research paper, indicating the effectiveness of our plot optimization.
+-  The line plot depicting the population estimates from 1995 to 2014 reveals annual variations in savannah elephant trends. Utilizing the loess method with geom_smooth, a continuous trend highlights a gradual increase from 1995 until approximately 2003. However, a notable decline follows from 2004, attributed to increased poaching, persisting until 2008. Subsequently, concerted conservation efforts result in a positive trend, aligning with findings in the research paper, indicating the effectiveness of our plot optimization.
 
 -   Conversely, the line plot illustrating predicted population estimates from the OLS regression method demonstrates a consistent, albeit slight, growth in African elephant populations. This prediction strongly relies on previous year estimates, influencing the gradual upward trend observed.
 
@@ -193,15 +370,16 @@ The illegal trade of ivory has remained a critical concern, posing significant t
 
 -   The trend of ivory trade in Africa, as depicted by the analysis, showcases the fluctuation in export counts over the years from 1990 to 2022. It allows for a visual understanding of the general trajectory of ivory exports, indicating whether they have increased, decreased, or remained relatively stable over this period. Additionally, the analysis dives into the types of ivory exports, offering insights into the diversity or dominance of specific types in the trade, which contributes to understanding the overall trend of ivory trade in Africa.
 
-## Plots
+### Analysis
 
-```{r,echo=FALSE}
+Visualising the trend in Ivory trade from 1990 to 2022
+
+```{r}
+#| title: "Plotting the Ivory exports between 1990 to 2022"
 
 # Loading ivory data
 ivory_exports_data <- read_csv(here("data","cites_ivory_export.csv"))
-```
 
-```{r,echo=FALSE}
 
 # Counting the number of instances for each year
 export_count_per_year <- ivory_exports_data |>
@@ -211,10 +389,9 @@ export_count_per_year <- ivory_exports_data |>
 # Assuming `count_per_year` is your dataset
 export_count_per_year <- export_count_per_year |>
   filter(Year > 1994)
-```
 
-```{r,echo=FALSE}
-#| fig-alt: Visualization of Ivory exports in Africa from 1990 to 2022
+#glimpse(export_count_per_year)
+
 
 # Plotting the Ivory exports between 1990 to 2022
 exports_barplot <- ggplot(export_count_per_year, aes(x = as.factor(Year), y = export_count, fill = as.factor(Year), text = paste("Export count: ", export_count))) +
@@ -223,7 +400,7 @@ exports_barplot <- ggplot(export_count_per_year, aes(x = as.factor(Year), y = ex
   labs(
     x = "Year",
     y = "Number of exports",
-    title = "Ivory exports in Africa from 2000 to 2022",
+    title = "Ivory exports in Africa from 1995 to 2022",
     caption = "Source: CITES (Convention of International Trade in Endangered Species of Wild Fauna and Flora)"
   ) +
   guides(fill = FALSE) +
@@ -239,9 +416,56 @@ exports_plotly <- ggplotly(exports_barplot, tooltip = "text")
 exports_plotly
 ```
 
-## IVORY CARVINGS
 
-```{r,echo=FALSE, warning = FALSE,message=FALSE}
+
+
+
+Visualizing the  Ivory exports in Africa among the Top 5 largest savannah elephant ecosystems
+
+
+```{r}
+
+#| fig-alt: "Ivory exports from 1995 to 2022 among the Top 5 largest ecosystems"
+
+# Extracing data from ivory_exports dataset
+country_export_count <- ivory_exports_data %>%
+  filter(Exporter %in% c("ZW", "ZM", "ZA", "BW", "MZ")) %>%
+  group_by(Exporter) %>%
+  summarise(count = n()) %>%
+  mutate(Country = case_when(
+    Exporter == "ZW" ~ "Zimbabwe",
+    Exporter == "ZM" ~ "Zambia",
+    Exporter == "ZA" ~ "South Africa",
+    Exporter == "BW" ~ "Botswana",
+    Exporter == "MZ" ~ "Mozambique",
+    TRUE ~ as.character(Exporter)
+  ))
+
+africa <- ne_countries(scale = "medium", continent = "Africa", returnclass = "sf")
+
+export_country_map <- merge(africa, country_export_count, by.x = "name", by.y = "Country")
+
+# Create a ggplot map
+gg_export_countries <- ggplot() +
+  geom_sf(data = africa, fill = "white") +
+  geom_sf(data = export_country_map, aes(fill = count, text = paste("Country: ", country_export_count$Country,"<br>",  
+    "Export count: ",count )), color = "#5D2606", size = 0.2) +
+  scale_fill_gradient(low = "#F2A64F", high = "#B61210", name = "Export count") + 
+  theme_void() +
+  labs(title = "Ivory exports from 1995 to 2022 (Top 5 largest ecosystems)", caption = "Source: CITES (Convention of International Trade 
+    in Endangered Species of Wild Fauna and Flora)")
+
+# Convert ggplot to plotly
+gg_export_countries_plotly <- ggplotly(gg_export_countries, tooltip = "text")
+
+# Show the Plotly map
+gg_export_countries_plotly
+```
+
+Visualizing the Type of Ivory exports in Africa
+
+```{r}
+
 #| fig-alt: Visualizing the Type of Ivory exports in Africa
 
 ivory_term_count <- ivory_exports_data |>
@@ -274,41 +498,11 @@ carvings_plotly <- ggplotly(carving_ggplot, tooltip = "text")
 carvings_plotly
 ```
 
-## Ivory Exports
 
-```{r,echo=FALSE}
 
-# Extracing data from ivory_exports dataset
-country_export_count <- ivory_exports_data %>%
-  filter(Exporter %in% c("ZW", "ZM", "ZA", "BW", "MZ")) %>%
-  group_by(Exporter) %>%
-  summarise(count = n()) %>%
-  mutate(Country = case_when(
-    Exporter == "ZW" ~ "Zimbabwe",
-    Exporter == "ZM" ~ "Zambia",
-    Exporter == "ZA" ~ "South Africa",
-    Exporter == "BW" ~ "Botswana",
-    Exporter == "MZ" ~ "Mozambique",
-    TRUE ~ as.character(Exporter)
-  ))
+### Discussion
 
-africa <- ne_countries(scale = "medium", continent = "Africa", returnclass = "sf")
+-   It is to observe there was huge number of exports during the early 2000s which now shows a declining trend.
 
-export_country_map <- merge(africa, country_export_count, by.x = "name", by.y = "Country")
+-   With reference to the line plots from question 1 and the declining trend in the ivory exports, it is to co-relate and interpret that the population of the elephants might gradually increase in near future. The predicted values of the population from 2015-2023 also convey the same. However, the increase in the elephant population also depends on various other factors.
 
-# Create a ggplot map
-gg_export_countries <- ggplot() +
-  geom_sf(data = africa, fill = "white") +
-  geom_sf(data = export_country_map, aes(fill = count, text = paste("Country: ", country_export_count$Country,"<br>",  
-    "Export count: ",count )), color = "#5D2606", size = 0.2) +
-  scale_fill_gradient(low = "#F2A64F", high = "#B61210", name = "Export count") + 
-  theme_void() +
-  labs(title = "Ivory exports from 1995 to 2022", caption = "Source: CITES (Convention of International Trade 
-    in Endangered Species of Wild Fauna and Flora)")
-
-# Convert ggplot to plotly
-gg_export_countries_plotly <- ggplotly(gg_export_countries, tooltip = "text")
-
-# Show the Plotly map
-gg_export_countries_plotly
-```
