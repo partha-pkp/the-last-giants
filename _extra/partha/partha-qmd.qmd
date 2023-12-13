@@ -464,18 +464,17 @@ eco2 <- merge(africa, eco, by.x = "name", by.y = "col1")
 map <- ggplot() +
   geom_sf(data = africa) +
   geom_sf(data= eco2, aes(fill = col3), color = "white", linewidth = 0.5)+
+  guides(fill=guide_legend(title=bquote('Area'~(km^2)), reverse=TRUE)
+         )+
   theme_void()+
   theme(
     plot.background = element_rect(
       fill = "white",
       colour = "white"
-    ))
+    ))  
+map
 
-gg_map <- map + guides(fill=guide_legend(title=bquote('Area'~(km^2))))
-
-#gg_map
-
-map3d <- plot_gg(gg_map,
+map3d <- plot_gg(map,
                  width=5,
                  height=5,
                  scale = 350,
@@ -485,7 +484,7 @@ map3d <- plot_gg(gg_map,
                  theta = 0,
                  flat_transparent_bg = TRUE,
                  invert = FALSE
-)
+                 )
 
 Tanzania_coords <- c(x = 200, y = 520, z = 50)
 rgl::text3d(x = Tanzania_coords[1], y = Tanzania_coords[2], z = Tanzania_coords[3],
@@ -553,8 +552,8 @@ rgl::lines3d(c(50, 50, 50),
 #              col = "darkgreen")
 
 
-# render_movie(filename = "filename_movie3.mp4", type = "orbit", 
-#              frames = 360,  phi = 35, zoom = 0.8, theta = -90)
+render_movie(filename = "final3d.mp4", type = "orbit",
+             frames = 360,  phi = 35, zoom = 0.8, theta = -90)
 
 
 rgl::rglwidget()
