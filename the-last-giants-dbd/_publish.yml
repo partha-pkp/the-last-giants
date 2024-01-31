@@ -1,0 +1,4 @@
+- source: giants-dbd.qmd
+  quarto-pub:
+    - id: f4c015ec-2e3d-474c-8c56-c2dc7ebb5a1a
+      url: 'https://partha-pkp.quarto.pub/the-last-giants'
